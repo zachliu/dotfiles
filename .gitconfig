@@ -1,0 +1,13 @@
+[user]
+  email = zach.z.liu@gmail.com
+  name = zachliu
+[core]
+  editor = vim
+  autocrlf = input
+  safecrlf = true
+[alias]
+  hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+  type = cat-file -t
+  dump = cat-file -p
+[merge "ours"]
+  driver = true
