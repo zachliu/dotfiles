@@ -117,11 +117,11 @@ function gn() {  # arg1: filename
 }
 
 # dictionary
-function definition() {  # arg1: word
+function def() {  # arg1: word
   dict -d gcide $1 | less
 }
 
-function synonym() {  # arg1: word
+function syn() {  # arg1: word
   dict -d moby-thesaurus $1 | less
 }
 
