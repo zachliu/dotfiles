@@ -219,7 +219,7 @@ fi
 # path appends --- {{{
 
 # Matlab
-export PATH="$PATH:/usr/local/MATLAB/R2016b/bin"
+# export PATH="$PATH:/usr/local/MATLAB/R2016b/bin"
 
 #}}}
 # Command history --- {{{
