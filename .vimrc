@@ -602,6 +602,10 @@ let g:jedi#auto_close_doc = 0
 let g:jedi#use_tabs_not_buffers = 1
 
 " mappings
+" auto_vim_configuration creates space between where vim is opened and
+" closed in my bash terminal. This is annoying, so I disable and manually
+" configure. See 'set completeopt' in my global config for my settings
+let g:jedi#auto_vim_configuration = 0
 let g:jedi#goto_command = "<C-]>"
 let g:jedi#documentation_command = "<leader>sd"
 let g:jedi#usages_command = "<leader>su"
