@@ -638,6 +638,10 @@ augroup END
 "  }}}
 " Plugin: Misc config ------------ {{{
 
+" vim-rooter
+" note: to set root to git repository, run :Rooter
+let g:rooter_manual_only = 1
+
 " vimtex
 let g:vimtex_compiler_latexmk = {'callback' : 0}
 
@@ -826,11 +830,14 @@ nnoremap <silent> <leader>v mz:call ResizeWidthToLongestLine()<CR>`z
 
 " Omnicompletion:
 " imap <C-space> <C-x><C-o>
+" <C-@> is actually <C-space>
 inoremap <C-@> <C-x><C-o>
 
 " Exit: Preview and Help
 inoremap <silent> <C-c> <Esc>:pclose <BAR> helpclose<CR>a
 nnoremap <silent> <C-c> :pclose <BAR> helpclose<CR>
+inoremap <silent> <C-q> <Esc>:cclose <BAR> lclose<CR>a
+nnoremap <silent> <C-q> :cclose <BAR> lclose<CR>
 
 " MoveVisual: up and down visually only if count is specified before
 " Otherwise, you want to move up lines numerically
@@ -878,6 +885,10 @@ nnoremap gp :bp<CR>
 
 " }}}
 " General: Command abbreviations ------------------------ {{{
+
+" changing directories
+cabbrev r Rooter
+cabbrev f cd %:p:h
 
 " abbreviate creating tab, vertical, and horizontal buffer splits
 cabbrev bt tab sb
