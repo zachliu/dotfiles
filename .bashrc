@@ -125,6 +125,19 @@ function syn() {  # arg1: word
   dict -d moby-thesaurus $1 | less
 }
 
+# Move up n directories using:  cd.. 10   cd.. dir
+function cd_up() {  # arg1: number|word
+  pushd . >/dev/null
+  case $1 in
+    *[!0-9]*)                                          # if no a number
+      cd $( pwd | sed -r "s|(.*/$1[^/]*/).*|\1|" )     # search dir_name in current path, if found - cd to it
+      ;;                                               # if not found - not cd
+    *)
+      cd $(printf "%0.0s../" $(seq 1 $1));             # cd ../../../../  (N dirs)
+    ;;
+  esac
+}
+
 # }}}
 # Command line prompt (PS1) --- {{{
 
