@@ -100,6 +100,29 @@ alias publicip='wget -qO - http://ipecho.net/plain ; echo'
 # Git aliases
 alias g="git status"
 
+# Less with default options
+# -c: auto-clear screen
+alias less='less -c'
+
+# Regex ignore annoying directories
+alias regrep="grep --perl-regexp -Ir \
+--exclude=*~ \
+--exclude=*.pyc \
+--exclude=*.csv \
+--exclude=*.tsv \
+--exclude=*.md \
+--exclude-dir=.bzr \
+--exclude-dir=.git \
+--exclude-dir=.svn \
+--exclude-dir=node_modules \
+--exclude-dir=venv"
+
+# upgrade
+alias upgrade="sudo apt update && sudo apt upgrade"
+
+# battery
+alias bat='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|to\ full|percentage"'
+
 # }}}
 # Functions --- {{{
 
@@ -111,6 +134,11 @@ function ovpn {
     --script-security 2
 }
 
+# Colored cat
+function cats() {
+  pygmentize -g $1 | less -rc
+}
+
 # open with gnome-open
 function gn() {  # arg1: filename
   gnome-open "$1" &> /dev/null
@@ -118,24 +146,17 @@ function gn() {  # arg1: filename
 
 # dictionary
 function def() {  # arg1: word
-  dict -d gcide $1 | less
+  dict -d gcide $1 | less -c
 }
 
 function syn() {  # arg1: word
-  dict -d moby-thesaurus $1 | less
+  dict -d moby-thesaurus $1 | less -c
 }
 
-# Move up n directories using:  cd.. 10   cd.. dir
+# Move up n directories using:  cd.. dir
 function cd_up() {  # arg1: number|word
   pushd . >/dev/null
-  case $1 in
-    *[!0-9]*)                                          # if no a number
-      cd $( pwd | sed -r "s|(.*/$1[^/]*/).*|\1|" )     # search dir_name in current path, if found - cd to it
-      ;;                                               # if not found - not cd
-    *)
-      cd $(printf "%0.0s../" $(seq 1 $1));             # cd ../../../../  (N dirs)
-    ;;
-  esac
+  cd $( pwd | sed -r "s|(.*/$1[^/]*/).*|\1|" ) # cd up into path (if found)
 }
 
 # }}}

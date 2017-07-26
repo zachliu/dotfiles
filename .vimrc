@@ -1,13 +1,11 @@
 " Notes --------- {{{
 
-" -----------------------------------------------------------
-" Text object selection
+" TextObjectSelection:
 " object-select OR text-objects
 " delete the inner (...) block where the cursor is.
 " dib ( or 'di(' )
 " -----------------------------------------------------------
-"
-" -----------------------------------------------------------
+" SystemCopy:
 " The default mapping is cp, and can be followed by any motion or text object. For instance:
 
 " cpiw => copy word into system clipboard
@@ -16,17 +14,28 @@
 
 " The sequence cv is mapped to paste the content of system clipboard to the next line.
 " -----------------------------------------------------------
-"
-" -----------------------------------------------------------
-"  Enable and disable folding
+"  Folding:
 "  zi
 " -----------------------------------------------------------
-"
-" How to insert parens purely
+" ParenInsertion:
 " There are 3 ways
 " 1. use Ctrl-V ) to insert paren without trigger the plugin.
 " 2. use Alt-P to turn off the plugin.
 " 3. use DEL or <C-O>x to delete the character insert by plugin.
+"
+" QuickfixAndLocationList:
+" ccl: close quickfix (my abbreviation: cc)
+" cw: open quickfix if there is anything to open
+" lcl: close location list (my abbreviation: lc)
+" lw: open location list if there is anything to open
+"
+" InsertModeEditing:
+" TLDR
+"   :help insert-index
+" CTRL-H   delete the character in front of the cursor
+" CTRL-W   delete the word in front of the cursor
+" CTRL-U   delete all characters in front of the cursor
+" CTRL-L   delete character under cursor (I create this in general remappings)
 
 " }}}
 " General: Leader mappings -------------------- {{{
@@ -36,6 +45,22 @@ let maplocalleader = "\\"
 
 " }}}
 " General: global config ------------ {{{
+
+"A comma separated list of options for Insert mode completion
+"   menuone  Use the popup menu also when there is only one match.
+"            Useful when there is additional information about the
+"            match, e.g., what file it comes from.
+
+"   longest  Only insert the longest common text of the matches.  If
+"            the menu is displayed you can use CTRL-L to add more
+"            characters.  Whether case is ignored depends on the kind
+"            of completion.  For buffer text the 'ignorecase' option is
+"            used.
+
+"   preview  Show extra information about the currently selected
+"            completion in the preview window.  Only works in
+"            combination with 'menu' or 'menuone'.
+set completeopt=menuone,longest,preview
 
 " Enable buffer deletion instead of having to write each buffer
 set hidden
@@ -53,7 +78,8 @@ set autochdir
 set nobackup
 set noswapfile
 
-set wrap
+" Do not wrap lines by default
+set nowrap
 
 " Set column to light grey at 80 characters
 if (exists('+colorcolumn'))
@@ -124,7 +150,6 @@ Plug 'airblade/vim-rooter'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
 Plug 'scrooloose/nerdtree'
-Plug 'troydm/zoomwintab.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'dkprice/vim-easygrep'
 Plug 't9md/vim-choosewin'
@@ -134,10 +159,14 @@ Plug 'gcmt/taboo.vim'
 Plug 'yssl/QFEnter'
 Plug 'djoshea/vim-autoread'
 Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'justinmk/vim-sneak'
 Plug 'simeji/winresizer'
 Plug 'vimwiki/vimwiki'
+Plug 'justinmk/vim-sneak'
 Plug 'bronson/vim-trailing-whitespace'
+Plug 'mbbill/undotree'
+
+" Commands run in vim's virtual screen and don't pollute main shell
+Plug 'fcpg/vim-altscreen'
 
 " Basic coloring
 Plug 'NLKNguyen/papercolor-theme'
@@ -175,6 +204,8 @@ Plug 'lervag/vimtex'
 Plug 'davidhalter/jedi-vim'
 Plug 'jmcantrell/vim-virtualenv'
 Plug 'marijnh/tern_for_vim', { 'do': 'npm install'  }  " for javascript
+" Additional requirements:
+"   ln -s /home/sroeca/configsettings/.tern-project /home/sroeca/.tern-project
 Plug 'Rip-Rip/clang_complete'
 Plug 'eagletmt/neco-ghc'
 
@@ -235,7 +266,9 @@ augroup END
 
 augroup quick_fix_move_bottom
   autocmd!
-  autocmd FileType qf wincmd J
+  " currently latest version of vim throws error
+  " just type these commands manually for now and wait for fix
+  " autocmd FileType qf wincmd J
 augroup END
 
 " }}}
@@ -255,56 +288,6 @@ augroup indentation_sr
   " Prevent auto-indenting from occuring
   autocmd Filetype yaml setlocal indentkeys-=<:>
 augroup END
-
-" }}}
-" General: Indentation navigation --- {{{
-
-" Jump to the next or previous line that has the same level or a lower
-" level of indentation than the current line.
-"
-" exclusive (bool): true: Motion is exclusive
-" false: Motion is inclusive
-" fwd (bool): true: Go to next line
-" false: Go to previous line
-" lowerlevel (bool): true: Go to line with lower indentation level
-" false: Go to line with the same indentation level
-" skipblanks (bool): true: Skip blank lines
-" false: Don't skip blank lines
-function! NextIndent(exclusive, fwd, lowerlevel, skipblanks)
-  let line = line('.')
-  let column = col('.')
-  let lastline = line('$')
-  let indent = indent(line)
-  let stepvalue = a:fwd ? 1 : -1
-  while (line > 0 && line <= lastline)
-    let line = line + stepvalue
-    if ( ! a:lowerlevel && indent(line) == indent ||
-          \ a:lowerlevel && indent(line) < indent)
-      if (! a:skipblanks || strlen(getline(line)) > 0)
-        if (a:exclusive)
-          let line = line - stepvalue
-        endif
-        exe line
-        exe "normal " column . "|"
-        return
-      endif
-    endif
-  endwhile
-endfunction
-
-" Moving back and forth between lines of same or lower indentation.
-nnoremap <silent> [l :call NextIndent(0, 0, 0, 1)<CR>
-nnoremap <silent> ]l :call NextIndent(0, 1, 0, 1)<CR>
-nnoremap <silent> [L :call NextIndent(0, 0, 1, 1)<CR>
-nnoremap <silent> ]L :call NextIndent(0, 1, 1, 1)<CR>
-vnoremap <silent> [l <Esc>:call NextIndent(0, 0, 0, 1)<CR>m'gv''
-vnoremap <silent> ]l <Esc>:call NextIndent(0, 1, 0, 1)<CR>m'gv''
-vnoremap <silent> [L <Esc>:call NextIndent(0, 0, 1, 1)<CR>m'gv''
-vnoremap <silent> ]L <Esc>:call NextIndent(0, 1, 1, 1)<CR>m'gv''
-onoremap <silent> [l :call NextIndent(0, 0, 0, 1)<CR>
-onoremap <silent> ]l :call NextIndent(0, 1, 0, 1)<CR>
-onoremap <silent> [L :call NextIndent(1, 0, 1, 1)<CR>
-onoremap <silent> ]L :call NextIndent(1, 1, 1, 1)<CR>
 
 " }}}
 " General: (relative) line number display ------------- {{{
@@ -416,6 +399,13 @@ augroup python_syntax
   autocmd FileType python syn keyword pythonBuiltinObj cls
 augroup end
 
+" Javascript: Highlight this keyword in object / function definitions
+augroup javascript_syntax
+  autocmd!
+  autocmd FileType javascript syn keyword jsBooleanTrue this
+  autocmd FileType javascript.jsx syn keyword jsBooleanTrue this
+augroup end
+
 " Syntax: select global syntax scheme
 " Make sure this is at end of section
 try
@@ -476,7 +466,7 @@ nnoremap <silent> <space>j :NERDTreeToggle %<CR>
 "  }}}
 " Plugin: Ctrl p --- {{{
 
-let g:ctrlp_working_path_mode = 'rw' " start from cwd
+let g:ctrlp_mruf_relative = 1 " show only MRU files in the current working directory
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 " open first in current window and others as hidden
 let g:ctrlp_open_multiple_files = '1r'
@@ -484,18 +474,23 @@ let g:ctrlp_use_caching = 0
 let g:ctrlp_switch_buffer = 0
 
 " Cycles through windows until it finds a modifiable buffer
+" First checks if startify and runs command if so
 " it then runs ctrl-p there
 " if there are no modifiable buffers, it does not run control p
 " this prevents ctrl-p from opening in NERDTree, QuickFix, or other
 function! CtrlPCommand()
     let current_window_number = 0
     let total_window_number = winnr('$')
+    if &filetype ==? 'startify'
+      exec 'CtrlPCurWD'
+      return
+    endif
     while !&modifiable && current_window_number < total_window_number
         exec 'wincmd w'
         let current_window_number = current_window_number + 1
     endwhile
     if current_window_number < total_window_number
-      exec 'CtrlP'
+      exec 'CtrlPCurWD'
     endif
 endfunction
 let g:ctrlp_cmd = 'call CtrlPCommand()'
@@ -518,6 +513,14 @@ function! CustomAirlineDisplayPath()
   " For project rooted at /home/user/src/myproject:
   " and file at /home/user/src/myproject/lib/file.c
   " display: 'file.c : myproject/lib'
+  " :.    Reduce file name to be relative to current directory, if
+  "       possible.  File name is unmodified if it is not below the
+  "       current directory.
+  "       For maximum shortness, use ':~:.'.
+  " The :~ is optional.
+  " It will reduce the path relative to your home folder if possible (~/...).
+  " Unfortunately that only works on your home;
+  " it won't turn /home/joey into ~joey.
   return expand('%:t') . ' : ' . expand('%:h')
 endfunction
 let g:airline_section_c = airline#section#create(
@@ -544,6 +547,7 @@ let g:airline_mode_map = {
 " }}}
 "  Plugin: Tagbar ------ {{{
 
+let g:tagbar_map_showproto = '`'
 let g:tagbar_show_linenumbers = -1
 let g:tagbar_autofocus = 1
 let g:tagbar_indent = 1
@@ -636,6 +640,36 @@ augroup haskell_complete
 augroup END
 
 "  }}}
+" Plugin: Startify ------------ {{{
+
+let g:startify_list_order = ['dir', 'files', 'bookmarks', 'sessions',
+      \ 'commands']
+let g:startify_fortune_use_unicode = 1
+let g:startify_enable_special = 2
+let g:startify_custom_header = [
+      \ '      ___________       __                            .__               ',
+      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____  ',
+      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \ ',
+      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/ ',
+      \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
+      \ '              \/     \/          \/      |__|                 \/     \/ ',
+      \ '',
+      \ ' \++================================|                    _=_',
+      \ '  \_________________________________/              ___/==+++==\___',
+      \ '               """\__      \"""       |======================================/',
+      \ '                     \__    \_          / ..  . _/--===+_____+===--""',
+      \ '                        \__   \       _/.  .. _/         `+`',
+      \ '                           \__ \   __/_______/                      \ /',
+      \ '                          ___-\_\-`---==+____|                  ---==O=-',
+      \ '                    __--+" .    . .        "==_                     / \',
+      \ '                    /  |. .  ..     -------- | \',
+      \ '                    "==+_    .   .  -------- | /',
+      \ '                         ""\___  . ..     __=="',
+      \ '                               """"--=--""',
+      \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
+
+
+" }}}
 " Plugin: Misc config ------------ {{{
 
 " vim-rooter
@@ -644,6 +678,7 @@ let g:rooter_manual_only = 1
 
 " vimtex
 let g:vimtex_compiler_latexmk = {'callback' : 0}
+let g:tex_flavor = 'latex'
 
 " Virtualenv
 " necessary for jedi-vim to discover virtual environments
@@ -669,33 +704,6 @@ let g:cpp_experimental_simple_template_highlight = 1
 let g:taboo_tab_format = ' [%N:tab]%m '
 let g:taboo_renamed_tab_format = ' [%N:%l]%m '
 
-" startify
-let g:startify_list_order = ['dir', 'files', 'bookmarks', 'sessions',
-      \ 'commands']
-let g:startify_fortune_use_unicode = 1
-let g:startify_enable_special = 2
-let g:startify_custom_header = [
-      \ '      ___________       __                            .__               ',
-      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____  ',
-      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \ ',
-      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/ ',
-      \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
-      \ '              \/     \/          \/      |__|                 \/     \/ ',
-      \ '',
-      \ ' \++================================|                    _=_',
-      \ '  \_________________________________/              ___/==+++==\___',
-      \ '               """\__      \"""       |======================================/',
-      \ '                     \__    \_          / ..  . _/--===+_____+===--""',
-      \ '                        \__   \       _/.  .. _/         `+`',
-      \ '                           \__ \   __/_______/                      \ /',
-      \ '                          ___-\_\-`---==+____|                  ---==O=-',
-      \ '                    __--+" .    . .        "==_                     / \',
-      \ '                    /  |. .  ..     -------- | \',
-      \ '                    "==+_    .   .  -------- | /',
-      \ '                         ""\___  . ..     __=="',
-      \ '                               """"--=--""',
-      \]
-
 " choosewin (just like tmux)
 nnoremap <leader>q :ChooseWin<CR>
 
@@ -714,7 +722,6 @@ let python_highlight_all = 1
 let g:ragtag_global_maps = 1
 
 " Vim-javascript
-let g:javascript_plugin_jsdoc = 1
 let g:javascript_plugin_flow = 1
 
 " JSX for .js files in addition to .jsx
@@ -738,6 +745,7 @@ nnoremap <leader>ga :Git add %:p<CR><CR>
 nnoremap <leader>g. :Git add .<CR><CR>
 nnoremap <leader>gs :Gstatus<CR>
 nnoremap <leader>gc :Gcommit -v -q<CR>
+nnoremap <leader>gd :Gdiff<CR>
 
 " indentlines
 let g:indentLine_enabled = 0  " indentlines disabled by default
@@ -774,8 +782,6 @@ highlight EOLWS ctermbg=darkgreen guibg=darkgreen
 augroup fix_whitespace_save
   autocmd!
   autocmd BufWritePre * call TrimWhitespace()
-  autocmd FileType * unlet! g:airline#extensions#whitespace#checks
-  autocmd FileType markdown let g:airline#extensions#whitespace#checks = [ 'indent'  ]
 augroup END
 
 " }}}
@@ -939,39 +945,6 @@ vnoremap <silent> # :<C-U>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 vnoremap <expr> // 'y/\V'.escape(@",'\').'<CR>'
-
-" }}}
-" General: Quickfix Toggle ------ {{{
-
-function! GetBufferList()
-  redir =>buflist
-  silent! ls!
-  redir END
-  return buflist
-endfunction
-
-function! ToggleList(bufname, pfx)
-  let buflist = GetBufferList()
-  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
-    if bufwinnr(bufnum) != -1
-      exec(a:pfx.'close')
-      return
-    endif
-  endfor
-  if a:pfx == 'l' && len(getloclist(0)) == 0
-      echohl ErrorMsg
-      echo "Location List is Empty."
-      return
-  endif
-  let winnr = winnr()
-  exec(a:pfx.'open')
-  if winnr() != winnr
-    wincmd p
-  endif
-endfunction
-
-nnoremap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
-nnoremap <silent> <leader>e :call ToggleList("Quickfix List", 'c')<CR>
 
 " }}}
 " General: Writing (non-coding)------------------ {{{
