@@ -227,6 +227,10 @@ PS1="${PS1_DIR}${PS1_GIT}${PS1_END}"
 # }}}
 # Imports from other files --- {{{
 
+if [ -f ~/.bin/tmuxinator.bash ]; then
+  source ~/.bin/tmuxinator.bash
+fi
+
 if [ -f ~/.bash/sensitive ]; then
   source ~/.bash/sensitive
 fi
@@ -267,5 +271,20 @@ export HISTSIZE=50000
 # When shell exits, append to history file instead of overwriting
 shopt -s histappend
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+
+#}}}
+# Pyenv --- {{{
+
+# Somewhere in your bashrc
+PYENV_ROOT="$HOME/.pyenv"
+if [ -d "$PYENV_ROOT" ]
+then
+  export PYENV_ROOT
+  PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+fi
+
+# Make sure you're also exporting PATH somewhere...
+export PATH
 
 #}}}
