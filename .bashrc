@@ -22,6 +22,9 @@ shuf -n 1 ~/Documents/system_configs/gre_words.txt | cowsay
 # }}}
 # Aliases --- {{{
 
+# For terraform
+alias tfenv='sudo tfswitch'
+
 # Easier directory navigation for going up a directory tree
 alias 'a'='cd - &> /dev/null'
 alias ,='cd ..'
@@ -132,6 +135,19 @@ function ovpn {
   sudo openvpn --config zach.conf \
     --up /etc/openvpn/update-resolv-conf \
     --script-security 2
+}
+
+# Mypy
+function mypy_check {
+  for i in $(find -maxdepth 1 -type f -name "*.py"); do
+    echo Type checked: $i
+    mypy $i | grep -v "missing a type annotation"
+  done
+
+  for i in $(find -maxdepth 1 -type f -name "*.py"); do
+    n="$(mypy $i | grep -o "missing a type annotation" | wc -l)"
+    echo Type checked: $i. Number of functions missing annotation: "${n}"
+  done
 }
 
 # Colored cat
