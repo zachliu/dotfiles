@@ -1,27 +1,62 @@
-" Notes --------- {{{
-
+" Author: Zach Liu <zach.z.liu@gmail.com>
+"
+" Notes:
+"   * To toggle sections below, scroll over a folded section and type 'za'
+"     when in Normal mode.
+" Additional Notes --------- {{{
+"
+" This is my .vimrc. I use Linux Mint 18.2.
+" My workflow is terminal-based, so I use this with vim-nox.
+"
+" PreRequisites:
+"   To get the most out of this vimrc, please install the following
+"   system dependencies. This may not be comprehensive, but represents
+"   some basics I believe everyone should have that you might not have
+"   by default on a modern Ubuntu-based OS:
+"   * git && build-essential && curl
+"   * nodejs && npm
+"   * rust && cargo
+"   * exuberant-ctags
+"
+" Installation:
+"   1. Put file in correct place within filesystem
+"     If using Vim, soft-link this file to ~/.vimrc
+"     If using NeoVim, soft-link this file to ~/.config/nvim/init.vim
+"   2. Install Vim-Plug (a great plugin manager)
+"     As of August 20, 2017, you just need to run this command:
+"     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+"         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"   3. Open vim (hint: type vim at command line and press enter :p)
+"   4. :PlugInstall
+"   5. :PlugUpdate
+"   6. :PlugUpgrade
+"
 " TextObjectSelection:
 " object-select OR text-objects
 " delete the inner (...) block where the cursor is.
 " dib ( or 'di(' )
 " -----------------------------------------------------------
 " SystemCopy:
-" The default mapping is cp, and can be followed by any motion or text object. For instance:
+" The default mapping is cp, and can be followed by any motion or text object.
+" For instance:
 
 " cpiw => copy word into system clipboard
 " cpi' => copy inside single quotes to system clipboard
 " In addition, cP is mapped to copy the current line directly.
 
-" The sequence cv is mapped to paste the content of system clipboard to the next line.
+" The sequence cv is mapped to paste the content of system clipboard
+" to the next line.
 " -----------------------------------------------------------
 "  Folding:
-"  zi
+"  zi: toggles everything
+"  za: toggles the current section
 " -----------------------------------------------------------
 " ParenInsertion:
 " There are 3 ways
 " 1. use Ctrl-V ) to insert paren without trigger the plugin.
 " 2. use Alt-P to turn off the plugin.
 " 3. use DEL or <C-O>x to delete the character insert by plugin.
+" 4. (more recently): type <C-l> in insert mode to delete right character
 "
 " QuickfixAndLocationList:
 " ccl: close quickfix (my abbreviation: cc)
@@ -143,7 +178,6 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 " Basics
-Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-rooter'
@@ -164,6 +198,10 @@ Plug 'vimwiki/vimwiki'
 Plug 'justinmk/vim-sneak'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'mbbill/undotree'
+
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'cohama/agit.vim'
 
 " Commands run in vim's virtual screen and don't pollute main shell
 Plug 'fcpg/vim-altscreen'
@@ -199,6 +237,7 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-vagrant'
 Plug 'lervag/vimtex'
+Plug 'hynek/vim-python-pep8-indent'
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
@@ -249,26 +288,22 @@ augroup filetype_recognition
   autocmd BufNewFile,BufRead,BufEnter *.md,*.markdown set filetype=markdown
   autocmd BufNewFile,BufRead,BufEnter *.hql,*.q set filetype=hive
   autocmd BufNewFile,BufRead,BufEnter *.config set filetype=yaml
-  autocmd BufNewFile,BufRead,BufEnter *.bowerrc,*.babelrc,*.eslintrc set filetype=json
+  autocmd BufNewFile,BufRead,BufEnter *.bowerrc,*.babelrc,*.eslintrc
+        \ set filetype=json
   autocmd BufNewFile,BufRead,BufEnter *.handlebars set filetype=html
   autocmd BufNewFile,BufRead,BufEnter *.m,*.oct set filetype=octave
   autocmd BufNewFile,BufRead,BufEnter *.jsx set filetype=javascript.jsx
-  autocmd BufNewFile,BufRead,BufEnter *.cfg,*.ini,.coveragerc,.pylintrc set filetype=dosini
+  autocmd BufNewFile,BufRead,BufEnter *.cfg,*.ini,.coveragerc,.pylintrc
+        \ set filetype=dosini
   autocmd BufNewFile,BufRead,BufEnter *.tsv set filetype=tsv
 augroup END
-nnoremap <leader>jx :set filetype=javascript.jsx<CR>
-nnoremap <leader>jj :set filetype=javascript<CR>
 
 augroup filetype_vim
   autocmd!
-  autocmd BufWritePost *vimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
-augroup END
-
-augroup quick_fix_move_bottom
-  autocmd!
-  " currently latest version of vim throws error
-  " just type these commands manually for now and wait for fix
-  " autocmd FileType qf wincmd J
+  autocmd BufWritePost *vimrc so $MYVIMRC |
+        \ if has('gui_running') |
+        \ so $MYGVIMRC |
+        \ endif
 augroup END
 
 " }}}
@@ -290,6 +325,44 @@ augroup indentation_sr
 augroup END
 
 " }}}
+" General: Writing (non-coding)------------------ {{{
+
+" note: indenting and de-indenting in insert mode are:
+"   <C-t> and <C-d>
+
+augroup writing
+  autocmd!
+  autocmd FileType markdown :setlocal wrap linebreak nolist
+  autocmd FileType markdown :setlocal colorcolumn=0
+  autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal wrap linebreak nolist
+  autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal colorcolumn=0
+augroup END
+
+" }}}
+" General: Word definition and meaning lookup --- {{{
+
+" Enable looking up values in either a dictionary or a thesaurus
+" these are expected to be either:
+"   Dict: dict-gcide
+"   Thesaurus: dict-moby-thesaurus
+function! ReadDictToPreview(word, dict) range
+  let dst = tempname()
+  execute "silent ! dict -d " . a:dict . " " . string(a:word) . " > " . dst
+  pclose! |
+        \ execute "silent! pedit! " . dst |
+        \ wincmd P |
+        \ set modifiable noreadonly |
+        \ call append(0, 'This is a scratch buffer in a preview window') |
+        \ set buftype=nofile nomodifiable noswapfile readonly nomodified |
+        \ setlocal nobuflisted |
+        \ wincmd p
+  execute ":redraw!"
+endfunction
+
+command! -nargs=1 Def call ReadDictToPreview(<q-args>, "gcide")
+command! -nargs=1 Syn call ReadDictToPreview(<q-args>, "moby-thesaurus")
+
+ " }}}
 " General: (relative) line number display ------------- {{{
 
 function! ToggleRelativeNumber()
@@ -340,11 +413,6 @@ function! RNUWinLeave()
   set norelativenumber
 endfunction
 
-" Set mappings for relative numbers
-
-" Toggle relative number status
-nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
-
 " autocmd that will set up the w:created variable
 autocmd VimEnter * autocmd WinEnter * let w:created=1
 autocmd VimEnter * let w:created=1
@@ -352,7 +420,9 @@ set number relativenumber
 augroup rnu_nu
   autocmd!
   "Initial window settings
-  autocmd WinEnter * if !exists('w:created') | setlocal number relativenumber | endif
+  autocmd WinEnter * if !exists('w:created') |
+        \ setlocal number relativenumber |
+        \ endif
   " Don't have relative numbers during insert mode
   autocmd InsertEnter * :call RNUInsertEnter()
   autocmd InsertLeave * :call RNUInsertLeave()
@@ -372,7 +442,35 @@ augroup fold_settings
   autocmd BufNewFile,BufRead .bashrc setlocal foldmethod=marker
   autocmd BufNewFile,BufRead .bashrc setlocal foldlevelstart=0
 augroup END
-nnoremap z<space> zA
+
+" }}}
+" General: Trailing whitespace ------------- {{{
+
+" This section should go before syntax highlighting
+" because autocommands must be declared before syntax library is loaded
+
+function! TrimWhitespace()
+  if &ft == 'markdown'
+    return
+  endif
+  let l:save = winsaveview()
+  %s/\s\+$//e
+  call winrestview(l:save)
+endfunction
+
+highlight EOLWS ctermbg=red guibg=red
+match EOLWS /\s\+$/
+augroup whitespace_color
+  autocmd!
+  autocmd ColorScheme * highlight EOLWS ctermbg=red guibg=red
+  autocmd InsertEnter * match EOLWS /\s\+\%#\@<!$/
+  autocmd InsertLeave * match EOLWS /\s\+$/
+augroup END
+
+augroup fix_whitespace_save
+  autocmd!
+  autocmd BufWritePre * call TrimWhitespace()
+augroup END
 
 " }}}
 " General: Syntax highlighting ---------------- {{{
@@ -415,6 +513,27 @@ try
 catch
 endtry
 
+hi CursorLine cterm=NONE
+
+" }}}
+" General: Resize Window --- {{{
+
+" WindowWidth: Resize window to a couple more than longest line
+" modified function from:
+" https://stackoverflow.com/questions/2075276/longest-line-in-vim
+function! ResizeWidthToLongestLine()
+  let maxlength   = 0
+  let linenumber  = 1
+  while linenumber <= line("$")
+    exe ":" . linenumber
+    let linelength  = virtcol("$")
+    if maxlength < linelength
+      let maxlength = linelength
+    endif
+    let linenumber  = linenumber+1
+  endwhile
+  exe ":vertical resize " . (maxlength + 4)
+endfunction
 
 " }}}
 " Plugin: Wiki --- {{{
@@ -447,6 +566,7 @@ augroup END
 "  Plugin: NERDTree --- {{{
 
 let g:NERDTreeMapOpenInTab = '<C-t>'
+let g:NERDTreeMapOpenInTabSilent = ''
 let g:NERDTreeMapOpenSplit = '<C-s>'
 let g:NERDTreeMapOpenVSplit = '<C-v>'
 let g:NERDTreeShowLineNumbers = 1
@@ -461,13 +581,26 @@ let g:NERDTreeIgnore=[
       \'.egg-info$[[dir]]',
       \'node_modules$[[dir]]'
       \]
-nnoremap <silent> <space>j :NERDTreeToggle %<CR>
+function! NERDTreeToggleCustom()
+    if &filetype ==? 'startify'
+      exec 'NERDTreeToggle'
+    else
+      if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
+        " if NERDTree is open in window in current tab...
+        exec 'NERDTreeClose'
+      else
+        exec 'NERDTree %'
+      endif
+    endif
+endfunction
 
 "  }}}
 " Plugin: Ctrl p --- {{{
 
-let g:ctrlp_mruf_relative = 1 " show only MRU files in the current working directory
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+let g:ctrlp_mruf_relative = 1 " show only MRU files in the cwd
+let g:ctrlp_user_command = [
+      \'.git',
+      \'cd %s && git ls-files -co --exclude-standard']
 " open first in current window and others as hidden
 let g:ctrlp_open_multiple_files = '1r'
 let g:ctrlp_use_caching = 0
@@ -502,6 +635,7 @@ let g:airline_theme='powerlineish'
 let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#virtualenv#enabled = 0
+let g:airline#extensions#whitespace#checks = []
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
@@ -509,19 +643,11 @@ let g:airline_symbols.space = "\ua0"
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.spell = 'Ꞩ'
+
 function! CustomAirlineDisplayPath()
-  " For project rooted at /home/user/src/myproject:
-  " and file at /home/user/src/myproject/lib/file.c
-  " display: 'file.c : myproject/lib'
-  " :.    Reduce file name to be relative to current directory, if
-  "       possible.  File name is unmodified if it is not below the
-  "       current directory.
-  "       For maximum shortness, use ':~:.'.
-  " The :~ is optional.
-  " It will reduce the path relative to your home folder if possible (~/...).
-  " Unfortunately that only works on your home;
-  " it won't turn /home/joey into ~joey.
-  return expand('%:t') . ' : ' . expand('%:h')
+  " get filepath relative to cwd
+  let cwd = getcwd()
+  return substitute(expand("%:p"), l:cwd . "/" , "", "")
 endfunction
 let g:airline_section_c = airline#section#create(
       \['%{CustomAirlineDisplayPath()}'])
@@ -546,7 +672,6 @@ let g:airline_mode_map = {
 
 " }}}
 "  Plugin: Tagbar ------ {{{
-
 let g:tagbar_map_showproto = '`'
 let g:tagbar_show_linenumbers = -1
 let g:tagbar_autofocus = 1
@@ -587,9 +712,136 @@ let g:tagbar_type_haskell = {
         \ 'type'   : 't'
     \ }
 \ }
+let g:tagbar_type_rust = {
+    \ 'ctagstype' : 'rust',
+    \ 'kinds' : [
+        \'T:types,type definitions',
+        \'f:functions,function definitions',
+        \'g:enum,enumeration names',
+        \'s:structure names',
+        \'m:modules,module names',
+        \'c:consts,static constants',
+        \'t:traits,traits',
+        \'i:impls,trait implementations',
+    \]
+    \}
 
-" Toggle TagBar, keeping cursor in original window
-nnoremap <silent> <space>l :TagbarToggle <CR>
+"  }}}
+" Plugin: Startify ------------ {{{
+
+let g:startify_list_order = ['dir', 'files', 'bookmarks', 'sessions',
+      \ 'commands']
+let g:startify_fortune_use_unicode = 1
+let g:startify_enable_special = 2
+let g:startify_custom_header = [
+      \ '      ___________       __                            .__               ',
+      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____  ',
+      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \ ',
+      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/ ',
+      \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
+      \ '              \/     \/          \/      |__|                 \/     \/ ',
+      \ '',
+      \ ' \++================================|                    _=_',
+      \ '  \_________________________________/              ___/==+++==\___',
+      \ '               """\__      \"""       |======================================/',
+      \ '                     \__    \_          / ..  . _/--===+_____+===--""',
+      \ '                        \__   \       _/.  .. _/         `+`',
+      \ '                           \__ \   __/_______/                      \ /',
+      \ '                          ___-\_\-`---==+____|                  ---==O=-',
+      \ '                    __--+" .    . .        "==_                     / \',
+      \ '                    /  |. .  ..     -------- | \',
+      \ '                    "==+_    .   .  -------- | /',
+      \ '                         ""\___  . ..     __=="',
+      \ '                               """"--=--""',
+      \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
+
+
+" }}}
+" Plugin: Miscellaneous global var config ------------ {{{
+
+" Agit:
+let g:agit_max_log_lines = 500
+
+" UndoTree:
+let g:undotree_SetFocusWhenToggle = 1
+let g:undotree_WindowLayout = 3
+
+" VimRooter:
+let g:rooter_manual_only = 1
+
+" VimTex:
+let g:vimtex_compiler_latexmk = {'callback' : 0}
+let g:tex_flavor = 'latex'
+
+" PythonVirtualenv:
+" necessary for jedi-vim to discover virtual environments
+let g:virtualenv_auto_activate = 1
+
+" QFEnter:
+let g:qfenter_keymap = {}
+let g:qfenter_keymap.open = ['<CR>']
+let g:qfenter_keymap.vopen = ['<C-v>']
+let g:qfenter_keymap.hopen = ['<C-s>']
+let g:qfenter_keymap.topen = ['<C-t>']
+" do not copy quickfix when opened in new tab
+let g:qfenter_enable_autoquickfix = 0
+
+" WinResize:
+let g:winresizer_start_key = '<C-E>'
+let g:winresizer_vert_resize = 1
+let g:winresizer_horiz_resize = 1
+
+" Taboo:
+" Tab format hardcoded to main for now since I often do this anyway
+let g:taboo_tab_format = ' [%N:tab]%m '
+let g:taboo_renamed_tab_format = ' [%N:%l]%m '
+
+" Haskell: 'neovimhaskell/haskell-vim'
+let g:haskell_enable_quantification = 1   " to highlight `forall`
+let g:haskell_enable_recursivedo = 1      " to highlight `mdo` and `rec`
+let g:haskell_enable_arrowsyntax = 1      " to highlight `proc`
+let g:haskell_enable_pattern_synonyms = 1 " to highlight `pattern`
+let g:haskell_enable_typeroles = 1        " to highlight type roles
+let g:haskell_enable_static_pointers = 1  " to highlight `static`
+
+" Python: highlighting
+" Must be set to 1, otherwise TrailingWhitespace is completely messed up
+let g:python_highlight_all = 1
+
+" Ragtag: on every filetype
+let g:ragtag_global_maps = 1
+
+" VimJavascript:
+let g:javascript_plugin_flow = 1
+
+" JSX: for .js files in addition to .jsx
+let g:jsx_ext_required = 0
+
+" JsDoc:
+let g:jsdoc_enable_es6 = 1
+
+" EasyGrep: - use git grep
+let g:EasyGrepCommand = 1 " use grep, NOT vimgrep
+let g:EasyGrepJumpToMatch = 0 " Do not jump to the first match
+
+" IndentLines:
+let g:indentLine_enabled = 0  " indentlines disabled by default
+
+" VimMarkdown:
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_no_default_key_mappings = 1
+
+" BulletsVim:
+let g:bullets_enabled_file_types = [
+    \ 'markdown',
+    \ 'text',
+    \ 'gitcommit',
+    \ 'scratch'
+    \]
+
+" AutoPairs:
+" unmap CR due to incompatibility with clang-complete
+let g:AutoPairsMapCR = 0
 
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
@@ -603,6 +855,7 @@ nnoremap <silent> <space>l :TagbarToggle <CR>
 let g:jedi#popup_on_dot = 0
 let g:jedi#show_call_signatures = 0
 let g:jedi#auto_close_doc = 0
+let g:jedi#smart_auto_mappings = 0
 let g:jedi#use_tabs_not_buffers = 1
 
 " mappings
@@ -640,153 +893,6 @@ augroup haskell_complete
 augroup END
 
 "  }}}
-" Plugin: Startify ------------ {{{
-
-let g:startify_list_order = ['dir', 'files', 'bookmarks', 'sessions',
-      \ 'commands']
-let g:startify_fortune_use_unicode = 1
-let g:startify_enable_special = 2
-let g:startify_custom_header = [
-      \ '      ___________       __                            .__               ',
-      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____  ',
-      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \ ',
-      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/ ',
-      \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
-      \ '              \/     \/          \/      |__|                 \/     \/ ',
-      \ '',
-      \ ' \++================================|                    _=_',
-      \ '  \_________________________________/              ___/==+++==\___',
-      \ '               """\__      \"""       |======================================/',
-      \ '                     \__    \_          / ..  . _/--===+_____+===--""',
-      \ '                        \__   \       _/.  .. _/         `+`',
-      \ '                           \__ \   __/_______/                      \ /',
-      \ '                          ___-\_\-`---==+____|                  ---==O=-',
-      \ '                    __--+" .    . .        "==_                     / \',
-      \ '                    /  |. .  ..     -------- | \',
-      \ '                    "==+_    .   .  -------- | /',
-      \ '                         ""\___  . ..     __=="',
-      \ '                               """"--=--""',
-      \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
-
-
-" }}}
-" Plugin: Misc config ------------ {{{
-
-" vim-rooter
-" note: to set root to git repository, run :Rooter
-let g:rooter_manual_only = 1
-
-" vimtex
-let g:vimtex_compiler_latexmk = {'callback' : 0}
-let g:tex_flavor = 'latex'
-
-" Virtualenv
-" necessary for jedi-vim to discover virtual environments
-let g:virtualenv_auto_activate = 1
-
-" QFEnter
-let g:qfenter_keymap = {}
-let g:qfenter_keymap.open = ['<CR>']
-let g:qfenter_keymap.vopen = ['<C-v>']
-let g:qfenter_keymap.hopen = ['<C-s>']
-let g:qfenter_keymap.topen = ['<C-t>']
-
-" WinResize
-let g:winresizer_start_key = '<C-E>'
-let g:winresizer_vert_resize = 1
-let g:winresizer_horiz_resize = 1
-
-" C++
-let g:cpp_experimental_simple_template_highlight = 1
-
-" Taboo:
-" Tab format hardcoded to main for now since I often do this anyway
-let g:taboo_tab_format = ' [%N:tab]%m '
-let g:taboo_renamed_tab_format = ' [%N:%l]%m '
-
-" choosewin (just like tmux)
-nnoremap <leader>q :ChooseWin<CR>
-
-" Haskell 'neovimhaskell/haskell-vim'
-let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
-let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
-let g:haskell_enable_arrowsyntax = 1      " to enable highlighting of `proc`
-let g:haskell_enable_pattern_synonyms = 1 " to enable highlighting of `pattern`
-let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
-let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
-
-" Python highlighting
-let python_highlight_all = 1
-
-" Ragtag on every filetype
-let g:ragtag_global_maps = 1
-
-" Vim-javascript
-let g:javascript_plugin_flow = 1
-
-" JSX for .js files in addition to .jsx
-let g:jsx_ext_required = 0
-
-" js-doc
-let g:jsdoc_enable_es6 = 1
-
-" EasyGrep - use git grep
-let g:EasyGrepCommand = 1 " use grep, NOT vimgrep
-let g:EasyGrepJumpToMatch = 0 " Do not jump to the first match
-
-" Auto-Pairs
-let g:AutoPairsMapCh = 0  "Do not map <C-h> to delete brackets, quotes in pair
-
-" vim-fugitive
-" DO NOT USE THESE MAPPINGS BELOW Vim version 8
-" version 8 solves some async issues
-" https://github.com/tpope/vim-fugitive/issues/648
-" fugitive and vim-airline overlap; TPope needs to fix some bugs
-" date of note: 2017-01-13
-nnoremap <leader>ga :Git add %:p<CR><CR>
-nnoremap <leader>g. :Git add .<CR><CR>
-nnoremap <leader>gs :Gstatus<CR>
-nnoremap <leader>gc :Gcommit -v -q<CR>
-nnoremap <leader>gd :Gdiff<CR>
-
-" indentlines
-let g:indentLine_enabled = 0  " indentlines disabled by default
-nnoremap <silent> <leader>i :IndentLinesToggle<CR>
-
-" vim-markdown-preview
-let vim_markdown_preview_hotkey = '<C-m>'
-let vim_markdown_preview_browser = 'Google Chrome'
-let vim_markdown_preview_github = 1
-
-" Terminus
-let g:TerminusBracketedPaste = 0  " pasting feature messes up tmux
-
-"  }}}
-" General: Trailing whitespace ------------- {{{
-
-function! TrimWhitespace()
-  if &ft == 'markdown'
-    return
-  endif
-  let l:save = winsaveview()
-  %s/\s\+$//e
-  call winrestview(l:save)
-endfunction
-
-augroup whitespace_color
-  autocmd!
-  autocmd ColorScheme * highlight EOLWS ctermbg=darkgreen guibg=darkgreen
-  autocmd InsertEnter * syn clear EOLWS | syn match EOLWS excludenl /\s\+\%#\@!$/
-  autocmd InsertLeave * syn clear EOLWS | syn match EOLWS excludenl /\s\+$/
-augroup END
-highlight EOLWS ctermbg=darkgreen guibg=darkgreen
-
-augroup fix_whitespace_save
-  autocmd!
-  autocmd BufWritePre * call TrimWhitespace()
-augroup END
-
-" }}}
 " General: Dict lookup --- {{{
 
 " Enable looking up values in either a dictionary or a thesaurus
@@ -813,33 +919,13 @@ command! -nargs=1 Syn call ReadDictToPreview(<q-args>, "moby-thesaurus")
 cabbrev syn Syn
 
 " }}}
-" General: Resize Window --- {{{
-
-" WindowWidth: Resize window to a couple more than longest line
-" modified function from:
-" https://stackoverflow.com/questions/2075276/longest-line-in-vim
-function! ResizeWidthToLongestLine()
-  let maxlength   = 0
-  let linenumber  = 1
-  while linenumber <= line("$")
-    exe ":" . linenumber
-    let linelength  = virtcol("$")
-    if maxlength < linelength
-      let maxlength = linelength
-    endif
-    let linenumber  = linenumber+1
-  endwhile
-  exe ":vertical resize " . (maxlength + 4)
-endfunction
-nnoremap <silent> <leader>v mz:call ResizeWidthToLongestLine()<CR>`z
-
-" }}}
 " General: Key remappings ----------------------- {{{
 
 " Omnicompletion:
 " imap <C-space> <C-x><C-o>
 " <C-@> is actually <C-space>
 inoremap <C-@> <C-x><C-o>
+inoremap <C-space> <C-x><C-o>
 
 " Exit: Preview and Help
 inoremap <silent> <C-c> <Esc>:pclose <BAR> helpclose<CR>a
@@ -853,11 +939,11 @@ nnoremap <silent> <C-q> :cclose <BAR> lclose<CR>
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 " Move to beginning and end of visual line
-nnoremap 0 g0
-nnoremap $ g$
+" nnoremap 0 g0
+" nnoremap $ g$
 " moving forward and backward with vim tabs
-nnoremap <Tab> gt
-nnoremap <S-Tab> gT
+nnoremap T gt
+nnoremap t gT
 
 " Insert Mode moves
 imap <C-h> <left>
@@ -886,10 +972,65 @@ nnoremap <silent> <C-h> :wincmd h<CR>
 " Scroll screen up and down
 nnoremap <silent> K <c-e>
 nnoremap <silent> J <c-y>
-" Switch buffers
-nnoremap gn :bn<CR>
-nnoremap gd :BD<CR>
-nnoremap gp :bp<CR>
+nnoremap <silent> H zh
+nnoremap <silent> L zl
+" Move cursor to top, bottom, and middle of screen
+nnoremap <silent> gJ L
+nnoremap <silent> gK H
+nnoremap <silent> gM M
+
+" InsertModeDeletion:
+" Delete character under cursor in insert mode
+inoremap <C-l> <Del>
+
+" VisualSearch: * and # work in visual mode too
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <expr> // 'y/\V'.escape(@",'\').'<CR>'
+
+" QuickChangeFiletype:
+" Sometimes we want to set some filetypes due to annoying behavior of plugins
+" The following mappings make it easier to chage javascript plugin behavior
+nnoremap <leader>jx :set filetype=javascript.jsx<CR>
+nnoremap <leader>jj :set filetype=javascript<CR>
+
+" ToggleRelativeNumber: uses custom functions
+nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
+
+" TogglePluginWindows:
+nnoremap <silent> <space>j :call NERDTreeToggleCustom()<CR>
+nnoremap <silent> <space>l :TagbarToggle <CR>
+nnoremap <silent> <space>u :UndotreeToggle<CR>
+
+" Choosewin: (just like tmux)
+nnoremap <leader>q :ChooseWin<CR>
+
+" VimFugitive: git bindings
+nnoremap <leader>ga :Git add %:p<CR><CR>
+nnoremap <leader>g. :Git add .<CR><CR>
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit -v -q<CR>
+nnoremap <leader>gd :Gdiff<CR>
+
+" IndentLines: toggle if indent lines is visible
+nnoremap <silent> <leader>i :IndentLinesToggle<CR>
+
+" ResizeWindow: up and down; relies on custom function
+" height
+nnoremap <silent> <leader><leader>h gg:exe "resize " . (line('$') + 1)<CR>
+" width
+nnoremap <silent> <leader><leader>w mz:call ResizeWidthToLongestLine()<CR>`z
+
+" AutoPairs:
+imap <silent><CR> <CR><Plug>AutoPairsReturn
 
 " }}}
 " General: Command abbreviations ------------------------ {{{
@@ -919,12 +1060,6 @@ cabbrev VS vs
 cabbrev vS vs
 cabbrev Vs vs
 
-" move tab to number
-cabbrev t tabn
-
-" close help menu
-cabbrev hc helpclose
-
 " echo current file path
 cabbrev fp echo expand('%:p')
 
@@ -932,44 +1067,12 @@ cabbrev fp echo expand('%:p')
 cabbrev pu PlugUpdate <BAR> PlugUpgrade
 
 " }}}
-" General: Visual Star Search ----------------{{{
+" General: Cleanup ------------------ {{{
+" commands that need to run at the end of my vimrc
 
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-
-vnoremap <expr> // 'y/\V'.escape(@",'\').'<CR>'
-
-" }}}
-" General: Writing (non-coding)------------------ {{{
-
-let g:vim_markdown_folding_disabled=1
-let g:vim_markdown_no_default_key_mappings=1
-" note: indenting and de-indenting in insert mode are:
-"   <C-t> and <C-d>
-
-" Bullets.vim
-let g:bullets_enabled_file_types = [
-    \ 'markdown',
-    \ 'text',
-    \ 'gitcommit',
-    \ 'scratch'
-    \]
-
-augroup writing
-  autocmd!
-  autocmd FileType markdown :setlocal wrap linebreak nolist
-  autocmd FileType markdown :setlocal colorcolumn=0
-  autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal wrap linebreak nolist
-  autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal colorcolumn=0
-augroup END
+" disable unsafe commands in your project-specific .vimrc files
+" This will prevent :autocmd, shell and write commands from being
+" run inside project-specific .vimrc files unless they’re owned by you.
+set secure
 
 " }}}

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Environment Variables --- {{{
 
 # colored GCC warnings and errors
