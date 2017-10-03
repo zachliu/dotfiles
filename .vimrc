@@ -237,7 +237,6 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-vagrant'
 Plug 'lervag/vimtex'
-Plug 'hynek/vim-python-pep8-indent'
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
@@ -734,12 +733,12 @@ let g:startify_list_order = ['dir', 'files', 'bookmarks', 'sessions',
 let g:startify_fortune_use_unicode = 1
 let g:startify_enable_special = 2
 let g:startify_custom_header = [
-      \ '      ___________       __                            .__               ',
-      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____  ',
-      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \ ',
-      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/ ',
+      \ '      ___________       __                            .__',
+      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____',
+      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \',
+      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/',
       \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
-      \ '              \/     \/          \/      |__|                 \/     \/ ',
+      \ '              \/     \/          \/      |__|                 \/     \/',
       \ '',
       \ ' \++================================|                    _=_',
       \ '  \_________________________________/              ___/==+++==\___',
@@ -825,7 +824,7 @@ let g:EasyGrepCommand = 1 " use grep, NOT vimgrep
 let g:EasyGrepJumpToMatch = 0 " Do not jump to the first match
 
 " IndentLines:
-let g:indentLine_enabled = 0  " indentlines disabled by default
+let g:indentLine_enabled = 1  " indentlines disabled by default
 
 " VimMarkdown:
 let g:vim_markdown_folding_disabled = 1
