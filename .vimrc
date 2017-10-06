@@ -56,7 +56,6 @@
 " 1. use Ctrl-V ) to insert paren without trigger the plugin.
 " 2. use Alt-P to turn off the plugin.
 " 3. use DEL or <C-O>x to delete the character insert by plugin.
-" 4. (more recently): type <C-l> in insert mode to delete right character
 "
 " QuickfixAndLocationList:
 " ccl: close quickfix (my abbreviation: cc)
@@ -841,6 +840,7 @@ let g:bullets_enabled_file_types = [
 " AutoPairs:
 " unmap CR due to incompatibility with clang-complete
 let g:AutoPairsMapCR = 0
+let g:AutoPairsMapCh = 0  "Do not map <C-h> to delete brackets, quotes in pair
 
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
@@ -977,10 +977,6 @@ nnoremap <silent> L zl
 nnoremap <silent> gJ L
 nnoremap <silent> gK H
 nnoremap <silent> gM M
-
-" InsertModeDeletion:
-" Delete character under cursor in insert mode
-inoremap <C-l> <Del>
 
 " VisualSearch: * and # work in visual mode too
 vnoremap <silent> * :<C-U>
