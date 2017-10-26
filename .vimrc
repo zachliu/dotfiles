@@ -755,6 +755,13 @@ let g:startify_custom_header = [
 
 
 " }}}
+"  Plugin: Terraform Syntax --- {{{
+
+let g:terraform_align=1
+" Use spacebar to fold/unfold resources
+let g:terraform_remap_spacebar=1
+
+" }}}
 " Plugin: Miscellaneous global var config ------------ {{{
 
 " Agit:
@@ -828,6 +835,8 @@ let g:indentLine_enabled = 1  " indentlines disabled by default
 " VimMarkdown:
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_default_key_mappings = 1
+let vim_markdown_preview_hotkey='<C-m>'
+let vim_markdown_preview_github=1
 
 " BulletsVim:
 let g:bullets_enabled_file_types = [

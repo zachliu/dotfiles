@@ -19,7 +19,12 @@ export EDITOR=vim
 stty -ixon
 
 # run cowsay
-shuf -n 1 ~/Documents/system_configs/gre_words.txt | cowsay
+{ echo "Daily fortune: "; \
+  fortune; \
+  echo; \
+  echo "Daily word: "; \
+  shuf -n 1 ~/Documents/system_configs/gre_words.txt; } \
+  | cowsay -n | cowsay -n -f gnu | lolcat
 
 # }}}
 # Aliases --- {{{
@@ -175,6 +180,15 @@ function syn() {  # arg1: word
 function cd_up() {  # arg1: number|word
   pushd . >/dev/null
   cd $( pwd | sed -r "s|(.*/$1[^/]*/).*|\1|" ) # cd up into path (if found)
+}
+
+# Get the weather
+weather() {  # arg1: Optional<location>
+  if [ $# -eq 0 ]; then
+    curl wttr.in/new_york
+  else
+    curl wttr.in/$1
+  fi
 }
 
 # }}}
