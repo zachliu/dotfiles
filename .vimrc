@@ -837,6 +837,7 @@ let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_default_key_mappings = 1
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_github=1
+let g:vim_markdown_conceal = 0
 
 " BulletsVim:
 let g:bullets_enabled_file_types = [
