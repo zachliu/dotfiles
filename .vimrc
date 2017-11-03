@@ -267,7 +267,7 @@ Plug 'heavenshell/vim-jsdoc'
 Plug 'mattn/emmet-vim'
 Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
+Plug 'machakann/vim-sandwich'
 Plug 'tpope/vim-ragtag'
 
 " Rainbow
@@ -1036,6 +1036,10 @@ nnoremap <silent> <leader><leader>w mz:call ResizeWidthToLongestLine()<CR>`z
 
 " AutoPairs:
 imap <silent><CR> <CR><Plug>AutoPairsReturn
+
+" VimSneak: remap f and F to the sneak command
+nmap f <Plug>Sneak_s
+nmap F <Plug>Sneak_S
 
 " }}}
 " General: Command abbreviations ------------------------ {{{
