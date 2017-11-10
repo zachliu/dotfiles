@@ -291,6 +291,9 @@ fi
 # Matlab
 # export PATH="$PATH:/usr/local/MATLAB/R2016b/bin"
 
+# Spark
+export PATH=$PATH:/usr/local/spark/bin/
+
 #}}}
 # Command history --- {{{
 
