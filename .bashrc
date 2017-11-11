@@ -294,6 +294,9 @@ fi
 # Spark
 export PATH=$PATH:/usr/local/spark/bin/
 
+# Scala
+export PATH=$PATH:/usr/local/scala
+
 #}}}
 # Command history --- {{{
 
