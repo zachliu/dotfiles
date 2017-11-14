@@ -17,8 +17,5 @@ tmux new-session -d -s $SESSION
 # Select first window
 tmux select-window -t $SESSION:0
 
-# Rename first window to 'edit'
-tmux rename-window edit
-
 # Attach to session newly-created session
 tmux attach -t $SESSION
