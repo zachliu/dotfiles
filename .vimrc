@@ -296,6 +296,7 @@ augroup filetype_recognition
   autocmd BufNewFile,BufRead,BufEnter *.cfg,*.ini,.coveragerc,.pylintrc
         \ set filetype=dosini
   autocmd BufNewFile,BufRead,BufEnter *.tsv set filetype=tsv
+  autocmd BufNewFile,BufRead,BufEnter .zshrc set filetype=sh
 augroup END
 
 augroup filetype_vim
@@ -439,8 +440,8 @@ augroup fold_settings
   autocmd FileType vim,tmux setlocal foldmethod=marker
   autocmd FileType vim,tmux setlocal foldlevelstart=0
   autocmd FileType * setlocal foldnestmax=1
-  autocmd BufNewFile,BufRead .bashrc setlocal foldmethod=marker
-  autocmd BufNewFile,BufRead .bashrc setlocal foldlevelstart=0
+  autocmd BufNewFile,BufRead .profile,.bashrc,.zshrc setlocal foldmethod=marker
+  autocmd BufNewFile,BufRead .profile,.bashrc,.zshrc setlocal foldlevelstart=0
 augroup END
 
 " }}}
