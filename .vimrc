@@ -5,7 +5,8 @@
 "     when in Normal mode.
 " Additional Notes --------- {{{
 "
-" This is my .vimrc. I use Linux Mint 18.2.
+" This is my .vimrc.
+" I use Linux Mint 18.X.
 " My workflow is terminal-based, so I use this with vim-nox.
 "
 " PreRequisites:
@@ -56,6 +57,7 @@
 " 1. use Ctrl-V ) to insert paren without trigger the plugin.
 " 2. use Alt-P to turn off the plugin.
 " 3. use DEL or <C-O>x to delete the character insert by plugin.
+" 4. (more recently): type <C-l> in insert mode to delete right character
 "
 " QuickfixAndLocationList:
 " ccl: close quickfix (my abbreviation: cc)
@@ -105,9 +107,6 @@ set hidden
 " want the cursor to move
 set mouse=""
 
-" Automatically change directory to current file
-set autochdir
-
 " SwapFiles: prevent their creation
 set nobackup
 set noswapfile
@@ -137,6 +136,8 @@ augroup cursorline_setting
   autocmd WinLeave * setlocal nocursorline
 augroup END
 
+set dictionary=$HOME/dotfiles/american-english-with-propcase
+
 set spelllang=en_us
 
 set showtabline=2
@@ -153,23 +154,15 @@ set wildmenu
 " Grep: program is 'git grep'
 set grepprg=git\ grep\ -n\ $*
 
-" AirlineSettings: specifics due to airline
-set laststatus=2
-set ttimeoutlen=50
-set noshowmode
-
 " Pasting: enable pasting without having to do 'set paste'
 " NOTE: this is actually typed <C-/>, but vim thinks this is <C-_>
 set pastetoggle=<C-_>
 
-" Backspace setting
-set backspace=indent,eol,start
-
-" clipboard X setting
-set clipboard=exclude:.*
-
 " Turn off complete vi compatibility
 set nocompatible
+
+" Enable using local vimrc
+set exrc
 
 " }}}
 " General: Plugin Install --------------------- {{{
@@ -177,12 +170,10 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 " Basics
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-rooter'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
-Plug 'rust-lang/rust.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'dkprice/vim-easygrep'
@@ -198,11 +189,14 @@ Plug 'vimwiki/vimwiki'
 Plug 'justinmk/vim-sneak'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'mbbill/undotree'
-Plug 'w0rp/ale'
+Plug 'henrik/vim-indexed-search'
+Plug 'tpope/vim-repeat'
+Plug 'machakann/vim-sandwich'
+
 
 " Git
 Plug 'tpope/vim-fugitive'
-Plug 'cohama/agit.vim'
+Plug 'junegunn/gv.vim'
 
 " Commands run in vim's virtual screen and don't pollute main shell
 Plug 'fcpg/vim-altscreen'
@@ -234,10 +228,12 @@ Plug 'vim-scripts/SAS-Syntax'
 Plug 'neovimhaskell/haskell-vim'
 Plug 'aklt/plantuml-syntax'
 Plug 'NLKNguyen/c-syntax.vim'
-Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-vagrant'
 Plug 'lervag/vimtex'
+Plug 'tomlion/vim-solidity'
+Plug 'jparise/vim-graphql'
+
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
@@ -268,8 +264,6 @@ Plug 'heavenshell/vim-jsdoc'
 " Web Development - General
 Plug 'mattn/emmet-vim'
 Plug 'tmhedberg/matchit'
-Plug 'tpope/vim-repeat'
-Plug 'machakann/vim-sandwich'
 Plug 'tpope/vim-ragtag'
 
 " Rainbow
@@ -330,7 +324,6 @@ augroup END
 
 " note: indenting and de-indenting in insert mode are:
 "   <C-t> and <C-d>
-
 augroup writing
   autocmd!
   autocmd FileType markdown :setlocal wrap linebreak nolist
@@ -449,7 +442,6 @@ augroup END
 
 " This section should go before syntax highlighting
 " because autocommands must be declared before syntax library is loaded
-
 function! TrimWhitespace()
   if &ft == 'markdown'
     return
@@ -522,7 +514,7 @@ hi CursorLine cterm=NONE
 " WindowWidth: Resize window to a couple more than longest line
 " modified function from:
 " https://stackoverflow.com/questions/2075276/longest-line-in-vim
-function! ResizeWidthToLongestLine()
+function! ResizeWindowWidth()
   let maxlength   = 0
   let linenumber  = 1
   while linenumber <= line("$")
@@ -534,6 +526,27 @@ function! ResizeWidthToLongestLine()
     let linenumber  = linenumber+1
   endwhile
   exe ":vertical resize " . (maxlength + 4)
+endfunction
+
+function! ResizeWindowHeight()
+  let initial = winnr()
+
+  " this duplicates code but avoids polluting global namespace
+  wincmd k
+  if winnr() != initial
+    exe initial . "wincmd w"
+    exe ":1"
+    exe "resize " . (line('$') + 1)
+    return
+  endif
+
+  wincmd j
+  if winnr() != initial
+    exe initial . "wincmd w"
+    exe ":1"
+    exe "resize " . (line('$') + 1)
+    return
+  endif
 endfunction
 
 " }}}
@@ -580,7 +593,12 @@ let g:NERDTreeIgnore=[
       \'venv$[[dir]]',
       \'__pycache__$[[dir]]',
       \'.egg-info$[[dir]]',
-      \'node_modules$[[dir]]'
+      \'node_modules$[[dir]]',
+      \'\.aux$[[file]]',
+      \'\.toc$[[file]]',
+      \'\.pdf$[[file]]',
+      \'\.out$[[file]]',
+      \'\.o$[[file]]',
       \]
 function! NERDTreeToggleCustom()
     if &filetype ==? 'startify'
@@ -630,46 +648,165 @@ endfunction
 let g:ctrlp_cmd = 'call CtrlPCommand()'
 
 " }}}
-" Plugin: Airline ---------------- {{{
+" Plugin: Lightline ---------------- {{{
 
-let g:airline_theme='powerlineish'
-let g:airline#extensions#hunks#enabled = 0
-let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#virtualenv#enabled = 0
-let g:airline#extensions#whitespace#checks = []
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-let g:airline_symbols.space = "\ua0"
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.spell = 'Ꞩ'
+" This is a giant section
+" that configures the status line for my vim editing.
+" It's super important, so I devote a lot of code to it.
+" Most of the functions are ported from the Lightlint documentation
 
-function! CustomAirlineDisplayPath()
-  " get filepath relative to cwd
-  let cwd = getcwd()
-  return substitute(expand("%:p"), l:cwd . "/" , "", "")
+let g:lightline = {'active': {}, 'inactive': {}}
+
+let g:lightline.mode_map = {
+      \ '__' : '-',
+      \ 'n'  : 'ℕ',
+      \ 'i'  : 'ⅈ',
+      \ 'R'  : 'ℛ',
+      \ 'c'  : 'ℂ',
+      \ 'v'  : '℣',
+      \ 'V'  : '℣',
+      \ '' : '℣',
+      \ 's'  : '₷',
+      \ 'S'  : '₷',
+      \ '' : '₷',
+      \ }
+
+let g:lightline.component = {
+      \ 'mode': '%{lightline#mode()}',
+      \ 'absolutepath': '%F',
+      \ 'relativepath': '%f',
+      \ 'filename': '%t',
+      \ 'modified': '%M',
+      \ 'bufnum': '%n',
+      \ 'paste': '%{&paste?"PASTE":""}',
+      \ 'readonly': '%R',
+      \ 'charvalue': '%b',
+      \ 'charvaluehex': '%B',
+      \ 'fileencoding': '%{&fenc!=#""?&fenc:&enc}',
+      \ 'fileformat': '%{&ff}',
+      \ 'filetype': '%{&ft!=#""?&ft:"no ft"}',
+      \ 'percent': '%3p%%',
+      \ 'percentwin': '%P',
+      \ 'spell': '%{&spell?&spelllang:""}',
+      \ 'lineinfo': '%c:%L',
+      \ 'line': '%l',
+      \ 'column': '%c',
+      \ 'close': '%999X X ',
+      \ 'winnr': '%{winnr()}' }
+
+let g:lightline.active.left = [
+      \ [ 'mode', 'paste', 'spell' ],
+      \ [ 'fugitive', 'readonly', 'filename' ],
+      \ [ 'ctrlpmark' ]
+      \ ]
+
+let g:lightline.inactive.left = [
+      \ [ 'mode', 'paste', 'spell' ],
+      \ [ 'fugitive', 'readonly', 'filename' ],
+      \ [ 'ctrlpmark' ]
+      \ ]
+
+let g:lightline.active.right = [
+      \ [ 'filetype' ],
+      \ [ 'fileformat', 'fileencoding' ],
+      \ [ 'lineinfo' ]
+      \ ]
+
+let g:lightline.inactive.right = [
+      \ [ 'filetype' ],
+      \ [],
+      \ []
+      \ ]
+
+let g:lightline.component_function = {
+      \ 'fugitive': 'LightlineFugitive',
+      \ 'filename': 'LightlineFilename',
+      \ 'mode': 'LightlineMode',
+      \ 'ctrlpmark': 'CtrlPMark'
+      \ }
+
+function! LightlineModified()
+  return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
-let g:airline_section_c = airline#section#create(
-      \['%{CustomAirlineDisplayPath()}'])
-let g:airline_section_x = airline#section#create(['%c:%L'])
-let g:airline_section_y = airline#section#create(['ffenc'])
-let g:airline_section_z = airline#section#create(['filetype'])
-let g:airline_powerline_fonts = 1
-let g:airline_inactive_collapse=0
-let g:airline_mode_map = {
-    \ '__' : '-',
-    \ 'n'  : 'ℕ',
-    \ 'i'  : 'ⅈ',
-    \ 'R'  : 'ℛ',
-    \ 'c'  : 'ℂ',
-    \ 'v'  : '℣',
-    \ 'V'  : '℣',
-    \ '' : '℣',
-    \ 's'  : '₷',
-    \ 'S'  : '₷',
-    \ '' : '₷',
-    \ }
+
+function! LightlineReadonly()
+  return &ft !~? 'help' && &readonly ? 'RO' : ''
+endfunction
+
+function! LightlineFilename()
+  let cwd = getcwd()
+  let fname = substitute(expand("%:p"), l:cwd . "/" , "", "")
+  return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
+        \ fname == '__Tagbar__' ? g:lightline.fname :
+        \ fname =~ '__Gundo\|NERD_tree' ? '' :
+        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \ &ft == 'unite' ? unite#get_status_string() :
+        \ &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+        \ ('' != fname ? fname : '[No Name]') .
+        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+endfunction
+
+function! LightlineFugitive()
+  try
+    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+      let mark = '⎇ '
+      let branch = fugitive#head()
+      return branch !=# '' ? mark.branch : ''
+    endif
+  catch
+  endtry
+  return ''
+endfunction
+
+function! LightlineMode()
+  let fname = expand('%:t')
+  return fname == '__Tagbar__' ? 'Tagbar' :
+        \ fname == 'ControlP' ? 'CtrlP' :
+        \ fname == '__Gundo__' ? 'Gundo' :
+        \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+        \ fname =~ 'NERD_tree' ? 'NERDTree' :
+        \ &ft == 'unite' ? 'Unite' :
+        \ &ft == 'vimfiler' ? 'VimFiler' :
+        \ &ft == 'vimshell' ? 'VimShell' :
+        \ winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+function! CtrlPMark()
+  if expand('%:t') =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item')
+    call lightline#link('iR'[g:lightline.ctrlp_regex])
+    return lightline#concatenate([
+          \ g:lightline.ctrlp_prev,
+          \ g:lightline.ctrlp_item,
+          \ g:lightline.ctrlp_next], 0)
+  else
+    return ''
+  endif
+endfunction
+
+let g:ctrlp_status_func = {
+      \ 'main': 'CtrlPStatusFunc_1',
+      \ 'prog': 'CtrlPStatusFunc_2',
+      \ }
+
+function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+  let g:lightline.ctrlp_regex = a:regex
+  let g:lightline.ctrlp_prev = a:prev
+  let g:lightline.ctrlp_item = a:item
+  let g:lightline.ctrlp_next = a:next
+  return lightline#statusline(0)
+endfunction
+
+function! CtrlPStatusFunc_2(str)
+  return lightline#statusline(0)
+endfunction
+
+let g:tagbar_status_func = 'TagbarStatusFunc'
+
+function! TagbarStatusFunc(current, sort, fname, ...) abort
+  let g:lightline.fname = a:fname
+  return lightline#statusline(0)
+endfunction
 
 " }}}
 "  Plugin: Tagbar ------ {{{
@@ -730,10 +867,9 @@ let g:tagbar_type_rust = {
 "  }}}
 " Plugin: Startify ------------ {{{
 
-let g:startify_list_order = ['dir', 'files', 'bookmarks', 'sessions',
-      \ 'commands']
+let g:startify_list_order = []
 let g:startify_fortune_use_unicode = 1
-let g:startify_enable_special = 2
+let g:startify_enable_special = 1
 let g:startify_custom_header = [
       \ '      ___________       __                            .__',
       \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____',
@@ -756,8 +892,24 @@ let g:startify_custom_header = [
       \ '                               """"--=--""',
       \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
 
-
 " }}}
+"  Plugin: VimTex --- {{{
+
+let g:vimtex_compiler_latexmk = {'callback' : 0}
+let g:tex_flavor = 'latex'
+let g:vimtex_imaps_enabled = 0
+let g:vimtex_doc_handlers = ['MyVimTexDocHandler']
+function! MyVimTexDocHandler(context)
+  " Function called with using :VimtexDocPackage
+  " to pull up package documentation
+  call vimtex#doc#make_selection(a:context)
+  if !empty(a:context.selected)
+    execute '!texdoc' a:context.selected '&'
+  endif
+  return 1
+endfunction
+
+"  }}}
 "  Plugin: Terraform Syntax --- {{{
 
 let g:terraform_align=1
@@ -767,8 +919,21 @@ let g:terraform_remap_spacebar=1
 " }}}
 " Plugin: Miscellaneous global var config ------------ {{{
 
-" Agit:
-let g:agit_max_log_lines = 500
+" GvVim:
+" :GV to open commit browser
+" You can pass git log options to the command, e.g. :GV -S foobar.
+" :GV! will only list commits that affected the current file
+" :GV? fills the location list with the revisions of the current file
+
+" :GV or :GV? can be used in visual mode to track the changes in the selected lines.
+
+" o or <cr> on a commit to display the content of it
+" o or <cr> on commits to display the diff in the range
+" O opens a new tab instead
+" gb for :Gbrowse
+" ]] and [[ to move between commits
+" . to start command-line with :Git [CURSOR] SHA à la fugitive
+" q to close
 
 " UndoTree:
 let g:undotree_SetFocusWhenToggle = 1
@@ -776,10 +941,6 @@ let g:undotree_WindowLayout = 3
 
 " VimRooter:
 let g:rooter_manual_only = 1
-
-" VimTex:
-let g:vimtex_compiler_latexmk = {'callback' : 0}
-let g:tex_flavor = 'latex'
 
 " PythonVirtualenv:
 " necessary for jedi-vim to discover virtual environments
@@ -793,6 +954,10 @@ let g:qfenter_keymap.hopen = ['<C-s>']
 let g:qfenter_keymap.topen = ['<C-t>']
 " do not copy quickfix when opened in new tab
 let g:qfenter_enable_autoquickfix = 0
+" automatically move QuickFix window to fill entire bottom screen
+augroup QuickFix
+  autocmd FileType qf wincmd J
+augroup END
 
 " WinResize:
 let g:winresizer_start_key = '<C-E>'
@@ -813,7 +978,7 @@ let g:haskell_enable_typeroles = 1        " to highlight type roles
 let g:haskell_enable_static_pointers = 1  " to highlight `static`
 
 " Python: highlighting
-" Must be set to 1, otherwise TrailingWhitespace is completely messed up
+let g:python_highlight_space_errors = 0
 let g:python_highlight_all = 1
 
 " Ragtag: on every filetype
@@ -831,9 +996,10 @@ let g:jsdoc_enable_es6 = 1
 " EasyGrep: - use git grep
 let g:EasyGrepCommand = 1 " use grep, NOT vimgrep
 let g:EasyGrepJumpToMatch = 0 " Do not jump to the first match
+let g:EasyGrepReplaceWindowMode = 2 " overwrite existing buffer; no new tabs
 
 " IndentLines:
-let g:indentLine_enabled = 1  " indentlines disabled by default
+let g:indentLine_enabled = 0  " indentlines disabled by default
 
 " VimMarkdown:
 let g:vim_markdown_folding_disabled = 1
@@ -868,7 +1034,7 @@ let g:jedi#popup_on_dot = 0
 let g:jedi#show_call_signatures = 0
 let g:jedi#auto_close_doc = 0
 let g:jedi#smart_auto_mappings = 0
-let g:jedi#use_tabs_not_buffers = 1
+" let g:jedi#use_tabs_not_buffers = 1
 
 " mappings
 " auto_vim_configuration creates space between where vim is opened and
@@ -888,7 +1054,7 @@ augroup javascript_complete
   autocmd FileType javascript nnoremap <buffer> <C-]> :TernDef<CR>
 augroup END
 
-" C++
+" CPP:
 " Jumping back defaults to <C-O> or <C-T>
 " Defaults to <C-]> for goto definition
 let g:clang_library_path = '/usr/lib/llvm-3.8/lib'
@@ -904,33 +1070,16 @@ augroup haskell_complete
   autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
 augroup END
 
+" Writing: writing document
+" currently only supports markdown
+" jump to word definition for several text editors (including markdown)
+augroup writing_complete
+  autocmd FileType markdown,tex, nnoremap <buffer> <C-]> :Def <cword><CR>
+  " Latex complete `` with ''
+  autocmd FileType tex inoremap <buffer> `` ``''<esc>hi
+augroup END
+
 "  }}}
-" General: Dict lookup --- {{{
-
-" Enable looking up values in either a dictionary or a thesaurus
-" these are expected to be either:
-"   Dict: dict-gcide
-"   Thesaurus: dict-moby-thesaurus
-function! ReadDictToPreview(word, dict) range
-  let dst = tempname()
-  execute "silent ! dict -d " . a:dict . " " . string(a:word) . " > " . dst
-  pclose! |
-        \ execute "silent! pedit! " . dst |
-        \ wincmd P |
-        \ set modifiable noreadonly |
-        \ call append(0, 'This is a scratch buffer in a preview window') |
-        \ set buftype=nofile nomodifiable noswapfile readonly nomodified |
-        \ setlocal nobuflisted |
-        \ wincmd p
-  execute ":redraw!"
-endfunction
-
-command! -nargs=1 Def call ReadDictToPreview(<q-args>, "gcide")
-cabbrev def Def
-command! -nargs=1 Syn call ReadDictToPreview(<q-args>, "moby-thesaurus")
-cabbrev syn Syn
-
-" }}}
 " General: Key remappings ----------------------- {{{
 
 " Omnicompletion:
@@ -1047,33 +1196,10 @@ nmap F <Plug>Sneak_S
 " }}}
 " General: Command abbreviations ------------------------ {{{
 
-" changing directories
-cabbrev r Rooter
-cabbrev f cd %:p:h
-
 " abbreviate creating tab, vertical, and horizontal buffer splits
 cabbrev bt tab sb
 cabbrev bv vert sb
 cabbrev bs sbuffer
-
-" make it easier to type TabooRename
-cabbrev : TabooRename
-
-" fix misspelling of ls
-cabbrev LS ls
-cabbrev lS ls
-cabbrev Ls ls
-
-" fix misspelling of vs and sp
-cabbrev SP sp
-cabbrev sP sp
-cabbrev Sp sp
-cabbrev VS vs
-cabbrev vS vs
-cabbrev Vs vs
-
-" echo current file path
-cabbrev fp echo expand('%:p')
 
 " Plug update and upgrade
 cabbrev pu PlugUpdate <BAR> PlugUpgrade
@@ -1086,5 +1212,24 @@ cabbrev pu PlugUpdate <BAR> PlugUpgrade
 " This will prevent :autocmd, shell and write commands from being
 " run inside project-specific .vimrc files unless they’re owned by you.
 set secure
+
+" Lightline: specifics for Lightline
+set laststatus=2
+set ttimeoutlen=50
+set noshowmode
+
+" ShowCommand: turn off character printing to vim status line
+set noshowcmd
+
+" Backspace setting
+set backspace=indent,eol,start
+
+" Cursor Line
+" insert mode - line
+let &t_SI .= "\<Esc>[5 q"
+"replace mode - underline
+let &t_SR .= "\<Esc>[4 q"
+"common - block
+let &t_EI .= "\<Esc>[3 q"
 
 " }}}
