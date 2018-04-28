@@ -529,14 +529,14 @@ function deshake-video() {
 # BEGIN: Git formatting
 #######################################################################
 autoload -Uz vcs_info
-zstyle ':vcs_info:*' stagedstr '%B%F{yellow}🌊 '
-zstyle ':vcs_info:*' unstagedstr '%B%F{red}🔥 '
+zstyle ':vcs_info:*' stagedstr '%B%F{yellow}裡'
+zstyle ':vcs_info:*' unstagedstr '%B%F{red}外'
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' actionformats \
   '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
 zstyle ':vcs_info:*' formats \
   '%F{magenta}[%F{green}%b%m%F{magenta}] %F{green}%c%F{yellow}%u%f'
-zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash
+zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked
 zstyle ':vcs_info:*' enable git
 
 function +vi-git-color() {
@@ -546,7 +546,6 @@ function +vi-git-color() {
   if [[ $git_status == "" ]]; then
     hook_com[branch]="%B%F{silver}${hook_com[branch]}"
   elif [[ ! $git_status =~ "working directory clean" ]]; then
-    hook_com[unstaged]+='%B%F{red}😱%f'
     hook_com[branch]="%B%F{red}${hook_com[branch]}"
   elif [[ $git_status =~ "Your branch is ahead of" ]]; then
     hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
@@ -558,15 +557,14 @@ function +vi-git-color() {
   fi
 }
 
-# Show untracked files
-# function +vi-git-untracked() {
-#   if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
-#   [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
-#   [[ $(git status 2> /dev/null) == *"no changes added to commit"* ]]; then
-#   hook_com[unstaged]+='%F{red}😱%f'
-#   hook_com[branch]="%F{red}${hook_com[branch]}"
-#   fi
-# }
+Show untracked files
+function +vi-git-untracked() {
+  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+  [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
+  [[ $(git status 2> /dev/null) == *"Untracked files"* ]]; then
+  hook_com[unstaged]+='%B%F{red}新'
+  fi
+}
 
 # Show remote ref name and number of commits ahead-of or behind
 function +vi-git-st() {
