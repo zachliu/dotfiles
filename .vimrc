@@ -455,8 +455,8 @@ augroup fold_settings
   autocmd FileType vim,tmux setlocal foldmethod=marker
   autocmd FileType vim,tmux setlocal foldlevelstart=0
   autocmd FileType * setlocal foldnestmax=1
-  autocmd BufNewFile,BufRead .profile,.bashrc,.zshrc setlocal foldmethod=marker
-  autocmd BufNewFile,BufRead .profile,.bashrc,.zshrc setlocal foldlevelstart=0
+  autocmd BufNewFile,BufRead .zprofile,.profile,.bashrc,.zshrc,sensitive setlocal foldmethod=marker
+  autocmd BufNewFile,BufRead .zprofile,.profile,.bashrc,.zshrc,sensitive setlocal foldlevelstart=0
 augroup END
 
 " }}}
