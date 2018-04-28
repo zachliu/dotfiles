@@ -13,7 +13,7 @@ include () {
   [[ -f "$1" ]] && source "$1"
 }
 
-include ~/.profile
+include ~/.zprofile
 include ~/.bashrc_local
 include ~/.bash/sensitive
 
@@ -529,8 +529,8 @@ function deshake-video() {
 # BEGIN: Git formatting
 #######################################################################
 autoload -Uz vcs_info
-zstyle ':vcs_info:*' stagedstr '%F{yellow}🌊 '
-zstyle ':vcs_info:*' unstagedstr '%F{red}🔥 '
+zstyle ':vcs_info:*' stagedstr '%B%F{yellow}🌊 '
+zstyle ':vcs_info:*' unstagedstr '%B%F{red}🔥 '
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' actionformats \
   '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
@@ -544,17 +544,17 @@ function +vi-git-color() {
   local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   if [[ $git_status == "" ]]; then
-    hook_com[branch]="%F{silver}${hook_com[branch]}"
+    hook_com[branch]="%B%F{silver}${hook_com[branch]}"
   elif [[ ! $git_status =~ "working directory clean" ]]; then
-    hook_com[unstaged]+='%F{red}😱%f'
-    hook_com[branch]="%F{red}${hook_com[branch]}"
+    hook_com[unstaged]+='%B%F{red}😱%f'
+    hook_com[branch]="%B%F{red}${hook_com[branch]}"
   elif [[ $git_status =~ "Your branch is ahead of" ]]; then
-    hook_com[branch]="%F{yellow}${hook_com[branch]}"
+    hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
   elif [[ $git_status =~ "nothing to commit" ]] && \
       [[ ! -n $git_commit ]]; then
-    hook_com[branch]="%F{green}${hook_com[branch]}"
+    hook_com[branch]="%B%F{green}${hook_com[branch]}"
   else
-    hook_com[branch]="%F{orange}${hook_com[branch]}"
+    hook_com[branch]="%B%F{orange}${hook_com[branch]}"
   fi
 }
 
