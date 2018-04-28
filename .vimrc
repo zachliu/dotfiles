@@ -121,7 +121,8 @@ if (exists('+colorcolumn'))
 endif
 
 " Don't highlight all search results
-set nohlsearch
+set hlsearch
+set incsearch
 
 " Remove query for terminal version
 " This prevents un-editable garbage characters from being printed
@@ -152,17 +153,34 @@ set wildmode=longest,list,full
 set wildmenu
 
 " Grep: program is 'git grep'
-set grepprg=git\ grep\ -n\ $*
+" set grepprg=git\ grep\ -n\ $*
+set grepprg=rg\ --vimgrep
 
 " Pasting: enable pasting without having to do 'set paste'
 " NOTE: this is actually typed <C-/>, but vim thinks this is <C-_>
+
 set pastetoggle=<C-_>
+
 
 " Turn off complete vi compatibility
 set nocompatible
 
 " Enable using local vimrc
-set exrc
+" set exrc
+
+" Make terminal zsh
+" set shell=/usr/bin/zsh
+
+" Make sure numbering is set
+" set number
+
+" Set split settings (options: splitright, splitbelow)
+" set splitright
+
+" Redraw window whenever I've regained focus
+" augroup redraw_on_refocus
+"   au FocusGained * :redraw!
+" augroup END
 
 " }}}
 " General: Plugin Install --------------------- {{{
@@ -170,14 +188,11 @@ set exrc
 call plug#begin('~/.vim/plugged')
 
 " Basics
-Plug 'itchyny/lightline.vim'
-Plug 'airblade/vim-rooter'
+Plug 'itchyny/lightline.vim'  " Plug 'airblade/vim-rooter'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
-Plug 'scrooloose/nerdtree'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'dkprice/vim-easygrep'
-Plug 't9md/vim-choosewin'
+Plug 'scrooloose/nerdtree'  " Plug 'ctrlpvim/ctrlp.vim'
+Plug 't9md/vim-choosewin' " Plug 'dkprice/vim-easygrep'
 Plug 'mhinz/vim-startify'
 Plug 'wincent/terminus'
 Plug 'gcmt/taboo.vim'
@@ -254,12 +269,14 @@ Plug 'lvht/tagbar-markdown'
 " Indentation
 Plug 'hynek/vim-python-pep8-indent'
 Plug 'Yggdroot/indentLine'
+Plug 'tell-k/vim-autopep8'
 
 " Web Development - Javascript
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'groenewege/vim-less'
 Plug 'heavenshell/vim-jsdoc'
+Plug 'maksimr/vim-jsbeautify'
 
 " Web Development - General
 Plug 'mattn/emmet-vim'
@@ -271,6 +288,11 @@ Plug 'junegunn/rainbow_parentheses.vim'
 
 " Writing
 Plug 'dkarter/bullets.vim'
+
+" PlantUML
+Plug 'aklt/plantuml-syntax'
+Plug 'tyru/open-browser.vim'
+Plug 'weirongxu/plantuml-previewer.vim'
 
 call plug#end()
 
@@ -1021,6 +1043,13 @@ let g:bullets_enabled_file_types = [
 let g:AutoPairsMapCR = 0
 let g:AutoPairsMapCh = 0  "Do not map <C-h> to delete brackets, quotes in pair
 
+" AutoPEP8
+let g:autopep8_disable_show_diff = 1
+" below turned off to make collaboration less annoying
+" augroup AutoPep8
+"   autocmd BufWritePre *.py Autopep8
+" augroup END
+
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
 
@@ -1080,6 +1109,19 @@ augroup writing_complete
 augroup END
 
 "  }}}
+"  Plugin: Language-specific file beautification --- {{{
+
+augroup language_specific_file_beauty
+  autocmd FileType javascript noremap <buffer> <leader>f :call JsBeautify()<cr>
+  autocmd FileType json noremap <buffer> <leader>f :call JsonBeautify()<cr>
+  autocmd FileType javascript.jsx,jsx noremap <buffer> <leader>f :call JsxBeautify()<cr>
+  autocmd FileType html noremap <buffer> <leader>f :call HtmlBeautify()<cr>
+  autocmd FileType css noremap <buffer> <leader>f :call CSSBeautify()<cr>
+  autocmd Filetype python nnoremap <buffer> <leader>f :Autopep8<cr>
+  autocmd Filetype elm nnoremap <buffer> <leader>f :ElmFormat<cr>
+augroup END
+
+" }}}
 " General: Key remappings ----------------------- {{{
 
 " Omnicompletion:

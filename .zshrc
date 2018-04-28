@@ -27,12 +27,28 @@ include ~/.bash/sensitive
 # enable functions to operate in PS1
 setopt PROMPT_SUBST
 
-# enable quicker completion
-setopt MENU_COMPLETE
+# list available directories automatically
+setopt AUTO_LIST
+setopt LIST_AMBIGUOUS
+setopt LIST_BEEP
+
+# completions
+setopt COMPLETE_ALIASES
+
+# automatically CD without typing cd
+setopt AUTOCD
+
+# Dealing with history
+setopt APPENDHISTORY
+setopt SHAREHISTORY
+setopt INCAPPENDHISTORY
 
 #######################################################################
 # Unset options
 #######################################################################
+
+# do not automatically complete
+unsetopt MENU_COMPLETE
 
 # do not automatically remove the slash
 unsetopt AUTO_REMOVE_SLASH
@@ -41,6 +57,7 @@ unsetopt AUTO_REMOVE_SLASH
 # Expected parameters
 #######################################################################
 export PERIOD=1
+export LISTMAX=0
 
 # }}}
 # ZShell Menu Completion --- {{{
@@ -48,7 +65,9 @@ export PERIOD=1
 autoload -U compinit && compinit
 zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
 
-# note: chose search-backward because search crashed a lot
+# CURRENT STATE: does not select any sort of searching
+# searching was too annoying and I didn't really use it
+# If you want it back, use "search-backward" as an option
 zstyle ':completion:*' menu select search-backward
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 
@@ -59,6 +78,17 @@ zstyle ':completion:*' matcher-list '' \
   'r:|?=** m:{a-z\-A-Z}={A-Z\_a-z}'
 fpath=(/usr/local/share/zsh-completions $fpath)
 zmodload -i zsh/complist
+
+# Manual libraries
+
+# vault, by Hashicorp
+_vault_complete() {
+  local word completions
+  word="$1"
+  completions="$(vault --cmplt "${word}")"
+  reply=( "${(ps:\n:)completions}" )
+}
+compctl -f -K _vault_complete vault
 
 # }}}
 # ZShell Misc Autoloads --- {{{
@@ -106,7 +136,6 @@ function zshaddhistory() {
 function zshexit() {
 }
 
-
 # }}}
 # ZShell Key-Bindings --- {{{
 
@@ -117,15 +146,16 @@ bindkey -e
 # '^d' - list options without selecting any of them
 # '^i' - synonym to TAB; tap twice to get into menu complete
 # '^o' - choose selection and execute
-# '^j' - choose selection but do NOT execute AND leave current mode
-# '^k' - choose selection but do NOT execute AND leave all modes in menu-select
+# '^m' - choose selection but do NOT execute AND leave all modes in menu-select
 #         useful to get out of both select and search-backward
-# '^p' - cycle through options backward (binding below necessary)
-# '^n' - cycle through options forward (binding below necessary)
 # '^z' - stop interactive tab-complete mode and go back to regular selection
 
-bindkey -M menuselect '^n' expand-or-complete
-bindkey -M menuselect '^p' reverse-menu-complete
+# make vi keys do menu-expansion (eg, ^j does expansion, navigate with hjkl)
+bindkey '^j' menu-expand-or-complete
+bindkey -M menuselect '^j' menu-complete
+bindkey -M menuselect '^k' reverse-menu-complete
+bindkey -M menuselect '^h' backward-char
+bindkey -M menuselect '^l' forward-char
 
 # delete function characters to include
 # Omitted: /=
@@ -137,19 +167,41 @@ WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 # Easier directory navigation for going up a directory tree
 alias 'a'='cd - &> /dev/null'
 alias 'cd..'='cd_up'  # can not name function 'cd..'; references cd_up below
-alias .='cd ..'
-alias ..='cd ../..'
-alias ...='cd ../../..'
-alias ....='cd ../../../..'
-alias .....='cd ../../../../..'
-alias ......='cd ../../../../../..'
-alias .......='cd ../../../../../../..'
-alias ........='cd ../../../../../../../..'
-alias .........='cd ../../../../../../../../..'
-alias ..........='cd ../../../../../../../../../..'
+alias ,='cd ..'
+alias ,,='cd ../..'
+alias ,,,='cd ../../..'
+alias ,,,,='cd ../../../..'
+alias ,,,,,='cd ../../../../..'
+alias ,,,,,,='cd ../../../../../..'
+alias ,,,,,,,='cd ../../../../../../..'
+alias ,,,,,,,,='cd ../../../../../../../..'
+alias ,,,,,,,,,='cd ../../../../../../../../..'
+alias ,,,,,,,,,,='cd ../../../../../../../../../..'
+
+# Vim and Vi
+# alias v="nvim"
+# alias vi='nvim'
+# alias vim='nvim'
+# alias nv="alias vim=\"echo 'no vim allowed here'\""
 
 # Tree that ignores annoying directories
-alias itree="tree -I '__pycache__|venv'"
+alias itree="tree -I '__pycache__|venv|node_modules'"
+
+# Grep, but ignore annoying directories
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias igrep="grep --perl-regexp -Ir \
+--exclude='*~' \
+--exclude='*.pyc' \
+--exclude='*.csv' \
+--exclude='*.tsv' \
+--exclude='*.md' \
+--exclude-dir='.bzr' \
+--exclude-dir='.git' \
+--exclude-dir='.svn' \
+--exclude-dir='node_modules' \
+--exclude-dir='venv'"
 
 # Tmux launch script
 alias t='~/tmuxlaunch.sh'
@@ -158,10 +210,6 @@ alias t='~/tmuxlaunch.sh'
 alias ls='ls --color=auto'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
-
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 
 alias sl='ls'
 alias ll='ls -alF'
@@ -186,71 +234,49 @@ alias publicip='wget -qO - http://ipecho.net/plain ; echo'
 
 # Git
 alias g="git status"
-alias gl="git branch --verbose --all"
-alias gm="git commit --verbose"
-alias gma="git commit --verbose --all"
-
-# Less with default options
-# -c: auto-clear screen
-# alias less='less -c'
-
-# Regex ignore annoying directories
-alias regrep="grep --perl-regexp -Ir \
---exclude=*~ \
---exclude=*.pyc \
---exclude=*.csv \
---exclude=*.tsv \
---exclude=*.md \
---exclude-dir=.bzr \
---exclude-dir=.git \
---exclude-dir=.svn \
---exclude-dir=node_modules \
---exclude-dir=venv"
+alias gl='git branch --verbose --all'
+alias gm='git commit --verbose'
+alias gma='git add --all && git commit --verbose'
+alias gp='git remote prune origin'
+alias gd='git diff'
 
 # upgrade
-alias upgrade="sudo apt-get update && sudo apt-get upgrade"
+alias upgrade='sudo mintupdate'
 
 # battery
-alias bat='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|to\ full|percentage"'
+alias bat='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|time\ to\ full|percentage"'
 
 # dynamodb
 alias docker-dynamodb="docker run -v /data:$HOME/data -p 8000:8000 dwmkerr/dynamodb -dbPath $HOME/data"
 
+# alias for say
+alias say='spd-say'
+compdef _dict_words say
+
+# reload zshrc
+alias so='source ~/.zshrc'
+
+# slack-term aliases
+alias slack-kepler='SLACK_TOKEN=$SLACK_TOKEN_KEPLER slack-term'
+
+# my preferred top program
+alias top='gotop'
+
 # }}}
 # Functions --- {{{
 
-# spectrum functions
-typeset -AHg FX FG BG
-
-FX=(
-    reset     "%{[00m%}"
-    bold      "%{[01m%}" no-bold      "%{[22m%}"
-    italic    "%{[03m%}" no-italic    "%{[23m%}"
-    underline "%{[04m%}" no-underline "%{[24m%}"
-    blink     "%{[05m%}" no-blink     "%{[25m%}"
-    reverse   "%{[07m%}" no-reverse   "%{[27m%}"
-)
-
-for color in {000..255}; do
-    FG[$color]="%{[38;5;${color}m%}"
-    BG[$color]="%{[48;5;${color}m%}"
-done
-
-
-ZSH_SPECTRUM_TEXT=${ZSH_SPECTRUM_TEXT:-Test}
-
-# Show all 256 colors with color number
-function spectrum_ls() {
-  for code in {000..255}; do
-    print -P -- "%{$FG[$code]%}$code: %{$FG[$code]%}$ZSH_SPECTRUM_TEXT%{$reset_color%}"
-  done
-}
-
-# Show all 256 colors where the background is set to specific color
-function spectrum_bls() {
-  for code in {000..255}; do
-    print -P -- "$code: %{$BG[$code]%}$ZSH_SPECTRUM_TEXT%{$reset_color%}"
-  done
+function gitzip() {  # arg1: the git repository
+  if [ $# -eq 0 ]; then
+    local git_dir='.'
+  else
+    local git_dir="$1"
+  fi
+  pushd $git_dir > /dev/null
+  local git_root=$(git rev-parse --show-toplevel)
+  local git_name=$(basename $git_root)
+  local outfile="$git_root/../$git_name.zip"
+  git archive --format=zip --prefix="$git_name-from-zip/" HEAD -o "$outfile"
+  popd > /dev/null
 }
 
 # Colored cat
@@ -262,10 +288,12 @@ function cats() {
 function def() {  # arg1: word
   dict -d gcide $1 | less -XF
 }
+compdef _dict_words def
 
 function syn() {  # arg1: word
   dict -d moby-thesaurus $1 | less -XF
 }
+compdef _dict_words syn
 
 # install
 function install() {  # arg1: word
@@ -281,7 +309,7 @@ function cd_up() {  # arg1: number|word
 # Get the weather
 function weather() {  # arg1: Optional<location>
   if [ $# -eq 0 ]; then
-    curl wttr.in/new_york
+    curl wttr.in/nyc
   else
     curl wttr.in/$1
   fi
@@ -310,23 +338,109 @@ function gn() {  # arg1: filename
   fi
 }
 
-# [optionally] create and activate Python virtual environment
-function ve() {
-  if [ ! -d venv ]; then
-    echo "Creating new Python 3.6 virtualenv"
-    python3.6 -m venv venv
-    source venv/bin/activate
-    pip install -U pip
-    pip install neovim
-  else
-    source venv/bin/activate
-  fi
-  echo "Activated $(python --version) virtualenv"
+# activate virtual environment from any directory from current and up
+DEFAULT_VENV_NAME=.venv
+DEFAULT_PYTHON_VERSION="3"
+
+function pydev() {
+  pip install -U pip neovim bpython autopep8 jedi restview
 }
 
-# alias for ve because I type va a lot more
 function va() {
+  if [ $# -eq 0 ]; then
+    local VENV_NAME=$DEFAULT_VENV_NAME
+  else
+    local VENV_NAME="$1"
+  fi
+  local slashes=${PWD//[^\/]/}
+  local DIR="$PWD"
+  for (( n=${#slashes}; n>0; --n ))
+  do
+    if [ -d "$DIR/$VENV_NAME" ]; then
+      source "$DIR/$VENV_NAME/bin/activate"
+      local DIR_REL=$(realpath --relative-to='.' "$DIR/$VENV_NAME")
+      echo "Activated $(python --version) virtualenv in $DIR_REL/"
+      return
+    fi
+    local DIR="$DIR/.."
+  done
+  echo "no $VENV_NAME/ found from here to OS root"
+}
+
+# [optionally] create and activate Python virtual environment
+function ve() {
+  if [ $# -eq 0 ]; then
+    local VENV_NAME="$DEFAULT_VENV_NAME"
+  else
+    local VENV_NAME="$1"
+  fi
+  if [ ! -d "$VENV_NAME" ]; then
+    echo "Creating new Python virtualenv in $VENV_NAME/"
+    python$DEFAULT_PYTHON_VERSION -m venv "$VENV_NAME"
+    source "$VENV_NAME/bin/activate"
+    pydev
+    deactivate
+    va
+  else
+    va
+  fi
+}
+
+# Create New Python Repo
+function pynew() {
+  if [ $# -ne 1 ]; then
+    echo "pynew <directory>"
+    exit 1
+  fi
+  local dir_name="$1"
+  mkdir "$dir_name"
+  cd "$dir_name"
+  git init
+
+  mkdir instance
+  cat > instance/.gitignore <<EOL
+*
+!.gitignore
+EOL
+
+  # venv/
   ve
+  # NOTE: not using pyenv right now
+  # pipenv install
+  # va
+  # pydev
+  # deactivate
+  # va
+
+  # .gitignore
+  cat > .gitignore <<EOL
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.tox/
+.cache
+.coverage
+docs/_build/
+*.egg-info/
+.installed.cfg
+*.egg
+.mypy_cache/
+
+# Vim
+*.swp
+
+# C
+*.so
+EOL
+
+  cat > main.py <<EOL
+#!/usr/bin/env python
+'''The main module'''
+
+EOL
+  chmod +x main.py
 }
 
 # Clubhouse story template
@@ -334,14 +448,9 @@ function clubhouse() {
   echo -e "## Objective\n## Value\n## Acceptance Criteria" | pbcopy
 }
 
-# Reload bashrc
-function so() {
-  source ~/.zshrc
-}
-
 # GIT: git-clone keplergrp repos to src/ directory
 function klone() {
-  git clone git@github.com:KeplerGroup/$1 $HOME/src/$1
+  git clone git@github.com:KeplerGroup/$1
 }
 
 # GIT: push current branch from origin to current branch
@@ -383,9 +492,32 @@ function stopwatch(){
 }
 
 function quote() {
-  local cowsay_word_message="$(shuf -n 1 ~/dotfiles/gre_words.txt)"
-  local cowsay_quote="$(fortune -s ~/dotfiles/fortunes/ | grep -v '\-\-' | grep .)"
-  echo -e "$cowsay_word_message\n\n$cowsay_quote" | cowsay
+  local cowsay_quote=$(echo "Daily fortune: "; \
+    fortune; \
+    echo; \
+    echo "Daily word: "; \
+    shuf -n 1 ~/Documents/system_configs/gre_words.txt;)
+  echo -e "$cowsay_quote" | cowsay -n | cowsay -n -f gnu | lolcat;
+  echo;
+}
+
+function deshake-video() {
+  # see below link for documentation
+  # https://github.com/georgmartius/vid.stab
+  if [ $# -ne 2 ]; then
+    echo "deshake-video <infile> <outfile>"
+    exit 1
+  fi
+  local infile="$1"
+  local outfile="$2"
+  local transfile="$infile.trf"
+  if [ ! -f "$transfile" ]; then
+    echo "Generating $transfile ..."
+    ffmpeg2 -i "$infile" -vf vidstabdetect=result="$transfile" -f null -
+  fi
+  ffmpeg2 -i "$infile" -vf \
+    vidstabtransform=smoothing=10:input="$transfile" \
+    "$outfile"
 }
 
 # }}}
@@ -404,34 +536,35 @@ zstyle ':vcs_info:*' actionformats \
   '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
 zstyle ':vcs_info:*' formats \
   '%F{magenta}[%F{green}%b%m%F{magenta}] %F{green}%c%F{yellow}%u%f'
-zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-st git-stash
+zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash
 zstyle ':vcs_info:*' enable git
 
-# Show untracked files
-function +vi-git-untracked() {
-  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
-  [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
-  [[ $(git status 2> /dev/null) == *"no changes added to commit"* ]]; then
-  hook_com[unstaged]+='%F{red}😱%f'
-  hook_com[branch]="%F{red}${hook_com[branch]}"
+function +vi-git-color() {
+  local git_status="$(git status 2> /dev/null)"
+  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+  local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
+  if [[ $git_status == "" ]]; then
+    hook_com[branch]="%F{silver}${hook_com[branch]}"
+  elif [[ ! $git_status =~ "working directory clean" ]]; then
+    hook_com[unstaged]+='%F{red}😱%f'
+    hook_com[branch]="%F{red}${hook_com[branch]}"
+  elif [[ $git_status =~ "Your branch is ahead of" ]]; then
+    hook_com[branch]="%F{yellow}${hook_com[branch]}"
+  elif [[ $git_status =~ "nothing to commit" ]] && \
+      [[ ! -n $git_commit ]]; then
+    hook_com[branch]="%F{green}${hook_com[branch]}"
+  else
+    hook_com[branch]="%F{orange}${hook_com[branch]}"
   fi
 }
 
-# function +vi-git-unstaged() {
-#   local git_status="$(git status 2> /dev/null)"
-#   local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-#   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
-#   if [[ $git_status == "" ]]; then
-#     echo -e $COLOR_SILVER
-#   elif [[ ! $git_status =~ "working directory clean" ]]; then
-#     echo -e $COLOR_RED
-#   elif [[ $git_status =~ "Your branch is ahead of" ]]; then
-#     echo -e $COLOR_YELLOW
-#   elif [[ $git_status =~ "nothing to commit" ]] && \
-#       [[ ! -n $git_commit ]]; then
-#     echo -e $COLOR_GREEN
-#   else
-#     echo -e $COLOR_ORANGE
+# Show untracked files
+# function +vi-git-untracked() {
+#   if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+#   [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
+#   [[ $(git status 2> /dev/null) == *"no changes added to commit"* ]]; then
+#   hook_com[unstaged]+='%F{red}😱%f'
+#   hook_com[branch]="%F{red}${hook_com[branch]}"
 #   fi
 # }
 
@@ -494,12 +627,45 @@ ${PS1_END}"
 # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
 stty -ixon
 
-# run cowsay
-{ echo "Daily fortune: "; \
-  fortune; \
-  echo; \
-  echo "Daily word: "; \
-  shuf -n 1 ~/Documents/system_configs/gre_words.txt; } \
-  | cowsay -n | cowsay -n -f gnu | lolcat
+if [[ -o interactive ]]; then
+  if [[ "$TMUX_PANE" == "%0" ]]; then
+    # if you're in the first tmux pane within all of tmux
+    quote
+  fi
+fi
+
+# }}}
+# Plugins --- {{{
+
+#if [ -f ~/.zplug/init.zsh ]; then
+#  source ~/.zplug/init.zsh
+
+#  # BEGIN: List plugins
+
+#  zplug 'paulirish/git-open', as:plugin
+#  zplug 'greymd/docker-zsh-completion', as:plugin
+
+#  #END: List plugins
+
+#  # Install plugins if there are plugins that have not been installed
+#  if ! zplug check --verbose; then
+#      printf "Install? [y/N]: "
+#      if read -q; then
+#          echo; zplug install
+#      fi
+#  fi
+
+#  # Then, source plugins and add commands to $PATH
+#  zplug load
+#else
+#  echo "zplug not installed, so no plugins available"
+#fi
+
+# }}}
+# Theme --- {{{
+
+# export ZSH=$HOME/.oh-my-zsh
+# ZSH_THEME="steeef"
+# source $ZSH/oh-my-zsh.sh
 
 # }}}

@@ -31,6 +31,8 @@ stty -ixon
 
 # For terraform
 alias tfenv='sudo tfswitch'
+alias tfold='tfenv 0.8.7'
+alias tfnew='tfenv 0.10.5'
 
 # Easier directory navigation for going up a directory tree
 alias 'a'='cd - &> /dev/null'
@@ -139,8 +141,10 @@ alias bat='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "stat
 # OpenVPN
 function ovpn {
   cd /home/zach/openvpn
-  sudo openvpn --config zach.conf \
+  sudo openvpn \
+    --config zach.conf \
     --up /etc/openvpn/update-resolv-conf \
+    --down /etc/openvpn/update-resolv-conf \
     --script-security 2
 }
 
@@ -288,14 +292,23 @@ fi
 # }}}
 # path appends --- {{{
 
+export PATH="/home/zach/.cargo/bin"
+export PATH="$PATH:/home/zach/.local/bin"
+export PATH="$PATH:/home/zach/.pyenv/shims"
+export PATH="$PATH:/home/zach/.pyenv/bin"
+export PATH="$PATH:/home/zach/Downloads/google-cloud-sdk/bin"
+export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PATH="$PATH:/usr/local/spark/bin"
+export PATH="$PATH:/home/zach/.nodenv/bin"
+
 # Matlab
 # export PATH="$PATH:/usr/local/MATLAB/R2016b/bin"
 
 # Spark
-export PATH=$PATH:/usr/local/spark/bin/
+# export PATH=$PATH:/usr/local/spark/bin/
 
 # Scala
-export PATH=$PATH:/usr/local/scala
+# export PATH=$PATH:/usr/local/scala
 
 #}}}
 # Command history --- {{{
@@ -323,6 +336,25 @@ then
 fi
 
 # Make sure you're also exporting PATH somewhere...
+export PATH
+
+#}}}
+# Nodenv --- {{{
+
+NODENV_ROOT="$HOME/.nodenv"
+if [ -d "$NODENV_ROOT" ]
+then
+  export NODENV_ROOT
+  # Make sure it's not already in path
+  if [[ ":$PATH:" != *":$NODENV_ROOT:"* ]]
+  then
+    # If $PATH exists, then add $NODENV_ROOT to $PATH with : at the end;
+    # otherwise NODENV_ROOT is the $PATH
+    PATH="${PATH:+"$PATH:"}$NODENV_ROOT"
+    eval "$(nodenv init -)"
+  fi
+fi
+
 export PATH
 
 #}}}

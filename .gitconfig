@@ -9,5 +9,9 @@
   hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
   type = cat-file -t
   dump = cat-file -p
-[merge "ours"]
-  driver = true
+[credential "https://github.com"]
+  username = zachliu
+[credential]
+  helper = cache
+[pull]
+  rebase = true
