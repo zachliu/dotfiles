@@ -23,7 +23,7 @@ stty -ixon
   fortune; \
   echo; \
   echo "Daily word: "; \
-  shuf -n 1 ~/Documents/system_configs/gre_words.txt; } \
+  shuf -n 1 ~/dotfiles/gre_words.txt; } \
   | cowsay -n | cowsay -n -f gnu | lolcat
 
 # }}}
