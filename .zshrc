@@ -628,12 +628,15 @@ ${PS1_END}"
 # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
 stty -ixon
 
-if [[ -o interactive ]]; then
-  if [[ "$TMUX_PANE" == "%0" ]]; then
-    # if you're in the first tmux pane within all of tmux
-    quote
-  fi
-fi
+# if you want to see less of "quote"
+# if [[ -o interactive ]]; then
+#   if [[ "$TMUX_PANE" == "%0" ]]; then
+#     # if you're in the first tmux pane within all of tmux
+#     quote
+#   fi
+# fi
+
+quote
 
 # }}}
 # Plugins --- {{{
