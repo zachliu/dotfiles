@@ -547,14 +547,14 @@ function +vi-git-color() {
   local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   if [[ $git_status == "" ]]; then
-    hook_com[branch]="%B%F{silver}${hook_com[branch]}"
+    hook_com[branch]="%B%F{cyan}${hook_com[branch]}"
   elif [[ ! $git_status =~ "working directory clean" ]]; then
     hook_com[branch]="%B%F{red}${hook_com[branch]}"
   elif [[ $git_status =~ "Your branch is ahead of" ]] || \
-    [[ ! -n $git_commit ]]; then
+    [[ -n $git_commit ]]; then
     hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
   elif [[ $git_status =~ "nothing to commit" ]] && \
-      [[ ! -n $git_commit ]]; then
+    [[ ! -n $git_commit ]]; then
     hook_com[branch]="%B%F{green}${hook_com[branch]}"
   else
     hook_com[branch]="%B%F{orange}${hook_com[branch]}"
@@ -575,7 +575,7 @@ function +vi-git-unpushed() {
   local git_status="$(git status 2> /dev/null)"
   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   if [[ $git_status =~ "Your branch is ahead of" ]] || \
-    [[ ! -n $git_commit ]]; then
+    [[ -n $git_commit ]]; then
     hook_com[unstaged]+='%B%F{yellow}推'
   fi
 }
