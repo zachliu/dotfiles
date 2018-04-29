@@ -557,7 +557,7 @@ function +vi-git-color() {
   fi
 }
 
-Show untracked files
+# Show untracked files
 function +vi-git-untracked() {
   if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
   [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
