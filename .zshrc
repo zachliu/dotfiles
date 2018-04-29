@@ -539,7 +539,7 @@ zstyle ':vcs_info:*' actionformats \
   '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
 zstyle ':vcs_info:*' formats \
   '%F{magenta}[%F{green}%b%m%F{magenta}] %F{green}%c%F{yellow}%u%f'
-zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked
+zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked git-unpushed
 zstyle ':vcs_info:*' enable git
 
 function +vi-git-color() {
@@ -565,7 +565,15 @@ function +vi-git-untracked() {
   if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
   [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
   [[ $(git status 2> /dev/null) == *"Untracked files"* ]]; then
-  hook_com[unstaged]+='%B%F{red}新'
+    hook_com[unstaged]+='%B%F{red}新'
+  fi
+}
+
+# Show unpushed commits
+function +vi-git-unpushed() {
+  local git_status="$(git status 2> /dev/null)"
+  if [[ $git_status =~ "Your branch is ahead of" ]]; then
+    hook_com[unstaged]+='%B%F{yellow}推'
   fi
 }
 
