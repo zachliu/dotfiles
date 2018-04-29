@@ -573,6 +573,7 @@ function +vi-git-untracked() {
 # Show unpushed commits
 function +vi-git-unpushed() {
   local git_status="$(git status 2> /dev/null)"
+  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   if [[ $git_status =~ "Your branch is ahead of" ]] || \
     [[ -n $git_commit ]]; then
