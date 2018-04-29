@@ -39,9 +39,8 @@ setopt COMPLETE_ALIASES
 setopt AUTOCD
 
 # Dealing with history
-setopt APPENDHISTORY
-setopt SHAREHISTORY
-setopt INCAPPENDHISTORY
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
 
 #######################################################################
 # Unset options
