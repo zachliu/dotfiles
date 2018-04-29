@@ -638,6 +638,9 @@ fi
 # }}}
 # Plugins --- {{{
 
+# This block makes the init of zshell a bit slow
+# I don't know why
+
 #if [ -f ~/.zplug/init.zsh ]; then
 #  source ~/.zplug/init.zsh
 
@@ -664,6 +667,9 @@ fi
 
 # }}}
 # Theme --- {{{
+
+# By editing the "ZShell prompt (PS1)" code block, I can achieve pretty much
+# similar visual effects
 
 # export ZSH=$HOME/.oh-my-zsh
 # ZSH_THEME="steeef"
