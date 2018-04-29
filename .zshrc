@@ -262,6 +262,9 @@ alias slack-kepler='SLACK_TOKEN=$SLACK_TOKEN_KEPLER slack-term'
 # my preferred top program
 alias top='gotop'
 
+# list all symbolic links
+alias lssl='ls -la | grep "\->"'
+
 # }}}
 # Functions --- {{{
 
