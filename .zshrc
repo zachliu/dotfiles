@@ -220,6 +220,12 @@ alias l='ls -CF'
 # P: if multiple files then showing complete path
 alias diff="diff -rupP"
 
+# Docker
+# remove stopped containers
+alias drm="docker ps --no-trunc -aq | xargs docker rm"
+# remove all untagged images
+alias drmi="docker images -q --filter 'dangling=true' | xargs docker rmi"
+
 # Set copy/paste helper functions
 # the perl step removes the final newline from the output
 alias pbcopy="perl -pe 'chomp if eof' | xsel --clipboard --input"
@@ -244,6 +250,7 @@ alias upgrade='sudo mintupdate'
 
 # battery
 alias bat='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|time\ to\ full|percentage"'
+alias batc='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "capacity"'
 
 # dynamodb
 alias docker-dynamodb="docker run -v /data:$HOME/data -p 8000:8000 dwmkerr/dynamodb -dbPath $HOME/data"
@@ -601,18 +608,13 @@ function +vi-git-st() {
     --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
 
   if [[ -n ${remote} ]] ; then
-    # for git prior to 1.7
-    # ahead=$(git rev-list origin/${hook_com[branch]}..HEAD | wc -l)
     ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
     (( $ahead )) && gitstatus+=( "${c3}+${ahead}${c2}" )
 
-    # for git prior to 1.7
-    # behind=$(git rev-list HEAD..origin/${hook_com[branch]} | wc -l)
     behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
     (( $behind )) && gitstatus+=( "${c4}-${behind}${c2}" )
 
-    # hook_com[branch]="${hook_com[branch]} [${remote} ${(j:/:)gitstatus}]"
-    hook_com[branch]="${hook_com[branch]} [🛂${(j:/:)gitstatus}]"
+    hook_com[branch]="${hook_com[branch]} [注意${(j:/:)gitstatus}]"
   fi
 }
 
@@ -622,7 +624,7 @@ function +vi-git-stash() {
 
   if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
     stashes=$(git stash list 2>/dev/null | wc -l)
-    hook_com[misc]+=" (💰${stashes})"
+    hook_com[misc]+=" (藏${stashes})"
   fi
 }
 
