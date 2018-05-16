@@ -18,6 +18,38 @@ include ~/.bashrc_local
 include ~/.bash/sensitive
 
 # }}}
+# Plugins --- {{{
+
+# This block makes the init of zshell a bit slow
+# I don't know why
+
+#if [ -f ~/.zplug/init.zsh ]; then
+#  source ~/.zplug/init.zsh
+
+#  # BEGIN: List plugins
+
+#  # use double quotes: the plugin manager author says we must for some reason
+#  zplug "paulirish/git-open", as:plugin
+#  zplug "greymd/docker-zsh-completion", as:plugin
+#  zplug "hejack0207/zsh-pip-plugin", as:plugin
+
+#  #END: List plugins
+
+#  # Install plugins if there are plugins that have not been installed
+#  if ! zplug check --verbose; then
+#      printf "Install? [y/N]: "
+#      if read -q; then
+#          echo; zplug install
+#      fi
+#  fi
+
+#  # Then, source plugins and add commands to $PATH
+#  zplug load
+#else
+#  echo "zplug not installed, so no plugins available"
+#fi
+
+# }}}
 # ZShell Options --- {{{
 
 #######################################################################
@@ -661,45 +693,5 @@ stty -ixon
 # fi
 
 quote
-
-# }}}
-# Plugins --- {{{
-
-# This block makes the init of zshell a bit slow
-# I don't know why
-
-#if [ -f ~/.zplug/init.zsh ]; then
-#  source ~/.zplug/init.zsh
-
-#  # BEGIN: List plugins
-
-#  zplug 'paulirish/git-open', as:plugin
-#  zplug 'greymd/docker-zsh-completion', as:plugin
-
-#  #END: List plugins
-
-#  # Install plugins if there are plugins that have not been installed
-#  if ! zplug check --verbose; then
-#      printf "Install? [y/N]: "
-#      if read -q; then
-#          echo; zplug install
-#      fi
-#  fi
-
-#  # Then, source plugins and add commands to $PATH
-#  zplug load
-#else
-#  echo "zplug not installed, so no plugins available"
-#fi
-
-# }}}
-# Theme --- {{{
-
-# By editing the "ZShell prompt (PS1)" code block, I can achieve pretty much
-# similar visual effects
-
-# export ZSH=$HOME/.oh-my-zsh
-# ZSH_THEME="steeef"
-# source $ZSH/oh-my-zsh.sh
 
 # }}}
