@@ -588,7 +588,7 @@ function +vi-git-color() {
     hook_com[branch]="%B%F{cyan}${hook_com[branch]}"
   elif [[ ! $git_status =~ "working directory clean" ]]; then
     hook_com[branch]="%B%F{red}${hook_com[branch]}"
-  elif [[ $git_status =~ "Your branch is ahead of" ]] || \
+  elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
     [[ -n $git_commit ]]; then
     hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
   elif [[ $git_status =~ "nothing to commit" ]] && \
@@ -622,7 +622,7 @@ function +vi-git-unpushed() {
     else
       # do nothing
     fi
-  elif [[ $git_status =~ "Your branch is ahead of" ]] || \
+  elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
     [[ -n $git_commit ]]; then
     hook_com[unstaged]+='%B%F{yellow}推'
   else
