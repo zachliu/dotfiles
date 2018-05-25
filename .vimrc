@@ -207,6 +207,7 @@ Plug 'mbbill/undotree'
 Plug 'henrik/vim-indexed-search'
 Plug 'tpope/vim-repeat'
 Plug 'machakann/vim-sandwich'
+Plug 'wincent/ferret'
 
 
 " Git
