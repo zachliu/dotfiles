@@ -209,6 +209,9 @@ alias ,,,,,,,,='cd ../../../../../../../..'
 alias ,,,,,,,,,='cd ../../../../../../../../..'
 alias ,,,,,,,,,,='cd ../../../../../../../../../..'
 
+# Open the current directory
+alias open='gnome-open .'
+
 # Vim and Vi
 alias f='vim'
 alias vi='vim'
