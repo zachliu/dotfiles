@@ -219,7 +219,7 @@ function git_color {
   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   if [[ $git_status == "" ]]; then
     echo -e $COLOR_SILVER
-  elif [[ ! $git_status =~ "working directory clean" ]]; then
+  elif [[ ! $git_status =~ "working tree clean" ]]; then
     echo -e $COLOR_RED
   elif [[ $git_status =~ "Your branch is ahead of" ]]; then
     echo -e $COLOR_YELLOW

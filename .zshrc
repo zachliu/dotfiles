@@ -587,7 +587,7 @@ function +vi-git-color() {
   local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   if [[ $git_status == "" ]]; then
     hook_com[branch]="%B%F{cyan}${hook_com[branch]}"
-  elif [[ ! $git_status =~ "working directory clean" ]]; then
+  elif [[ ! $git_status =~ "working tree clean" ]]; then
     hook_com[branch]="%B%F{red}${hook_com[branch]}"
   elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
     [[ -n $git_commit ]]; then
@@ -617,7 +617,7 @@ function +vi-git-unpushed() {
   local git_unpushed_commit="$(git log --branches --not --remotes 2>/dev/null)"
   # Making sure "推" is NOT displayed if i haven't committed yet
   # but if I partically committed, still need to show "推"
-  if [[ ! $git_status =~ "working directory clean" ]]; then
+  if [[ ! $git_status =~ "working tree clean" ]]; then
     if [[ -n $git_unpushed_commit ]]; then
       hook_com[unstaged]+='%B%F{yellow}推'
     else

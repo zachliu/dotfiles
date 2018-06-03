@@ -1229,6 +1229,11 @@ nnoremap <silent> <leader><leader>h gg:exe "resize " . (line('$') + 1)<CR>
 " width
 nnoremap <silent> <leader><leader>w mz:call ResizeWidthToLongestLine()<CR>`z
 
+" Show the length (bytes) of the current word
+nmap bliw :echo 'word' expand('<cword>') 'has byte length' strlen(substitute(expand('<cword>'), '.', 'x', 'g'))<CR>
+" Show the length (characters) of the current word
+nmap cliw :echo 'word' expand('<cword>') 'has char length' strlen(expand('<cword>'))<CR>
+
 " AutoPairs:
 imap <silent><CR> <CR><Plug>AutoPairsReturn
 
