@@ -151,7 +151,7 @@ then
   # load NVM
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   # This loads nvm bash_completion
-  # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
   # the above line causes the "complete:13: command not found: compdef error"
   # https://github.com/robbyrussell/oh-my-zsh/issues/3356
 fi
