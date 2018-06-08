@@ -14,7 +14,6 @@ include () {
 }
 
 include ~/.zprofile
-include ~/.bashrc_local
 include ~/.bash/sensitive
 
 # }}}
@@ -212,7 +211,7 @@ alias ,,,,,,,,,='cd ../../../../../../../../..'
 alias ,,,,,,,,,,='cd ../../../../../../../../../..'
 
 # Open the current directory
-alias open='gnome-open .'
+alias open='gnome-open . &>/dev/null'
 
 # Vim and Vi
 alias f='vim'
