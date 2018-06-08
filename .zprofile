@@ -162,6 +162,14 @@ then
   path_ladd "$HOME_BIN"
 fi
 
+NODENV_ROOT="$HOME/.nodenv"
+if [ -d "$NODENV_ROOT" ]
+then
+  export NODENV_ROOT
+  path_radd "$NODENV_ROOT/bin"
+  eval "$(nodenv init -)"
+fi
+
 # EXPORT THE FINAL, MODIFIED PATH
 export PATH
 

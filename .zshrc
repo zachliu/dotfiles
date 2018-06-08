@@ -20,9 +20,10 @@ include ~/.bash/sensitive
 # }}}
 # Plugins --- {{{
 
+# -----------------------------------------------------------------------------
 # This block makes the init of zshell a bit slow
 # I don't know why
-
+# -----------------------------------------------------------------------------
 #if [ -f ~/.zplug/init.zsh ]; then
 #  source ~/.zplug/init.zsh
 
@@ -48,6 +49,7 @@ include ~/.bash/sensitive
 #else
 #  echo "zplug not installed, so no plugins available"
 #fi
+# -----------------------------------------------------------------------------
 
 # }}}
 # ZShell Options --- {{{
