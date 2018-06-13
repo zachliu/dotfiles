@@ -210,6 +210,9 @@ alias ,,,,,,,,='cd ../../../../../../../..'
 alias ,,,,,,,,,='cd ../../../../../../../../..'
 alias ,,,,,,,,,,='cd ../../../../../../../../../..'
 
+# restore wallpapers
+alias wallpaper='nitrogen --restore'
+
 # Open the current directory
 alias open='gnome-open . &>/dev/null'
 
