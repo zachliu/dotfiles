@@ -617,19 +617,19 @@ function +vi-git-untracked() {
 function +vi-git-unpushed() {
   local git_status="$(git status 2> /dev/null)"
   local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-  local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
+  local git_diff_origin="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
   local git_unpushed_commit="$(git log --branches --not --remotes 2>/dev/null)"
   # Making sure "推" is NOT displayed if i haven't committed yet
   # but if I partically committed, still need to show "推"
-  if [[ ! $git_status =~ "working tree clean" ]]; then
-    if [[ -n $git_unpushed_commit ]]; then
+  if [[ -n $git_unpushed_commit ]]; then
+    hook_com[unstaged]+='%B%F{yellow}推'
+  elif [[ $git_status =~ "working tree clean" ]]; then
+    if [[ -n $git_diff_origin ]] || \
+      [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]]; then
       hook_com[unstaged]+='%B%F{yellow}推'
     else
       # do nothing
     fi
-  elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
-    [[ -n $git_commit ]]; then
-    hook_com[unstaged]+='%B%F{yellow}推'
   else
     # do nothing
   fi
