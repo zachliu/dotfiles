@@ -32,6 +32,7 @@ include ~/.bash/sensitive
 #  zplug "paulirish/git-open", as:plugin
 #  zplug "greymd/docker-zsh-completion", as:plugin
 #  zplug "hejack0207/zsh-pip-plugin", as:plugin
+#  zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
 #  #END: List plugins
 
@@ -698,5 +699,7 @@ stty -ixon
 # fi
 
 quote
+
+source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # }}}
