@@ -309,6 +309,9 @@ alias top='gotop'
 # list all symbolic links
 alias lssl='ls -la | grep "\->"'
 
+# measure zsh startup time
+alias tzsh='time zsh -i -c exit'
+
 # }}}
 # Functions --- {{{
 
