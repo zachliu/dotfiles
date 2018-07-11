@@ -136,6 +136,13 @@ export PIPENV_VENV_IN_PROJECT='doit'
 # }}}
 # Path appends --- {{{
 
+CARGO_ROOT="/home/zach/.cargo/bin"
+if [ -d "$CARGO_ROOT" ]
+then
+  export CARGO_ROOT
+  path_ladd "$CARGO_ROOT"
+fi
+
 PYENV_ROOT="$HOME/.pyenv"
 if [ -d "$PYENV_ROOT" ]
 then
