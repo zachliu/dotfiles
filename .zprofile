@@ -136,6 +136,8 @@ export PIPENV_VENV_IN_PROJECT='doit'
 # }}}
 # Path appends --- {{{
 
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+
 CARGO_ROOT="/home/zach/.cargo/bin"
 if [ -d "$CARGO_ROOT" ]
 then
@@ -148,6 +150,7 @@ if [ -d "$PYENV_ROOT" ]
 then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
+  path_ladd "$PYENV_ROOT/shims"
   eval "$(pyenv init -)"
 fi
 
