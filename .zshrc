@@ -436,6 +436,16 @@ function ve() {
   fi
 }
 
+function nove() {
+  if [ -d "venv/" ]
+  then
+    rm -rf venv/
+    echo "The folder venv/ has been removed."
+  else
+    echo "No venv/ folder here."
+  fi
+}
+
 # Create New Python Repo
 function pynew() {
   if [ $# -ne 1 ]; then
