@@ -215,7 +215,7 @@ alias ,,,,,,,,,,='cd ../../../../../../../../../..'
 alias wallpaper='nitrogen --restore'
 
 # Open the current directory
-alias open='gnome-open . &>/dev/null'
+alias open='xdg-open . &>/dev/null'
 
 # Vim and Vi
 alias f='vim'
