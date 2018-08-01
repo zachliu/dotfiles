@@ -183,4 +183,8 @@ fi
 # EXPORT THE FINAL, MODIFIED PATH
 export PATH
 
+# Remove duplicates in $PATH
+# https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
+typeset -aU path
+
 # }}}
