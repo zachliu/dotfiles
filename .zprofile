@@ -138,6 +138,13 @@ export PIPENV_VENV_IN_PROJECT='doit'
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
+LOCAL_BIN="/home/zach/.local/bin"
+if [ -d "$LOCAL_BIN" ]
+then
+  export LOCAL_BIN
+  path_radd "$LOCAL_BIN"
+fi
+
 CARGO_ROOT="/home/zach/.cargo/bin"
 if [ -d "$CARGO_ROOT" ]
 then
