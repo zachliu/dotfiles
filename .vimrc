@@ -249,7 +249,7 @@ Plug 'hashivim/vim-vagrant'
 Plug 'lervag/vimtex'
 Plug 'tomlion/vim-solidity'
 Plug 'jparise/vim-graphql'
-
+Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'

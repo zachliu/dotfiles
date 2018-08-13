@@ -358,3 +358,10 @@ fi
 export PATH
 
 #}}}
+# SDKMAN --- {{{
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/zach/.sdkman"
+[[ -s "/home/zach/.sdkman/bin/sdkman-init.sh" ]] && source "/home/zach/.sdkman/bin/sdkman-init.sh"
+
+#}}}
