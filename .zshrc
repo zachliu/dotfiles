@@ -249,7 +249,7 @@ alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 
 alias sl='ls'
-alias ll='ls -alF'
+alias ll='ls -ahlF'
 alias la='ls -A'
 alias l='ls -CF'
 
