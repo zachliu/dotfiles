@@ -244,7 +244,7 @@ alias igrep="grep --perl-regexp -Ir \
 alias t='~/tmuxlaunch.sh'
 
 # enable color support of ls and also add handy aliases
-alias ls='ls --color=auto'
+alias ls='exa --color=auto'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 

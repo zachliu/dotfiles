@@ -76,7 +76,7 @@ LS_COLORS+="or=31:"
 #   mi 	Non-existent file pointed to by a symbolic link (visible with ls -l)
 LS_COLORS+="mi=0:"
 #   ex 	File which is executable (ie. has 'x' set in permissions).
-LS_COLORS+="ex=1;92:"
+# LS_COLORS+="ex=1;92:"
 # additional file types as-defined by their extension
 LS_COLORS+="*.rpm=90"
 
