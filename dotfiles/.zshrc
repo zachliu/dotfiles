@@ -243,8 +243,13 @@ include ~/.bash/sensitive
 #  # use double quotes: the plugin manager author says we must for some reason
 #  zplug "paulirish/git-open", as:plugin
 #  zplug "greymd/docker-zsh-completion", as:plugin
-#  zplug "hejack0207/zsh-pip-plugin", as:plugin
-#  zplug "zsh-users/zsh-syntax-highlighting", defer:2
+#  zplug "zsh-users/zsh-syntax-highlighting", as:plugin
+#  zplug "nobeans/zsh-sdkman", as:plugin
+#  zplug "junegunn/fzf-bin", \
+#    from:gh-r, \
+#    as:command, \
+#    rename-to:fzf
+
 
 #  #END: List plugins
 
@@ -405,6 +410,27 @@ bindkey -M menuselect '^l' forward-char
 # delete function characters to include
 # Omitted: /=
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+
+# }}}
+# FZF --- {{{
+
+# # Load zsh script
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# # Use fd to generate the list for file and directory completion
+# _fzf_compgen_path() {
+#   fd -c always --hidden --follow --exclude ".git" . "$1"
+# }
+
+# _fzf_compgen_dir() {
+#   fd -c always --hidden --type d --follow --exclude ".git" . "$1"
+# }
+
+# # <C-t> does fzf; <C-i> does normal stuff; <C-o> does the same thing as enter
+# export FZF_COMPLETION_TRIGGER=''
+# export FZF_DEFAULT_OPTS="--bind=ctrl-o:accept --ansi"
+# bindkey '^T' fzf-completion
+# bindkey '^I' $fzf_default_completion
 
 # }}}
 # Aliases --- {{{
@@ -769,7 +795,7 @@ function quote() {
     fortune; \
     echo; \
     echo "Daily word: "; \
-    shuf -n 1 ~/dotfiles/gre_words.txt;)
+    shuf -n 1 ~/.gre_words.txt;)
   echo -e "$cowsay_quote" | cowsay -n | cowsay -n -f gnu | lolcat;
   echo;
 }
