@@ -1,12 +1,13 @@
-# System Configurations
-This a repository of my personal settings across Linux systems.
+This a repository of my personal settings across Unix tools.
 
-Repository contains configuration files for the following programs:
+Feel free to repurpose these files in any way you so-desire.
 
-* zsh
-* bash
-* vim
-* pylint
-* tmux
+OS placement is automated with the help of GNU Stow. Simply run the following
+command from this directory to place the files in the proper location on your
+OS:
 
-Written by: Samuel Roeca, Byron Kim, Zach Liu
+```bash
+make dotfiles
+```
+
+Written by: Not me

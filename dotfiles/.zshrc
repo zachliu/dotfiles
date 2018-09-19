@@ -174,6 +174,13 @@ then
   eval "$(pyenv init -)"
 fi
 
+RBENV_ROOT="$HOME/.rbenv"
+if [ -d "$RBENV_ROOT" ]; then
+  export RBENV_ROOT
+  path_ladd "$RBENV_ROOT/bin"
+  eval "$(rbenv init -)"
+fi
+
 NVM_DIR="$HOME/.nvm"
 if [ -d "$NVM_DIR" ]
 then
