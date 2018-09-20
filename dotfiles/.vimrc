@@ -1191,7 +1191,7 @@ let g:markdown_composer_open_browser = 0
 let g:requirements#detect_filename_pattern = 'requirements.*\.txt'
 
 " QuickScope: great plugin helping with f and t
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+let g:qs_highlight_on_keys = ['f', 'F']
 
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
@@ -1366,8 +1366,8 @@ nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 
 " MoveTabs: moving forward, backward, and to number with vim tabs
-" nnoremap T gt
-" nnoremap t gT
+nnoremap T gt
+nnoremap t gT
 
 inoremap <C-e> <Esc>A
 inoremap <C-a> <Esc>I
