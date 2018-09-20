@@ -5,9 +5,9 @@
 "     when in Normal mode.
 " Additional Notes --------- {{{
 "
-" This is my .vimrc.
-" I use Linux Mint 18.X.
-" My workflow is terminal-based, so I use this with vim-nox.
+" This is not entirely my own .vimrc. I copied and pasted from others.
+" I always use the latest Linux Mint.
+" My workflow is terminal-based and I might try Neovim.
 "
 " PreRequisites:
 "   To get the most out of this vimrc, please install the following
@@ -101,11 +101,8 @@ set completeopt=menuone,longest,preview
 " Enable buffer deletion instead of having to write each buffer
 set hidden
 
-" Mouse: remove GUI mouse support
-" This support is actually annoying, because I may occasionally
-" use the mouse to select text or something, and don't actually
-" want the cursor to move
-set mouse=""
+" Mouse: enable GUI mouse support in all modes
+set mouse=a
 
 " SwapFiles: prevent their creation
 set nobackup
@@ -120,9 +117,9 @@ if (exists('+colorcolumn'))
   highlight ColorColumn ctermbg=9
 endif
 
-" Don't highlight all search results
-set hlsearch
+" Search result highlighting
 set incsearch
+set hlsearch
 
 " Remove query for terminal version
 " This prevents un-editable garbage characters from being printed
@@ -131,13 +128,7 @@ set t_RV=
 
 filetype plugin indent on
 
-augroup cursorline_setting
-  autocmd!
-  autocmd WinEnter,BufEnter * setlocal cursorline
-  autocmd WinLeave * setlocal nocursorline
-augroup END
-
-set dictionary=$HOME/dotfiles/american-english-with-propcase
+set dictionary=$HOME/.american-english-with-propcase.txt
 
 set spelllang=en_us
 
@@ -158,29 +149,27 @@ set grepprg=rg\ --vimgrep
 
 " Pasting: enable pasting without having to do 'set paste'
 " NOTE: this is actually typed <C-/>, but vim thinks this is <C-_>
-
 set pastetoggle=<C-_>
-
 
 " Turn off complete vi compatibility
 set nocompatible
 
 " Enable using local vimrc
-" set exrc
+set exrc
 
 " Make terminal zsh
-" set shell=/usr/bin/zsh
+set shell=/usr/bin/zsh
 
 " Make sure numbering is set
-" set number
+set number
 
 " Set split settings (options: splitright, splitbelow)
-" set splitright
+set splitright
 
 " Redraw window whenever I've regained focus
-" augroup redraw_on_refocus
-"   au FocusGained * :redraw!
-" augroup END
+augroup redraw_on_refocus
+  au FocusGained * :redraw!
+augroup END
 
 " }}}
 " General: Plugin Install --------------------- {{{
@@ -188,34 +177,37 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 " Basics
-Plug 'itchyny/lightline.vim'  " Plug 'airblade/vim-rooter'
+Plug 'itchyny/lightline.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
-Plug 'scrooloose/nerdtree'  " Plug 'ctrlpvim/ctrlp.vim'
-Plug 't9md/vim-choosewin' " Plug 'dkprice/vim-easygrep'
+Plug 'scrooloose/nerdtree'
+Plug 't9md/vim-choosewin'
 Plug 'mhinz/vim-startify'
 Plug 'wincent/terminus'
 Plug 'gcmt/taboo.vim'
 Plug 'yssl/QFEnter'
 Plug 'djoshea/vim-autoread'
-Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'simeji/winresizer'
-Plug 'vimwiki/vimwiki'
-Plug 'justinmk/vim-sneak'
-Plug 'bronson/vim-trailing-whitespace'
 Plug 'mbbill/undotree'
-Plug 'henrik/vim-indexed-search'
 Plug 'tpope/vim-repeat'
+Plug 'henrik/vim-indexed-search'
 Plug 'machakann/vim-sandwich'
+Plug 'unblevable/quick-scope'
+Plug 'fcpg/vim-altscreen'
+Plug 'sjl/strftimedammit.vim'
 Plug 'wincent/ferret'
+Plug 'bronson/vim-visual-star-search'
 
+" Relative Numbering
+Plug 'myusuf3/numbers.vim'
+
+" Fuzzy finder
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 
 " Git
-Plug 'tpope/vim-fugitive'
+Plug 'lambdalisue/gina.vim'
 Plug 'junegunn/gv.vim'
-
-" Commands run in vim's virtual screen and don't pollute main shell
-Plug 'fcpg/vim-altscreen'
 
 " Basic coloring
 Plug 'NLKNguyen/papercolor-theme'
@@ -225,9 +217,9 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-abolish'
 Plug 'jiangmiao/auto-pairs'
 
-" Language-specific syntax
+" Syntax highlighting
 Plug 'derekwyatt/vim-scala',
-Plug 'wting/rust.vim'
+Plug 'rust-lang/rust.vim'
 Plug 'hdima/python-syntax',
 Plug 'autowitch/hive.vim'
 Plug 'elzr/vim-json',
@@ -249,16 +241,36 @@ Plug 'hashivim/vim-vagrant'
 Plug 'lervag/vimtex'
 Plug 'tomlion/vim-solidity'
 Plug 'jparise/vim-graphql'
+Plug 'magicalbanana/sql-syntax-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'groenewege/vim-less'
+Plug 'farfanoide/vim-kivy'
+Plug 'raimon49/requirements.txt.vim'
+Plug 'chr4/nginx.vim'
+Plug 'othree/html5.vim'
+Plug 'pearofducks/ansible-vim'
 Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
-Plug 'jmcantrell/vim-virtualenv'
 Plug 'marijnh/tern_for_vim', { 'do': 'npm install'  }  " for javascript
 " Additional requirements:
-"   ln -s /home/sroeca/configsettings/.tern-project /home/sroeca/.tern-project
+"   ln -s /home/zliu/dotfiles/dotfiles/.tern-project /home/zliu/.tern-project
 Plug 'Rip-Rip/clang_complete'
+" for C header filename completion:
+Plug 'xaizek/vim-inccomplete'
 Plug 'eagletmt/neco-ghc'
+Plug 'racer-rust/vim-racer'
+" Addional requirements:
+"   cargo install racer
+"   rustup component add rust-src
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+Plug 'fatih/vim-go'
+Plug 'wannesm/wmgraphviz.vim'  " dotlanguage
+" note: must run 'gem install neovim' to get this to work
+" might require the neovim headers
+Plug 'juliosueiras/vim-terraform-completion'
 
 " Tagbar
 Plug 'majutsushi/tagbar'
@@ -267,33 +279,35 @@ Plug 'lvht/tagbar-markdown'
 "   sudo npm install -g jsctags
 "   sudo apt install -y php
 
-" Indentation
+" Indentation-only
 Plug 'hynek/vim-python-pep8-indent'
 Plug 'Yggdroot/indentLine'
-Plug 'tell-k/vim-autopep8'
-
-" Web Development - Javascript
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
-Plug 'groenewege/vim-less'
-Plug 'heavenshell/vim-jsdoc'
-Plug 'maksimr/vim-jsbeautify'
 
 " Web Development - General
-Plug 'mattn/emmet-vim'
 Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-ragtag'
+Plug 'heavenshell/vim-jsdoc'
 
 " Rainbow
 Plug 'junegunn/rainbow_parentheses.vim'
 
 " Writing
 Plug 'dkarter/bullets.vim'
+Plug 'gu-fan/riv.vim'
 
-" PlantUML
-Plug 'aklt/plantuml-syntax'
+" Previewers
+Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'tyru/open-browser.vim'
 Plug 'weirongxu/plantuml-previewer.vim'
+
+" Code prettifiers
+Plug 'b4b4r07/vim-sqlfmt'
+Plug 'tell-k/vim-autopep8'
+Plug 'maksimr/vim-jsbeautify'
+Plug 'alx741/vim-stylishask'
+
+" C Programming
+Plug 'ericcurtin/CurtineIncSw.vim'
 
 call plug#end()
 
@@ -305,15 +319,18 @@ augroup filetype_recognition
   autocmd BufNewFile,BufRead,BufEnter *.md,*.markdown set filetype=markdown
   autocmd BufNewFile,BufRead,BufEnter *.hql,*.q set filetype=hive
   autocmd BufNewFile,BufRead,BufEnter *.config set filetype=yaml
-  autocmd BufNewFile,BufRead,BufEnter *.bowerrc,*.babelrc,*.eslintrc
+  autocmd BufNewFile,BufRead,BufEnter *.bowerrc,*.babelrc,*.eslintrc,*.slack-term
         \ set filetype=json
   autocmd BufNewFile,BufRead,BufEnter *.handlebars set filetype=html
   autocmd BufNewFile,BufRead,BufEnter *.m,*.oct set filetype=octave
   autocmd BufNewFile,BufRead,BufEnter *.jsx set filetype=javascript.jsx
+  autocmd BufNewFile,BufRead,BufEnter *.gs set filetype=javascript
   autocmd BufNewFile,BufRead,BufEnter *.cfg,*.ini,.coveragerc,.pylintrc
         \ set filetype=dosini
   autocmd BufNewFile,BufRead,BufEnter *.tsv set filetype=tsv
   autocmd BufNewFile,BufRead,BufEnter .zshrc set filetype=sh
+  autocmd BufNewFile,BufRead,BufEnter Dockerfile.* set filetype=Dockerfile
+  autocmd BufNewFile,BufRead,BufEnter Makefile.* set filetype=make
 augroup END
 
 augroup filetype_vim
@@ -333,13 +350,29 @@ augroup END
 augroup indentation_sr
   autocmd!
   autocmd Filetype * setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=8
-  autocmd Filetype python,c,elm,haskell,terraform,markdown
+  autocmd Filetype python,c,elm,haskell,markdown,rust,rst,kv,nginx
         \ setlocal shiftwidth=4 softtabstop=4 tabstop=8
   autocmd Filetype dot setlocal autoindent cindent
-  autocmd Filetype make,tsv,votl
+  autocmd Filetype make,tsv,votl,go
         \ setlocal tabstop=4 softtabstop=0 shiftwidth=4 noexpandtab
   " Prevent auto-indenting from occuring
   autocmd Filetype yaml setlocal indentkeys-=<:>
+
+  " Rust-specifc 'indentation overrides'
+  " This is no longer necessary, but keeping in case I need
+  " to do something with ctags again
+  "   assumes working with rust.vim, which uses ctags
+  "     cino-m
+  "       c = c1 && (
+  "           c2 ||
+  "           c3
+  "       ) && c4;
+  " autocmd Filetype rust setlocal cinoptions+='(s,m1'
+  "     cino-(
+  "        if (c1 && (c2 ||
+  "                   c3))
+  "        foo;
+  " autocmd Filetype rust setlocal cinoptions+='(0'
 augroup END
 
 " }}}
@@ -347,12 +380,18 @@ augroup END
 
 " note: indenting and de-indenting in insert mode are:
 "   <C-t> and <C-d>
+"   formatting hard line breaks
+"     NORMAL
+"       gqap => format current paragraph
+"       gq => format selection
+"     VISUAL
+"       J => join all lines
+
 augroup writing
   autocmd!
   autocmd FileType markdown :setlocal wrap linebreak nolist
-  autocmd FileType markdown :setlocal colorcolumn=0
   autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal wrap linebreak nolist
-  autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal colorcolumn=0
+  autocmd BufNewFile,BufRead *.html,*.txt :setlocal colorcolumn=0
 augroup END
 
 " }}}
@@ -380,75 +419,6 @@ command! -nargs=1 Def call ReadDictToPreview(<q-args>, "gcide")
 command! -nargs=1 Syn call ReadDictToPreview(<q-args>, "moby-thesaurus")
 
  " }}}
-" General: (relative) line number display ------------- {{{
-
-function! ToggleRelativeNumber()
-  if &rnu
-    set norelativenumber
-  else
-    set relativenumber
-  endif
-endfunction
-
-function! RNUInsertEnter()
-  if &rnu
-    let w:line_number_state = 'rnu'
-    set norelativenumber
-  else
-    let w:line_number_state = 'nornu'
-  endif
-endfunction
-
-function! RNUInsertLeave()
-  if w:line_number_state == 'rnu'
-    set relativenumber
-  else
-    set norelativenumber
-    let w:line_number_state = 'nornu'
-  endif
-endfunction
-
-function! RNUWinEnter()
-  if exists('w:line_number_state')
-    if w:line_number_state == 'rnu'
-      set relativenumber
-    else
-      set norelativenumber
-    endif
-  else
-    set relativenumber
-    let w:line_number_state = 'rnu'
-  endif
-endfunction
-
-function! RNUWinLeave()
-  if &rnu
-    let w:line_number_state = 'rnu'
-  else
-    let w:line_number_state = 'nornu'
-  endif
-  set norelativenumber
-endfunction
-
-" autocmd that will set up the w:created variable
-autocmd VimEnter * autocmd WinEnter * let w:created=1
-autocmd VimEnter * let w:created=1
-set number relativenumber
-augroup rnu_nu
-  autocmd!
-  "Initial window settings
-  autocmd WinEnter * if !exists('w:created') |
-        \ setlocal number relativenumber |
-        \ endif
-  " Don't have relative numbers during insert mode
-  autocmd InsertEnter * :call RNUInsertEnter()
-  autocmd InsertLeave * :call RNUInsertLeave()
-  " Set and unset relative numbers when buffer is active
-  autocmd WinEnter * :call RNUWinEnter()
-  autocmd WinLeave * :call RNUWinLeave()
-augroup end
-
-" }}}
 " General: Folding Settings --------------- {{{
 
 augroup fold_settings
@@ -479,8 +449,8 @@ match EOLWS /\s\+$/
 augroup whitespace_color
   autocmd!
   autocmd ColorScheme * highlight EOLWS ctermbg=red guibg=red
-  autocmd InsertEnter * match EOLWS /\s\+\%#\@<!$/
-  autocmd InsertLeave * match EOLWS /\s\+$/
+  autocmd InsertEnter * highlight EOLWS NONE
+  autocmd InsertLeave * highlight EOLWS ctermbg=red guibg=red
 augroup END
 
 augroup fix_whitespace_save
@@ -492,19 +462,23 @@ augroup END
 " General: Syntax highlighting ---------------- {{{
 
 " Papercolor: options
-let g:PaperColor_Theme_Options = {
-  \   'language': {
-  \     'python': {
-  \       'highlight_builtins' : 1
-  \     },
-  \     'cpp': {
-  \       'highlight_standard_library': 1
-  \     },
-  \     'c': {
-  \       'highlight_builtins' : 1
-  \     }
-  \   }
-  \ }
+let g:PaperColor_Theme_Options = {}
+let g:PaperColor_Theme_Options['theme'] = {
+      \     'default': {
+      \       'transparent_background': 1
+      \     }
+      \ }
+let g:PaperColor_Theme_Options['language'] = {
+      \     'python': {
+      \       'highlight_builtins' : 1
+      \     },
+      \     'cpp': {
+      \       'highlight_standard_library': 1
+      \     },
+      \     'c': {
+      \       'highlight_builtins' : 1
+      \     }
+      \ }
 
 " Python: Highlight self and cls keyword in class definitions
 augroup python_syntax
@@ -520,6 +494,12 @@ augroup javascript_syntax
   autocmd FileType javascript.jsx syn keyword jsBooleanTrue this
 augroup end
 
+augroup qs_colors
+  autocmd!
+  autocmd ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
+  autocmd ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
+augroup END
+
 " Syntax: select global syntax scheme
 " Make sure this is at end of section
 try
@@ -530,6 +510,12 @@ catch
 endtry
 
 hi CursorLine cterm=NONE
+
+augroup cursorline_setting
+  autocmd!
+  autocmd WinEnter,BufEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+augroup END
 
 " }}}
 " General: Resize Window --- {{{
@@ -573,19 +559,78 @@ function! ResizeWindowHeight()
 endfunction
 
 " }}}
-" Plugin: Wiki --- {{{
+"  General: Color Column and Text Width --- {{{
 
-" Wiki is only valid when in pre-defined wiki area
-let g:vimwiki_global_ext = 0
+augroup color_column_and_text_width
+  autocmd!
+  autocmd FileType gitcommit :setlocal colorcolumn=72 textwidth=72
+augroup END
 
-" Define wikis
-let wiki_personal = {}
-let wiki_personal.index = 'main'
-let wiki_personal.ext = '.md'
-let wiki_personal.path = '~/Wiki/'
+"  }}}
+"  Plugin: Vim-Plug --- {{{
 
-" Organize them in a list
-let g:vimwiki_list = [wiki_personal]
+" Plug update and upgrade
+function! _PU()
+  exec 'PlugUpdate'
+  exec 'PlugUpgrade'
+endfunction
+command! PU call _PU()
+
+"  }}}
+" Plugin: Riv.Vim --- {{{
+
+" Notes (because this Plugin's documentation sucks)
+"
+" Titles:
+"   <C-e>s{0,1,2,3,4,5,6} is the 7 levels of titles
+" Lists:
+"   Commands:
+"     '=' makes list re-number
+"     <C-e>l{1,2,3,4,5} sets list to different list types
+"   List Types:
+"     1) '*'
+"     2) '1.'
+"     3) 'a.'
+"     4) 'A)'
+"     5) 'i)'
+" Tables:
+"   <C-e>tc <- creates a table
+"   Insert Mode:
+"     typing | creates a new column
+"     Header row + new row = <Alt>Enter
+"     New row = Just type the correct columns then get into normal mode
+
+let g:riv_disable_folding = 1
+let g:riv_global_leader = '<C-E>'
+let g:riv_web_browser = 'firefox'
+let g:riv_disable_indent = 0
+let g:riv_disable_del = 0
+let g:riv_auto_format_table = 1
+let g:riv_auto_rst2html = 0
+
+let g:instant_rst_localhost_only = 1
+
+" }}}
+" Plugin: Preview Compiled Stuff in Viewer --- {{{
+
+function! _Preview()
+  if &filetype ==? 'rst'
+    exec 'terminal restview %'
+    exec "normal \<C-O>"
+  elseif &filetype ==? 'markdown'
+    " from markdown-preview.vim
+    exec 'MarkdownPreview'
+  elseif &filetype ==? 'dot'
+    " from wmgraphviz.vim
+    exec 'GraphvizInteractive'
+  elseif &filetype ==? 'plantuml'
+    " from plantuml-previewer.vim
+    exec 'PlantumlOpen'
+  else
+    echo 'Preview not supported for this filetype'
+  endif
+endfunction
+command! Preview call _Preview()
 
 " }}}
 "  Plugin: Rainbow Parentheses --- {{{
@@ -602,73 +647,96 @@ augroup END
 "  }}}
 "  Plugin: NERDTree --- {{{
 
+let g:NERDTreeAutoDeleteBuffer = 1
+let g:NERDTreeCaseSensitiveSort = 0
+let g:NERDTreeMapJumpFirstChild = '<C-k>'
+let g:NERDTreeMapJumpLastChild = '<C-j>'
+let g:NERDTreeMapJumpNextSibling = '<C-n>'
+let g:NERDTreeMapJumpPrevSibling = '<C-p>'
 let g:NERDTreeMapOpenInTab = '<C-t>'
 let g:NERDTreeMapOpenInTabSilent = ''
 let g:NERDTreeMapOpenSplit = '<C-s>'
 let g:NERDTreeMapOpenVSplit = '<C-v>'
+let g:NERDTreeShowHidden = 1
 let g:NERDTreeShowLineNumbers = 1
-let g:NERDTreeCaseSensitiveSort = 0
+let g:NERDTreeSortOrder = ['*', '\/$']
 let g:NERDTreeWinPos = 'left'
 let g:NERDTreeWinSize = 31
-let g:NERDTreeAutoDeleteBuffer = 1
-let g:NERDTreeSortOrder = ['*', '\/$']
+
 let g:NERDTreeIgnore=[
       \'venv$[[dir]]',
+      \'.venv$[[dir]]',
       \'__pycache__$[[dir]]',
       \'.egg-info$[[dir]]',
       \'node_modules$[[dir]]',
+      \'elm-stuff$[[dir]]',
       \'\.aux$[[file]]',
       \'\.toc$[[file]]',
       \'\.pdf$[[file]]',
       \'\.out$[[file]]',
       \'\.o$[[file]]',
       \]
+
 function! NERDTreeToggleCustom()
-    if &filetype ==? 'startify'
-      exec 'NERDTreeToggle'
-    else
-      if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
-        " if NERDTree is open in window in current tab...
-        exec 'NERDTreeClose'
-      else
-        exec 'NERDTree %'
-      endif
-    endif
+  if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
+    " if NERDTree is open in window in current tab...
+    exec 'NERDTreeClose'
+  else
+    exec 'NERDTree %'
+  endif
 endfunction
+
+function! s:CloseIfOnlyControlWinLeft()
+  if winnr("$") != 1
+    return
+  endif
+  if (exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1)
+        \ || &buftype == 'quickfix'
+    q
+  endif
+endfunction
+
+augroup CloseIfOnlyControlWinLeft
+  au!
+  au BufEnter * call s:CloseIfOnlyControlWinLeft()
+augroup END
 
 "  }}}
-" Plugin: Ctrl p --- {{{
+" Plugin: fzf --- {{{
 
-let g:ctrlp_mruf_relative = 1 " show only MRU files in the cwd
-let g:ctrlp_user_command = [
-      \'.git',
-      \'cd %s && git ls-files -co --exclude-standard']
-" open first in current window and others as hidden
-let g:ctrlp_open_multiple_files = '1r'
-let g:ctrlp_use_caching = 0
-let g:ctrlp_switch_buffer = 0
+command! -bang -nargs=* Grep call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --case-sensitive --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+command! -bang -nargs=* GrepIgnoreCase call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
 
-" Cycles through windows until it finds a modifiable buffer
-" First checks if startify and runs command if so
-" it then runs ctrl-p there
-" if there are no modifiable buffers, it does not run control p
-" this prevents ctrl-p from opening in NERDTree, QuickFix, or other
-function! CtrlPCommand()
-    let current_window_number = 0
-    let total_window_number = winnr('$')
-    if &filetype ==? 'startify'
-      exec 'CtrlPCurWD'
-      return
-    endif
-    while !&modifiable && current_window_number < total_window_number
-        exec 'wincmd w'
-        let current_window_number = current_window_number + 1
-    endwhile
-    if current_window_number < total_window_number
-      exec 'CtrlPCurWD'
-    endif
+" An action can be a reference to a function that processes selected lines
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
 endfunction
-let g:ctrlp_cmd = 'call CtrlPCommand()'
+
+function! FZFFilesAvoidNerdtree()
+  if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
+    exe "normal! \<c-w>\<c-w>"
+  endif
+  " getcwd(-1, -1) tells it to always use the global working directory
+  call fzf#run(fzf#wrap({'source': 'fd -c always --type f --hidden --follow --exclude ".git"', 'dir': getcwd(-1, -1)}))
+endfunction
+
+function! FZFBuffersAvoidNerdtree()
+  if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
+    exe "normal! \<c-w>\<c-w>"
+  endif
+  " getcwd(-1, -1) tells it to always use the global working directory
+  execute 'Buffers'
+endfunction
+
+let g:fzf_action = {
+      \ 'ctrl-o': 'edit',
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-s': 'split',
+      \ 'ctrl-v': 'vsplit',
+      \ 'ctrl-l': function('s:build_quickfix_list'),
+      \}
 
 " }}}
 " Plugin: Lightline ---------------- {{{
@@ -719,13 +787,13 @@ let g:lightline.component = {
 
 let g:lightline.active.left = [
       \ [ 'mode', 'paste', 'spell' ],
-      \ [ 'fugitive', 'readonly', 'filename' ],
+      \ [ 'gina', 'readonly', 'filename' ],
       \ [ 'ctrlpmark' ]
       \ ]
 
 let g:lightline.inactive.left = [
       \ [ 'mode', 'paste', 'spell' ],
-      \ [ 'fugitive', 'readonly', 'filename' ],
+      \ [ 'gina', 'readonly', 'filename' ],
       \ [ 'ctrlpmark' ]
       \ ]
 
@@ -742,10 +810,9 @@ let g:lightline.inactive.right = [
       \ ]
 
 let g:lightline.component_function = {
-      \ 'fugitive': 'LightlineFugitive',
+      \ 'gina': 'LightlineGina',
       \ 'filename': 'LightlineFilename',
-      \ 'mode': 'LightlineMode',
-      \ 'ctrlpmark': 'CtrlPMark'
+      \ 'mode': 'LightlineMode'
       \ }
 
 function! LightlineModified()
@@ -760,7 +827,7 @@ function! LightlineFilename()
   let cwd = getcwd()
   let fname = substitute(expand("%:p"), l:cwd . "/" , "", "")
   return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
-        \ fname == '__Tagbar__' ? g:lightline.fname :
+        \ fname =~ '__Tagbar__.*' ? '' :
         \ fname =~ '__Gundo\|NERD_tree' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
@@ -770,11 +837,11 @@ function! LightlineFilename()
         \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
-function! LightlineFugitive()
+function! LightlineGina()
   try
-    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler'
       let mark = '⎇ '
-      let branch = fugitive#head()
+      let branch = gina#component#repo#branch()
       return branch !=# '' ? mark.branch : ''
     endif
   catch
@@ -784,8 +851,7 @@ endfunction
 
 function! LightlineMode()
   let fname = expand('%:t')
-  return fname == '__Tagbar__' ? 'Tagbar' :
-        \ fname == 'ControlP' ? 'CtrlP' :
+  return fname =~ '__Tagbar__.*' ? 'Tagbar' :
         \ fname == '__Gundo__' ? 'Gundo' :
         \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
         \ fname =~ 'NERD_tree' ? 'NERDTree' :
@@ -793,35 +859,6 @@ function! LightlineMode()
         \ &ft == 'vimfiler' ? 'VimFiler' :
         \ &ft == 'vimshell' ? 'VimShell' :
         \ winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
-function! CtrlPMark()
-  if expand('%:t') =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item')
-    call lightline#link('iR'[g:lightline.ctrlp_regex])
-    return lightline#concatenate([
-          \ g:lightline.ctrlp_prev,
-          \ g:lightline.ctrlp_item,
-          \ g:lightline.ctrlp_next], 0)
-  else
-    return ''
-  endif
-endfunction
-
-let g:ctrlp_status_func = {
-      \ 'main': 'CtrlPStatusFunc_1',
-      \ 'prog': 'CtrlPStatusFunc_2',
-      \ }
-
-function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-  let g:lightline.ctrlp_regex = a:regex
-  let g:lightline.ctrlp_prev = a:prev
-  let g:lightline.ctrlp_item = a:item
-  let g:lightline.ctrlp_next = a:next
-  return lightline#statusline(0)
-endfunction
-
-function! CtrlPStatusFunc_2(str)
-  return lightline#statusline(0)
 endfunction
 
 let g:tagbar_status_func = 'TagbarStatusFunc'
@@ -832,7 +869,74 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
 endfunction
 
 " }}}
+" Plugin: Gina --- {{{
+" This plugin is awesome
+" Just Gina followed by whatever I'd normally type in Git
+
+for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
+  call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
+endfor
+
+for gina_cmd in ['diff']
+  call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
+endfor
+
+call gina#custom#command#option('commit', '--verbose')
+call gina#custom#command#option('branch', '--verbose|--all')
+
+let g:gina#command#blame#use_default_mappings = 0
+call gina#custom#command#option('blame', '--width', '79')
+
+" Custom mappings for Gina blame buffer
+call gina#custom#mapping#nmap(
+      \ 'blame', 'c',
+      \ '<Plug>(gina-blame-echo)'
+      \)
+call gina#custom#mapping#nmap(
+      \ 'blame', '<CR>',
+      \ '<Plug>(gina-blame-open)'
+      \)
+call gina#custom#mapping#nmap(
+      \ 'blame', '<c-i>',
+      \ '<Plug>(gina-blame-open)'
+      \)
+call gina#custom#mapping#nmap(
+      \ 'blame', '<Backspace>',
+      \ '<Plug>(gina-blame-back)'
+      \)
+call gina#custom#mapping#nmap(
+      \ 'blame', '<c-o>',
+      \ '<Plug>(gina-blame-back)'
+      \)
+
+let g:gina#command#blame#formatter#format = '%in|%ti|%au|%su'
+let g:gina#command#blame#formatter#timestamp_months = 0
+let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%d"
+let g:gina#command#blame#formatter#timestamp_format2 = "%Y-%m-%d"
+
+function! _Gpush()
+  let current_branch = gina#component#repo#branch()
+  execute 'Gina push -u origin' current_branch
+endfunction
+
+function! _Gpull()
+  let current_branch = gina#component#repo#branch()
+  execute 'Gina pull origin' current_branch
+endfunction
+
+function! _Gblame()
+  let current_file = expand('%:t')
+  execute 'Gina blame'
+  execute 'TabooRename blame:' . current_file
+endfunction
+
+command! Gpush call _Gpush()
+command! Gpull call _Gpull()
+command! Gblame call _Gblame()
+
+" }}}
 "  Plugin: Tagbar ------ {{{
+
 let g:tagbar_map_showproto = '`'
 let g:tagbar_show_linenumbers = -1
 let g:tagbar_autofocus = 1
@@ -873,19 +977,20 @@ let g:tagbar_type_haskell = {
         \ 'type'   : 't'
     \ }
 \ }
-let g:tagbar_type_rust = {
-    \ 'ctagstype' : 'rust',
-    \ 'kinds' : [
-        \'T:types,type definitions',
-        \'f:functions,function definitions',
-        \'g:enum,enumeration names',
-        \'s:structure names',
-        \'m:modules,module names',
-        \'c:consts,static constants',
-        \'t:traits,traits',
-        \'i:impls,trait implementations',
-    \]
-    \}
+let g:tagbar_type_rst = {
+      \ 'ctagstype': 'rst',
+      \ 'ctagsbin' : '~/src/lib/rst2ctags/rst2ctags.py',
+      \ 'ctagsargs' : '-f - --sort=yes',
+      \ 'kinds' : [
+      \ 's:sections',
+      \ 'i:images'
+      \ ],
+      \ 'sro' : '|',
+      \ 'kind2scope' : {
+      \ 's' : 'section',
+      \ },
+      \ 'sort': 0,
+      \ }
 
 "  }}}
 " Plugin: Startify ------------ {{{
@@ -933,6 +1038,43 @@ function! MyVimTexDocHandler(context)
 endfunction
 
 "  }}}
+"  Plugin: AutoPairs --- {{{
+
+" AutoPairs:
+" unmap CR due to incompatibility with clang-complete
+let g:AutoPairsMapCR = 0
+let g:AutoPairs = {
+      \ '(':')',
+      \ '[':']',
+      \ '{':'}',
+      \ "'":"'",
+      \ '"':'"',
+      \ '`':'`'
+      \ }
+augroup autopairs_filetype_overrides
+  autocmd FileType rust let b:AutoPairs = {
+        \ '(':')',
+        \ '[':']',
+        \ '{':'}',
+        \ '"':'"',
+        \ '`':'`'
+        \ }
+  autocmd FileType plantuml let b:AutoPairs = {
+        \ '(':')',
+        \ '[':']',
+        \ '{':'}',
+        \ '"':'"',
+        \ '`':'`'
+        \ }
+  autocmd FileType tex let b:AutoPairs = {
+        \ '(':')',
+        \ '[':']',
+        \ '{':'}',
+        \ '`': "'"
+        \ }
+augroup END
+
+"  }}}
 "  Plugin: Terraform Syntax --- {{{
 
 let g:terraform_align=1
@@ -958,16 +1100,11 @@ let g:terraform_remap_spacebar=1
 " . to start command-line with :Git [CURSOR] SHA à la fugitive
 " q to close
 
+let g:agit_max_log_lines = 500
+
 " UndoTree:
 let g:undotree_SetFocusWhenToggle = 1
 let g:undotree_WindowLayout = 3
-
-" VimRooter:
-let g:rooter_manual_only = 1
-
-" PythonVirtualenv:
-" necessary for jedi-vim to discover virtual environments
-let g:virtualenv_auto_activate = 1
 
 " QFEnter:
 let g:qfenter_keymap = {}
@@ -1016,11 +1153,6 @@ let g:jsx_ext_required = 0
 " JsDoc:
 let g:jsdoc_enable_es6 = 1
 
-" EasyGrep: - use git grep
-let g:EasyGrepCommand = 1 " use grep, NOT vimgrep
-let g:EasyGrepJumpToMatch = 0 " Do not jump to the first match
-let g:EasyGrepReplaceWindowMode = 2 " overwrite existing buffer; no new tabs
-
 " IndentLines:
 let g:indentLine_enabled = 0  " indentlines disabled by default
 
@@ -1039,17 +1171,27 @@ let g:bullets_enabled_file_types = [
     \ 'scratch'
     \]
 
-" AutoPairs:
-" unmap CR due to incompatibility with clang-complete
-let g:AutoPairsMapCR = 0
-let g:AutoPairsMapCh = 0  "Do not map <C-h> to delete brackets, quotes in pair
-
 " AutoPEP8
 let g:autopep8_disable_show_diff = 1
-" below turned off to make collaboration less annoying
-" augroup AutoPep8
-"   autocmd BufWritePre *.py Autopep8
-" augroup END
+
+" SQLFormat:
+" relies on 'pip install sqlformat'
+let g:sqlfmt_auto = 0
+let g:sqlfmt_command = "sqlformat"
+let g:sqlfmt_options = "--keywords=upper --identifiers=lower --use_space_around_operators"
+
+" Numbersvim: override default plugin settings
+let g:numbers_exclude = ['startify', 'gundo', 'vimshell', 'gina-commit',
+      \ 'gitcommit']
+
+" VimMarkdownComposer: override defaults
+let g:markdown_composer_open_browser = 0
+
+" RequirementsVim: filetype detection (begin with requirements)
+let g:requirements#detect_filename_pattern = 'requirements.*\.txt'
+
+" QuickScope: great plugin helping with f and t
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
@@ -1058,12 +1200,23 @@ let g:autopep8_disable_show_diff = 1
 " 1) go to file containing definition: <C-]>
 " 2) Return from file (relies on tag stack): <C-O>
 
+" VimScript:
+" Autocompletion and show definition is built in to Vim
+" Set the same shortcuts as usual to find them
+augroup vimscript_complete
+  autocmd!
+  autocmd FileType vim nnoremap <buffer> <C-]> yiw:help <C-r>"<CR>
+  autocmd FileType vim inoremap <buffer> <C-@> <C-x><C-v>
+  autocmd FileType vim inoremap <buffer> <C-space> <C-x><C-v>
+augroup END
+
 " Python
 " Open module, e.g. :Pyimport os (opens the os module)
 let g:jedi#popup_on_dot = 0
 let g:jedi#show_call_signatures = 0
 let g:jedi#auto_close_doc = 0
 let g:jedi#smart_auto_mappings = 0
+let g:jedi#force_py_version = 3
 " let g:jedi#use_tabs_not_buffers = 1
 
 " mappings
@@ -1084,12 +1237,23 @@ augroup javascript_complete
   autocmd FileType javascript nnoremap <buffer> <C-]> :TernDef<CR>
 augroup END
 
+" Elm:
+let g:elm_detailed_complete = 1
+let g:elm_format_autosave = 0
+augroup elm_complete
+  autocmd!
+  autocmd FileType elm nnoremap <buffer> <C-]> :ElmShowDocs<CR>
+augroup END
+
 " CPP:
-" Jumping back defaults to <C-O> or <C-T>
+" Jumping back defaults to <C-O> or <C-T> (in is <C-I> per usual)
 " Defaults to <C-]> for goto definition
-let g:clang_library_path = '/usr/lib/llvm-3.8/lib'
-let g:clang_auto_user_options = 'compile_commands.json, path'
+" Additionally, jumping to Header file under cursor: gd
+let g:clang_library_path = '/usr/lib/llvm-6.0/lib'
+let g:clang_auto_user_options = 'compile_commands.json, path, .clang_complete'
 let g:clang_complete_auto = 0
+let g:clang_complete_macros = 1
+let g:clang_jumpto_declaration_key = "<C-]>"
 
 " Haskell
 " Disable haskell-vim omnifunc
@@ -1100,13 +1264,30 @@ augroup haskell_complete
   autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
 augroup END
 
+" Rust:
+" rustup install racer
+let g:racer_cmd = $HOME . '/.cargo/bin/racer'
+" rustup component add rust-src
+let $RUST_SRC_PATH = $HOME .
+      \'/.multirust/toolchains/stable-x86_64-unknown-linux-gnu/' .
+      \'lib/rustlib/src/rust/src'
+let g:racer_experimental_completer = 1
+augroup rust_complete
+  autocmd!
+  " needs to be nmap; does not work with nnoremap
+  autocmd FileType rust nmap <buffer> <C-]> <Plug>(rust-def)
+augroup END
+
 " Writing: writing document
 " currently only supports markdown
 " jump to word definition for several text editors (including markdown)
 augroup writing_complete
-  autocmd FileType markdown,tex, nnoremap <buffer> <C-]> :Def <cword><CR>
-  " Latex complete `` with ''
-  autocmd FileType tex inoremap <buffer> `` ``''<esc>hi
+  autocmd FileType markdown,tex,rst,txt nnoremap <buffer> <C-]> :Def <cword><CR>
+augroup END
+
+" Terraform
+augroup terraform_complete
+  autocmd FileType terraform setlocal omnifunc=terraformcomplete#Complete
 augroup END
 
 "  }}}
@@ -1120,16 +1301,57 @@ augroup language_specific_file_beauty
   autocmd FileType css noremap <buffer> <leader>f :call CSSBeautify()<cr>
   autocmd Filetype python nnoremap <buffer> <leader>f :Autopep8<cr>
   autocmd Filetype elm nnoremap <buffer> <leader>f :ElmFormat<cr>
+  autocmd Filetype sql nnoremap <buffer> <leader>f :SQLFmt<cr>
+  autocmd Filetype rust nnoremap <buffer> <leader>f :RustFmt<cr>
+  autocmd Filetype terraform nnoremap <buffer> <leader>f :TerraformFmt<cr>
+  autocmd Filetype haskell nnoremap <buffer> <leader>f :Stylishask<cr>
 augroup END
 
 " }}}
+" General: Clean Unicode --- {{{
+
+function! CleanUnicode()
+  " Replace unicode symbols with cleaned versions
+  silent! %s/”/"/g
+  silent! %s/“/"/g
+  silent! %s/’/'/g
+  silent! %s/‘/'/g
+endfunction()
+command! CleanUnicode call CleanUnicode()
+
+" }}}
+" General: Number width to 80 (including special characters)---- {{{
+
+function! ResizeTo80()
+  let cols = 80
+  if &number ==# 1 || &relativenumber ==# 1
+    let numberwidth = float2nr(log10(line("$"))) + 2
+    let columns = &numberwidth + cols
+    execute 'vertical res ' columns
+  else
+    execute 'vertical res ' cols
+  endif
+endfunction
+
+" }}}
 " General: Key remappings ----------------------- {{{
+
+" Escape:
+" Make escape also clear highlighting
+" Note: the following line makes my arrow keys insert a new line with A,B,C,D
+" and also makes PgUp PgDn toggle upper/lower case
+" nnoremap <silent> <esc> :noh<return><esc>
 
 " Omnicompletion:
 " imap <C-space> <C-x><C-o>
 " <C-@> is actually <C-space>
 inoremap <C-@> <C-x><C-o>
 inoremap <C-space> <C-x><C-o>
+
+" EnglishWordCompletion:
+" Look up words in a dictionary
+" <C-x><C-k> = dictionary completion
+inoremap <C-k> <C-x><C-k>
 
 " Exit: Preview and Help
 inoremap <silent> <C-c> <Esc>:pclose <BAR> helpclose<CR>a
@@ -1142,18 +1364,10 @@ nnoremap <silent> <C-q> :cclose <BAR> lclose<CR>
 " e.g. ignoring wrapped lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-" Move to beginning and end of visual line
-" nnoremap 0 g0
-" nnoremap $ g$
-" moving forward and backward with vim tabs
-nnoremap T gt
-nnoremap t gT
 
-" Insert Mode moves
-imap <C-h> <left>
-imap <C-j> <down>
-imap <C-k> <up>
-imap <C-l> <right>
+" MoveTabs: moving forward, backward, and to number with vim tabs
+" nnoremap T gt
+" nnoremap t gT
 
 inoremap <C-e> <Esc>A
 inoremap <C-a> <Esc>I
@@ -1163,9 +1377,6 @@ inoremap <C-a> <Esc>I
 nnoremap <silent> <Plug>NewLineComma f,wi<CR><Esc>
       \:call repeat#set("\<Plug>NewLineComma")<CR>
 nmap <leader><CR> <Plug>NewLineComma
-
-" WindowHeight: Resize window to one more than window height
-nnoremap <silent> <leader>h gg:exe "resize " . (line('$') + 1)<CR>
 
 " BuffersAndWindows:
 " Move from one window to another
@@ -1183,19 +1394,6 @@ nnoremap <silent> gJ L
 nnoremap <silent> gK H
 nnoremap <silent> gM M
 
-" VisualSearch: * and # work in visual mode too
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <expr> // 'y/\V'.escape(@",'\').'<CR>'
-
 " QuickChangeFiletype:
 " Sometimes we want to set some filetypes due to annoying behavior of plugins
 " The following mappings make it easier to chage javascript plugin behavior
@@ -1210,50 +1408,72 @@ nnoremap <silent> <space>j :call NERDTreeToggleCustom()<CR>
 nnoremap <silent> <space>l :TagbarToggle <CR>
 nnoremap <silent> <space>u :UndotreeToggle<CR>
 
+" NERDTree: Jump to current file
+nnoremap <silent> <space>k :NERDTreeFind<cr><C-w>w
+
 " Choosewin: (just like tmux)
 nnoremap <leader>q :ChooseWin<CR>
 
-" VimFugitive: git bindings
-nnoremap <leader>ga :Git add %:p<CR><CR>
-nnoremap <leader>g. :Git add .<CR><CR>
-nnoremap <leader>gs :Gstatus<CR>
-nnoremap <leader>gc :Gcommit -v -q<CR>
-nnoremap <leader>gd :Gdiff<CR>
+" Gina: git bindings
+nnoremap <leader>ga :Gina add %:p<CR><CR>
+nnoremap <leader>g. :Gina add .<CR><CR>
+nnoremap <leader>gs :Gina status<CR>
+nnoremap <leader>gc :Gina commit<CR>
+nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>gd :Gina diff<CR>
 
 " IndentLines: toggle if indent lines is visible
 nnoremap <silent> <leader>i :IndentLinesToggle<CR>
 
-" ResizeWindow: up and down; relies on custom function
-" height
-nnoremap <silent> <leader><leader>h gg:exe "resize " . (line('$') + 1)<CR>
-" width
-nnoremap <silent> <leader><leader>w mz:call ResizeWidthToLongestLine()<CR>`z
-
-" Show the length (bytes) of the current word
-nmap bliw :echo 'word' expand('<cword>') 'has byte length' strlen(substitute(expand('<cword>'), '.', 'x', 'g'))<CR>
-" Show the length (characters) of the current word
-nmap cliw :echo 'word' expand('<cword>') 'has char length' strlen(expand('<cword>'))<CR>
+" ResizeWindow: up and down; relies on custom functions
+nnoremap <silent> <leader><leader>h mz:call ResizeWindowHeight()<CR>`z
+nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
 
 " AutoPairs:
 imap <silent><CR> <CR><Plug>AutoPairsReturn
 
-" VimSneak: remap f and F to the sneak command
-nmap f <Plug>Sneak_s
-nmap F <Plug>Sneak_S
+" Taboo: rename files smartly
+nnoremap <leader><leader>t :TabooRename<space>
+
+" FZF: create shortcuts for finding stuff
+nnoremap <silent> <C-P> :call FZFFilesAvoidNerdtree()<CR>
+nnoremap <silent> <C-B> :call FZFBuffersAvoidNerdtree()<CR>
+nnoremap <C-n> yiw:Grep <C-r>"<CR>
+vnoremap <C-n> y:Grep <C-r>"<CR>
+nnoremap <leader><C-n> yiw:GrepIgnoreCase <C-r>"<CR>
+vnoremap <leader><C-n> y:GrepIgnoreCase <C-r>"<CR>
+
+" DeleteHiddenBuffers: shortcut to make this easier
+" Note: weird stuff happens if you mess this up
+nnoremap <leader>d :DeleteHiddenBuffers<CR>
+
+" Jumping to header file
+nnoremap gh :call CurtineIncSw()<CR>
+
+" Open split for writing (80 character window width for wrap)
+nnoremap <silent> <leader>v :call ResizeTo80()<CR>
 
 " }}}
 " General: Command abbreviations ------------------------ {{{
 
-" abbreviate creating tab, vertical, and horizontal buffer splits
-cabbrev bt tab sb
-cabbrev bv vert sb
-cabbrev bs sbuffer
+" creating tab, vertical, and horizontal buffer splits
+" command! BT tab sb
+" command! BV vert sb
+" command! BS sbuffer
 
-" Plug update and upgrade
-cabbrev pu PlugUpdate <BAR> PlugUpgrade
+" Terminal abbreviation
+command! Terms split <BAR> terminal
+command! Termv vsplit <BAR> terminal
+command! Termt tabnew <BAR> terminal
+
+" Change directory to current file
+command! CD cd %:h
+
+" Execute current file
+command! Run !./%
 
 " }}}
-" General: Cleanup ------------------ {{{
+" General: Global Config + Cleanup ------------------ {{{
 " commands that need to run at the end of my vimrc
 
 " disable unsafe commands in your project-specific .vimrc files
@@ -1279,5 +1499,13 @@ let &t_SI .= "\<Esc>[5 q"
 let &t_SR .= "\<Esc>[4 q"
 "common - block
 let &t_EI .= "\<Esc>[3 q"
+
+" Configure updatetime
+" This is the amount of time vim waits to do something after you stop
+" acting. Default is 4000, this works well for my fast system
+set updatetime=750
+
+" Update path for Linux-specific libraries
+set path+=/usr/include/x86_64-linux-gnu/
 
 " }}}
