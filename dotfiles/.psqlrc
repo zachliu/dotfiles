@@ -2,6 +2,7 @@
 \set HISTFILE ~/.psql_history
 \set HISTSIZE 20000
 \timing
-\set PROMPT1 '%[%033[38;5;27m%]%`hostname -s`%[%033[38;5;102m%]/%/ %[%033[31;5;27m%]%`~/.role.sh`%[%033[0m%] %# '
+\set PROMPT1 '%[%033[38;5;27m%]%(%n@%m:%>) %[%033[38;5;102m%][DB: %/]%[%033[0m%] \n%# '
 \set PROMPT2 ''
+\pset pager always
 \encoding unicode
