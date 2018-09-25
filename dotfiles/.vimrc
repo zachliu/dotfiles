@@ -1230,7 +1230,7 @@ let g:jedi#usages_command = "<leader>su"
 let g:jedi#rename_command = "<leader>sr"
 
 " Javascript
-let g:tern_show_argument_hints = 1
+let g:tern_show_argument_hints = 'on_move'
 let g:tern_show_signature_in_pum = 1
 augroup javascript_complete
   autocmd!
