@@ -4,5 +4,5 @@
 \timing
 \set PROMPT1 '%[%033[38;5;27m%]%(%n@%m:%>) %[%033[38;5;102m%][DB: %/]%[%033[0m%] \n%# '
 \set PROMPT2 ''
-\pset pager always
+-- \pset pager always
 \encoding unicode
