@@ -508,7 +508,7 @@ alias l='ls -CF'
 # diff
 # r: recursively; u: shows line number; p: shows difference in C function
 # P: if multiple files then showing complete path
-alias diff="diff -rupP"
+alias diff="diff -rupP --color"
 
 # Docker
 # remove stopped containers
