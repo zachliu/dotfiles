@@ -251,6 +251,8 @@ Plug 'chr4/nginx.vim'
 Plug 'othree/html5.vim'
 Plug 'pearofducks/ansible-vim'
 Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
+Plug 'cespare/vim-toml'
+Plug 'maralla/vim-toml-enhance'
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
@@ -1192,6 +1194,10 @@ let g:requirements#detect_filename_pattern = 'requirements.*\.txt'
 
 " QuickScope: great plugin helping with f and t
 let g:qs_highlight_on_keys = ['f', 'F']
+let g:qs_max_chars = 10000
+
+" Go: random stuff
+let g:go_version_warning = 0
 
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
