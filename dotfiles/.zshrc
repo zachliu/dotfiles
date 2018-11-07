@@ -228,6 +228,11 @@ export PATH
 # https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
 typeset -aU path
 
+POETRY_BINS="$HOME/.poetry/bin"
+if [ -d "$POETRY_BINS" ]; then
+  path_ladd "$POETRY_BINS"
+fi
+
 # }}}
 
 #######################################################################
