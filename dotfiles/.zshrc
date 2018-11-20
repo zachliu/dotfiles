@@ -666,7 +666,7 @@ DEFAULT_VENV_NAME=venv
 DEFAULT_PYTHON_VERSION="3.6"
 
 function pydev() {
-  pip install -U pip bpython autopep8 jedi
+  pip install -U pip bpython autopep8 jedi neovim
 }
 
 function va() {
