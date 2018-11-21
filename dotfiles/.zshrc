@@ -720,6 +720,33 @@ function nove() {
   fi
 }
 
+# Print out the Github-recommended gitignore
+export GITIGNORE_DIR=$HOME/src/lib/gitignore
+function gitignore() {
+  if [ ! -d "$GITIGNORE_DIR" ]; then
+    mkdir -p $HOME/src/lib
+    git clone https://github.com/github/gitignore $GITIGNORE_DIR
+    return 1
+  elif [ $# -eq 0 ]; then
+    echo "Usage: gitignore <file1> <file2> <file3> <file...n>"
+    return 1
+  else
+    # print all the files
+    local count=0
+    for filevalue in $@; do
+      echo "#################################################################"
+      echo "# $filevalue"
+      echo "#################################################################"
+      cat $GITIGNORE_DIR/$filevalue
+      if [ $count -ne $# ]; then
+        echo
+      fi
+      (( count++ ))
+    done
+  fi
+}
+compdef "_files -W $GITIGNORE_DIR/" gitignore
+
 # Create New Python Repo
 function pynew() {
   if [ $# -ne 1 ]; then
