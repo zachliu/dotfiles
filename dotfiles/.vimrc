@@ -197,6 +197,8 @@ Plug 'fcpg/vim-altscreen'
 Plug 'sjl/strftimedammit.vim'
 Plug 'wincent/ferret'
 Plug 'bronson/vim-visual-star-search'
+Plug 'chrisbra/Colorizer'
+Plug 'fidian/hexmode'
 
 " Relative Numbering
 Plug 'myusuf3/numbers.vim'
@@ -1173,9 +1175,6 @@ let g:bullets_enabled_file_types = [
     \ 'scratch'
     \]
 
-" AutoPEP8
-let g:autopep8_disable_show_diff = 1
-
 " SQLFormat:
 " relies on 'pip install sqlformat'
 let g:sqlfmt_auto = 0
@@ -1198,6 +1197,18 @@ let g:qs_max_chars = 10000
 
 " Go: random stuff
 let g:go_version_warning = 0
+
+" Autopep8: options
+let g:autopep8_disable_show_diff = 1
+let g:autopep8_on_save = 0
+
+" Colorizer: css color code highlighting
+let g:colorizer_auto_filetype='css,html'
+
+" HexMode: configure hex editing
+" relevant command: Hexmode
+let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
+let g:hexmode_xxd_options = '-g 2'
 
 "  }}}
 "  Plugin: AutoCompletion config, multiple plugins ------------ {{{
