@@ -120,6 +120,7 @@ endif
 " Search result highlighting
 set incsearch
 set hlsearch
+set inccommand=nosplit
 
 " Remove query for terminal version
 " This prevents un-editable garbage characters from being printed
