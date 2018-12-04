@@ -200,6 +200,7 @@ Plug 'wincent/ferret'
 Plug 'bronson/vim-visual-star-search'
 Plug 'chrisbra/Colorizer'
 Plug 'fidian/hexmode'
+Plug 'wellle/targets.vim'
 
 " Relative Numbering
 Plug 'myusuf3/numbers.vim'
