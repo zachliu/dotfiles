@@ -257,6 +257,7 @@ Plug 'pearofducks/ansible-vim'
 Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 Plug 'cespare/vim-toml'
 Plug 'maralla/vim-toml-enhance'
+Plug 'mattn/vim-xxdcursor'
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
