@@ -664,7 +664,7 @@ function gn() {  # arg1: filename
 
 # activate virtual environment from any directory from current and up
 DEFAULT_VENV_NAME=venv
-DEFAULT_PYTHON_VERSION="3.6"
+DEFAULT_PYTHON_VERSION="3.7"
 
 function pydev() {
   pip install -U pip bpython autopep8 jedi neovim
