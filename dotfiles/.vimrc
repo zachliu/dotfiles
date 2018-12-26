@@ -258,6 +258,7 @@ Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 Plug 'cespare/vim-toml'
 Plug 'maralla/vim-toml-enhance'
 Plug 'mattn/vim-xxdcursor'
+Plug 'martinda/Jenkinsfile-vim-syntax'
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
