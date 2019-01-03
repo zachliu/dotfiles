@@ -1014,7 +1014,11 @@ stty -ixon
 
 quote
 
+# Syntax highlighting for zsh
 source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Autojump for zsh
+source /usr/share/autojump/autojump.zsh
 
 # }}}
 # SDKMAN --- {{{
