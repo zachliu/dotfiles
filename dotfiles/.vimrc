@@ -201,6 +201,7 @@ Plug 'bronson/vim-visual-star-search'
 Plug 'chrisbra/Colorizer'
 Plug 'fidian/hexmode'
 Plug 'wellle/targets.vim'
+Plug 'tpope/vim-surround'
 
 " Relative Numbering
 Plug 'myusuf3/numbers.vim'
