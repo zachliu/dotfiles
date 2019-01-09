@@ -1052,6 +1052,8 @@ endfunction
 " AutoPairs:
 " unmap CR due to incompatibility with clang-complete
 let g:AutoPairsMapCR = 0
+let g:AutoPairsMapCh = 0  " Do not map <C-h> to delete brackets/quotes in pair,
+                          " It conflicts with Insert Mode moves <C-h>
 let g:AutoPairs = {
       \ '(':')',
       \ '[':']',
@@ -1474,6 +1476,13 @@ nnoremap gh :call CurtineIncSw()<CR>
 
 " Open split for writing (80 character window width for wrap)
 nnoremap <silent> <leader>v :call ResizeTo80()<CR>
+
+" Insert Mode moves
+imap <C-h> <left>
+" AutoPairsMapCh has to be 0 for <C-h> to work here
+imap <C-j> <down>
+imap <C-k> <up>
+imap <C-l> <right>
 
 " }}}
 " General: Command abbreviations ------------------------ {{{
