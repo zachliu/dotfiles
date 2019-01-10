@@ -489,11 +489,15 @@ let g:PaperColor_Theme_Options['language'] = {
       \     }
       \ }
 
-" Python: Highlight self and cls keyword in class definitions
+" Python: Highlight self, cls, args, kwargs anywhere in Python
+
 augroup python_syntax
   autocmd!
+  autocmd ColorScheme * highlight OhMyPython ctermfg=167
   autocmd FileType python syn keyword pythonBuiltinObj self
   autocmd FileType python syn keyword pythonBuiltinObj cls
+  autocmd FileType python syn keyword OhMyPython args
+  autocmd FileType python syn keyword OhMyPython kwargs
 augroup end
 
 " Javascript: Highlight this keyword in object / function definitions
