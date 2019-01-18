@@ -187,6 +187,7 @@ then
   path_ladd "$PYENV_ROOT/shims"
   eval "$(pyenv init -)"
 fi
+eval "$(pyenv virtualenv-init -)"
 
 RBENV_ROOT="$HOME/.rbenv"
 if [ -d "$RBENV_ROOT" ]; then
@@ -662,62 +663,29 @@ function gn() {  # arg1: filename
   fi
 }
 
-# activate virtual environment from any directory from current and up
-DEFAULT_VENV_NAME=venv
-DEFAULT_PYTHON_VERSION="3.7"
-
-function pydev() {
-  pip install -U pip bpython autopep8 jedi neovim
-}
-
-function va() {
-  if [ $# -eq 0 ]; then
-    local VENV_NAME=$DEFAULT_VENV_NAME
-  else
-    local VENV_NAME="$1"
-  fi
-  local slashes=${PWD//[^\/]/}
-  local DIR="$PWD"
-  for (( n=${#slashes}; n>0; --n ))
-  do
-    if [ -d "$DIR/$VENV_NAME" ]; then
-      source "$DIR/$VENV_NAME/bin/activate"
-      local DIR_REL=$(realpath --relative-to='.' "$DIR/$VENV_NAME")
-      echo "Activated $(python --version) virtualenv in $DIR_REL/"
-      return
-    fi
-    local DIR="$DIR/.."
-  done
-  echo "no $VENV_NAME/ found from here to OS root"
-}
+# [optionally] create and activate Python virtual environment
+PYTHON_DEV_PACKAGES=(pynvim bpython restview jedi autopep8 pre-commit)
 
 # [optionally] create and activate Python virtual environment
 function ve() {
-  if [ $# -eq 0 ]; then
-    local VENV_NAME="$DEFAULT_VENV_NAME"
+  if [ ${#} -ne 1 ]; then
+    local pkg_base=$(basename $PWD)
+    local pkg_hashval=$(\
+      pwd |\
+      sha1sum |\
+      base32 |\
+      cut -c1-5 |\
+      tr '[:upper:]' '[:lower:]')
+    local pkg="$pkg_base-$pkg_hashval"
   else
-    local VENV_NAME="$1"
+    local pkg=$@
   fi
-  if [ ! -d "$VENV_NAME" ]; then
-    echo "Creating new Python virtualenv in $VENV_NAME/"
-    python$DEFAULT_PYTHON_VERSION -m venv "$VENV_NAME"
-    source "$VENV_NAME/bin/activate"
-    pydev
-    deactivate
-    va
-  else
-    va
-  fi
-}
-
-function nove() {
-  if [ -d "venv/" ]
-  then
-    rm -rf venv/
-    echo "The folder venv/ has been removed."
-  else
-    echo "No venv/ folder here."
-  fi
+  venv_name=$pkg
+  pyenv virtualenv $venv_name
+  pyenv activate $venv_name
+  $(pyenv which pip) install --upgrade pip $PYTHON_DEV_PACKAGES
+  pyenv deactivate
+  echo $venv_name > .python-version
 }
 
 # Print out the Github-recommended gitignore
