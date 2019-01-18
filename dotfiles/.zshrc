@@ -684,7 +684,7 @@ function ve() {
   pyenv virtualenv $venv_name
   pyenv activate $venv_name
   $(pyenv which pip) install --upgrade pip $PYTHON_DEV_PACKAGES
-  pyenv deactivate
+  # pyenv deactivate  # seems useless???
   echo $venv_name > .python-version
 }
 
