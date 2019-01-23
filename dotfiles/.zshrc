@@ -668,6 +668,7 @@ PYTHON_DEV_PACKAGES=(pynvim bpython restview jedi autopep8 pre-commit)
 
 # [optionally] create and activate Python virtual environment
 function ve() {
+  python_version=$(pyenv version | head -n 1 | cut -d ' ' -f 1)
   if [ ${#} -ne 1 ]; then
     local pkg_base=$(basename $PWD)
     local pkg_hashval=$(\
@@ -676,7 +677,7 @@ function ve() {
       base32 |\
       cut -c1-5 |\
       tr '[:upper:]' '[:lower:]')
-    local pkg="$pkg_base-$pkg_hashval"
+    local pkg="$pkg_base-$pkg_hashval-$python_version"
   else
     local pkg=$@
   fi
