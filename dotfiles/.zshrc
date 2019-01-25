@@ -555,8 +555,8 @@ alias gdw='git diff --word-diff'
 alias upgrade='sudo mintupdate'
 
 # battery
-alias bat='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|time\ to\ full|percentage"'
-alias batc='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "capacity"'
+alias batt='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|time\ to\ full|percentage"'
+alias battc='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "capacity"'
 
 # dynamodb
 alias docker-dynamodb="docker run -v /data:$HOME/data -p 8000:8000 dwmkerr/dynamodb -dbPath $HOME/data"
