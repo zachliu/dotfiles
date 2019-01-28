@@ -962,8 +962,9 @@ COLOR_SILVER="250"
 PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
 PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
 PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
+PS1_PYV="%B%F{$COLOR_SILVER}$(pyenv version | head -n 1 | cut -d ' ' -f 1)"
 
-PS1="${PS1_USR} [${PS1_DIR}] \$vcs_info_msg_0_ \
+PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
 
 ${PS1_END}"
 
