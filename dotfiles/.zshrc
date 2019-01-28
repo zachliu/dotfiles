@@ -664,7 +664,7 @@ function gn() {  # arg1: filename
 }
 
 # [optionally] create and activate Python virtual environment
-PYTHON_DEV_PACKAGES=(pynvim bpython restview jedi autopep8 pre-commit awscli)
+PYTHON_DEV_PACKAGES=(pynvim bpython restview jedi autopep8 pre-commit boto3 awscli)
 
 # [optionally] create and activate Python virtual environment
 function ve() {
