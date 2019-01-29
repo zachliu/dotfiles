@@ -957,12 +957,17 @@ function precmd() { vcs_info }
 COLOR_BRIGHT_BLUE="086"
 COLOR_GOLD="184"
 COLOR_SILVER="250"
+COLOR_PINK="164"
 
 # Set Bash PS1
 PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
 PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
 PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
-PS1_PYV="%B%F{$COLOR_SILVER}$(pyenv version | head -n 1 | cut -d ' ' -f 1)"
+
+# See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
+# for the reason of using single quotes here
+# PS1_PYV='%B%F{$COLOR_SILVER}$(pyenv version | head -n 1 | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")'
+PS1_PYV='%B%F{$COLOR_PINK}$(pyenv version | head -n 1 | grep -o -P "\d+\.\d+\.\d+")%f%b'
 
 PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
 
