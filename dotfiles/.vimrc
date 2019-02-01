@@ -309,11 +309,13 @@ Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'tyru/open-browser.vim'
 Plug 'weirongxu/plantuml-previewer.vim'
 
-" Code prettifiers
-Plug 'b4b4r07/vim-sqlfmt'
-Plug 'tell-k/vim-autopep8'
-Plug 'maksimr/vim-jsbeautify'
-Plug 'alx741/vim-stylishask'
+" " Code prettifiers
+" Plug 'b4b4r07/vim-sqlfmt'
+" Plug 'tell-k/vim-autopep8'
+" Plug 'maksimr/vim-jsbeautify'
+" Plug 'alx741/vim-stylishask'
+
+Plug 'pappasam/vim-filetype-formatter'
 
 " C Programming
 Plug 'ericcurtin/CurtineIncSw.vim'
@@ -1095,6 +1097,23 @@ augroup END
 let g:terraform_align=1
 " Use spacebar to fold/unfold resources
 let g:terraform_remap_spacebar=1
+
+" }}}
+" Plugin: vim-filetype-formatter and autoformatting --- {{{
+
+let g:vim_filetype_formatter_verbose = 0
+let g:vim_filetype_formatter_commands = {
+     \ 'python': 'yapf',
+     \ 'rust': 'rustfmt',
+     \ 'terraform': 'terraform fmt -'
+     \}
+
+" Key mappings (leader-f)
+augroup language_specific_file_beauty
+ autocmd FileType python,rust,terraform
+       \ nnoremap <silent> <buffer> <leader>f :FiletypeFormat<cr>
+ autocmd FileType ledger nnoremap <buffer> <leader>f :%LedgerAlign<cr>
+augroup END
 
 " }}}
 " Plugin: Miscellaneous global var config ------------ {{{
