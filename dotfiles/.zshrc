@@ -634,9 +634,9 @@ function cd_up() {  # arg1: number|word
 # Get the weather
 function weather() {  # arg1: Optional<location>
   if [ $# -eq 0 ]; then
-    curl wttr.in/nyc
+    curl "wttr.in/nyc?m"
   else
-    curl wttr.in/$1
+    curl "wttr.in/$1?m"
   fi
 }
 
