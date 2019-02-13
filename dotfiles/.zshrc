@@ -588,6 +588,7 @@ alias psql='LESS="-iMSx4 -FXR" PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIG
 
 # Python
 alias pip='noglob pip'
+alias pipr='pip install -r'
 alias pipi='pip install'
 
 # }}}
