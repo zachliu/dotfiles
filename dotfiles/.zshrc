@@ -107,7 +107,6 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 # Configure less (de-initialization clears the screen)
 # Gives nicely-colored man pages
-
 export PAGER=less
 
 export YELLOW=`echo -e '\033[1;33m'`
@@ -135,8 +134,8 @@ export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 export MANPAGER='nvim -c "set ft=man" -'
 
 # tmuxinator
-export EDITOR=vim
-export SHELL=bash
+export EDITOR=/usr/bin/nvim
+export SHELL=/usr/bin/zsh
 
 # environment variable controlling difference between HI-DPI / Non HI_DPI
 # turn off because it messes up my pdf tooling
@@ -151,7 +150,8 @@ export GDK_SCALE=0
 # History: How many lines of history to keep in memory
 export HISTSIZE=15000
 
-# History: Where to save history to disk
+# History: ignore leading space, where to save history to disk
+export HISTCONTROL=ignorespace
 export HISTFILE=~/.zsh_history
 
 #History: Number of history entries to save to disk
@@ -163,34 +163,50 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.g
 # pipenv
 export PIPENV_VENV_IN_PROJECT='doit'
 
+# Default browser for some programs (eg, urlview)
+export BROWSER='/usr/bin/google-chrome'
+
+# Enable editor to scale with monitor's DPI
+export WINIT_HIDPI_FACTOR=1.0
+
+# Bat
+export BAT_PAGER=''
+
 # }}}
-# Path appends --- {{{
+# Path appends + Misc env setup --- {{{
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
-LOCAL_BIN="/home/zach/.local/bin"
+LOCAL_BIN="$HOME/.local/bin"
 if [ -d "$LOCAL_BIN" ]
 then
   export LOCAL_BIN
   path_radd "$LOCAL_BIN"
 fi
 
-CARGO_ROOT="/home/zach/.cargo/bin"
-if [ -d "$CARGO_ROOT" ]
-then
-  export CARGO_ROOT
-  path_ladd "$CARGO_ROOT"
-fi
-
 PYENV_ROOT="$HOME/.pyenv"
-if [ -d "$PYENV_ROOT" ]
-then
+if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
-  path_ladd "$PYENV_ROOT/shims"
   eval "$(pyenv init -)"
+  if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
+    eval "$(pyenv virtualenv-init -)"
+  fi
 fi
-eval "$(pyenv virtualenv-init -)"
+
+SDKMAN_DIR="$HOME/.sdkman"
+if [ -d "$SDKMAN_DIR" ]; then
+  export SDKMAN_DIR
+  [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && \
+    source "$SDKMAN_DIR/bin/sdkman-init.sh"
+fi
+
+NODENV_ROOT="$HOME/.nodenv"
+if [ -d "$NODENV_ROOT" ]; then
+  export NODENV_ROOT
+  path_radd "$NODENV_ROOT/bin"
+  eval "$(nodenv init -)"
+fi
 
 RBENV_ROOT="$HOME/.rbenv"
 if [ -d "$RBENV_ROOT" ]; then
@@ -199,16 +215,15 @@ if [ -d "$RBENV_ROOT" ]; then
   eval "$(rbenv init -)"
 fi
 
-NVM_DIR="$HOME/.nvm"
-if [ -d "$NVM_DIR" ]
-then
-  export NVM_DIR
-  # load NVM
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  # This loads nvm bash_completion
-  # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-  # the above line causes the "complete:13: command not found: compdef error"
-  # https://github.com/robbyrussell/oh-my-zsh/issues/3356
+TFENV_ROOT="$HOME/.tfenv"
+if [ -d "$TFENV_ROOT" ]; then
+  export TFENV_ROOT
+  path_radd "$TFENV_ROOT/bin"
+fi
+
+RUST_CARGO="$HOME/.cargo/bin"
+if [ -d "$RUST_CARGO" ]; then
+  path_ladd "$RUST_CARGO"
 fi
 
 HOME_BIN="$HOME/bin"
@@ -217,12 +232,15 @@ then
   path_ladd "$HOME_BIN"
 fi
 
-NODENV_ROOT="$HOME/.nodenv"
-if [ -d "$NODENV_ROOT" ]
-then
-  export NODENV_ROOT
-  path_radd "$NODENV_ROOT/bin"
-  eval "$(nodenv init -)"
+STACK_LOC="$HOME/.local/bin"
+if [ -d "$STACK_LOC" ]; then
+  path_ladd "$STACK_LOC"
+fi
+
+POETRY_LOC="$HOME/.poetry/bin"
+if [ -d "$POETRY_LOC" ]; then
+  path_ladd "$POETRY_LOC"
+  source $HOME/.poetry/env
 fi
 
 # EXPORT THE FINAL, MODIFIED PATH
@@ -231,11 +249,6 @@ export PATH
 # Remove duplicates in $PATH
 # https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
 typeset -aU path
-
-POETRY_BINS="$HOME/.poetry/bin"
-if [ -d "$POETRY_BINS" ]; then
-  path_ladd "$POETRY_BINS"
-fi
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/home/zach/google-cloud-sdk/path.zsh.inc' ]; then . '/home/zach/google-cloud-sdk/path.zsh.inc'; fi
@@ -272,6 +285,7 @@ include ~/.bash/sensitive
 #  # use double quotes: the plugin manager author says we must for some reason
 #  zplug "paulirish/git-open", as:plugin
 #  zplug "greymd/docker-zsh-completion", as:plugin
+#  zplug "zsh-users/zsh-completions", as:plugin
 #  zplug "zsh-users/zsh-syntax-highlighting", as:plugin
 #  zplug "nobeans/zsh-sdkman", as:plugin
 #  zplug "junegunn/fzf-bin", \
@@ -319,6 +333,8 @@ setopt COMPLETE_ALIASES
 setopt AUTOCD
 
 # Dealing with history
+setopt HIST_IGNORE_SPACE
+setopt APPENDHISTORY
 setopt SHARE_HISTORY
 setopt INC_APPEND_HISTORY
 
@@ -337,40 +353,6 @@ unsetopt AUTO_REMOVE_SLASH
 #######################################################################
 export PERIOD=1
 export LISTMAX=0
-
-# }}}
-# ZShell Menu Completion --- {{{
-
-autoload -U compinit && compinit
-zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
-
-# CURRENT STATE: does not select any sort of searching
-# searching was too annoying and I didn't really use it
-# If you want it back, use "search-backward" as an option
-zstyle ':completion:*' menu select search-backward
-zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
-
-# Fuzzy completion
-zstyle ':completion:*' matcher-list '' \
-  'm:{a-z\-A-Z}={A-Z\_a-z}' \
-  'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-A-Z}={A-Z\_a-z}' \
-  'r:|?=** m:{a-z\-A-Z}={A-Z\_a-z}'
-fpath=(/usr/local/share/zsh-completions $fpath)
-zmodload -i zsh/complist
-
-# docker completion
-fpath=(~/.zsh/completion $fpath)
-
-# Manual libraries
-
-# vault, by Hashicorp
-_vault_complete() {
-  local word completions
-  word="$1"
-  completions="$(vault --cmplt "${word}")"
-  reply=( "${(ps:\n:)completions}" )
-}
-compctl -f -K _vault_complete vault
 
 # }}}
 # ZShell Misc Autoloads --- {{{
@@ -419,6 +401,47 @@ function zshexit() {
 }
 
 # }}}
+# ZShell Auto Completion --- {{{
+
+autoload -U compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
+
+# CURRENT STATE: does not select any sort of searching
+# searching was too annoying and I didn't really use it
+# If you want it back, use "search-backward" as an option
+zstyle ':completion:*' menu select search-backward
+zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
+
+# Fuzzy completion
+zstyle ':completion:*' matcher-list '' \
+  'm:{a-z\-A-Z}={A-Z\_a-z}' \
+  'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-A-Z}={A-Z\_a-z}' \
+  'r:|?=** m:{a-z\-A-Z}={A-Z\_a-z}'
+fpath=(/usr/local/share/zsh-completions $fpath)
+zmodload -i zsh/complist
+
+# docker completion
+fpath=(~/.zsh/completion $fpath)
+
+# Manual libraries
+
+# vault, by Hashicorp
+_vault_complete() {
+  local word completions
+  word="$1"
+  completions="$(vault --cmplt "${word}")"
+  reply=( "${(ps:\n:)completions}" )
+}
+compctl -f -K _vault_complete vault
+
+# stack
+# eval "$(stack --bash-completion-script stack)"
+
+# Add autocompletion path
+fpath+=~/.zfunc
+
+# }}}
 # ZShell Key-Bindings --- {{{
 
 # emacs
@@ -442,27 +465,6 @@ bindkey -M menuselect '^l' forward-char
 # delete function characters to include
 # Omitted: /=
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
-
-# }}}
-# FZF --- {{{
-
-# # Load zsh script
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# # Use fd to generate the list for file and directory completion
-# _fzf_compgen_path() {
-#   fd -c always --hidden --follow --exclude ".git" . "$1"
-# }
-
-# _fzf_compgen_dir() {
-#   fd -c always --hidden --type d --follow --exclude ".git" . "$1"
-# }
-
-# # <C-t> does fzf; <C-i> does normal stuff; <C-o> does the same thing as enter
-# export FZF_COMPLETION_TRIGGER=''
-# export FZF_DEFAULT_OPTS="--bind=ctrl-o:accept --ansi"
-# bindkey '^T' fzf-completion
-# bindkey '^I' $fzf_default_completion
 
 # }}}
 # Aliases --- {{{
@@ -596,6 +598,50 @@ alias pipi='pip install'
 # }}}
 # Functions --- {{{
 
+# Tmux Launch
+# NOTE: I use the option "-2" to force Tmux to accept 256 colors. This is
+# necessary for proper Vim support in the Linux Console. My Vim colorscheme,
+# PaperColor, does a lot of smart translation for Color values between 256 and
+# terminal 16 color support, and this translation is lost otherwise.
+# Steps (assuming index of 1, which requires tmux config):
+# 1. Create session in detached mode
+# 2. Select first window
+# 3. Rename first window to 'edit'
+# 4. Attach to session newly-created session
+function t() {
+  if [ -n "$TMUX" ]; then
+    echo 'Cannot run t() in tmux session'
+    return 1
+  elif [[ $# > 0 ]]; then
+    SESSION=$1
+  else
+    SESSION=Main
+  fi
+  HAS_SESSION=$(tmux has-session -t $SESSION 2>/dev/null)
+  if [ $HAS_SESSION ]; then
+    tmux attach -t $SESSION
+  else
+    tmux -2 new-session -d -s $SESSION
+    tmux -2 select-window -t $SESSION:1
+    tmux -2 rename-window edit
+    tmux -2 attach -t $SESSION
+  fi
+}
+
+# Fix window dimensions: tty mode
+# Set consolefonts to appropriate size based on monitor resolution
+# For each new monitor, you'll need to do this manually
+# Console fonts found here: /usr/share/consolefonts
+function fixwindow() {
+  echo "Getting window dimensions, waiting 5 seconds..."
+  MONITOR_RESOLUTIONS=$(sleep 5 && xrandr -d :0 | grep '*')
+  if $(echo $MONITOR_RESOLUTIONS | grep -q "3840x2160"); then
+    setfont Uni3-Terminus32x16.psf.gz
+  elif $(echo $MONITOR_RESOLUTIONS | grep -q "2560x1440"); then
+    setfont Uni3-Terminus24x12.psf.gz
+  fi
+}
+
 function gitzip() {  # arg1: the git repository
   if [ $# -eq 0 ]; then
     local git_dir='.'
@@ -726,57 +772,15 @@ compdef "_files -W $GITIGNORE_DIR/" gitignore
 function pynew() {
   if [ $# -ne 1 ]; then
     echo "pynew <directory>"
-    exit 1
+    return 1
   fi
   local dir_name="$1"
-  mkdir "$dir_name"
-  cd "$dir_name"
-  git init
-
-  mkdir instance
-  cat > instance/.gitignore <<EOL
-*
-!.gitignore
-EOL
-
-  # venv/
-  ve
-  # NOTE: not using pyenv right now
-  # pipenv install
-  # va
-  # pydev
-  # deactivate
-  # va
-
-  # .gitignore
-  cat > .gitignore <<EOL
-# Python
-venv/
-.venv/
-__pycache__/
-*.py[cod]
-.tox/
-.cache
-.coverage
-docs/_build/
-*.egg-info/
-.installed.cfg
-*.egg
-.mypy_cache/
-
-# Vim
-*.swp
-
-# C
-*.so
-EOL
-
-  cat > main.py <<EOL
-#!/usr/bin/env python
-'''The main module'''
-
-EOL
-  chmod +x main.py
+  if [ -d "$dir_name" ]; then
+    echo "$dir_name already exists"
+    return 1
+  fi
+  git init "$dir_name" && cd "$dir_name"
+  pyinit
 }
 
 # Clubhouse story template
@@ -980,32 +984,43 @@ PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
 ${PS1_END}"
 
 # }}}
+# FZF --- {{{
+
+# Load zsh script
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Use fd to generate the list for file and directory completion
+_fzf_compgen_path() {
+  fd -c always --hidden --follow --exclude ".git" . "$1"
+}
+
+_fzf_compgen_dir() {
+  fd -c always --hidden --type d --follow --exclude ".git" . "$1"
+}
+
+# <C-t> does fzf; <C-i> does normal stuff; <C-o> does the same thing as enter
+export FZF_COMPLETION_TRIGGER=''
+export FZF_DEFAULT_OPTS="--bind=ctrl-o:accept --ansi"
+bindkey '^T' fzf-completion
+bindkey '^I' $fzf_default_completion
+
+# }}}
 # Executed Commands --- {{{
 
-# turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
-stty -ixon
-
 # if you want to see less of "quote"
-# if [[ -o interactive ]]; then
-#   if [[ "$TMUX_PANE" == "%0" ]]; then
-#     # if you're in the first tmux pane within all of tmux
-#     quote
-#   fi
-# fi
-
-quote
+if [[ -o interactive ]]; then
+  if [[ "$TMUX_PANE" == "%0" ]]; then
+    # if you're in the first tmux pane within all of tmux
+    quote
+  fi
+  # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
+  stty -ixon
+fi
 
 # Syntax highlighting for zsh
 source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Autojump for zsh
 source /usr/share/autojump/autojump.zsh
-
-# }}}
-# SDKMAN --- {{{
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/zach/.sdkman"
-[[ -s "/home/zach/.sdkman/bin/sdkman-init.sh" ]] && source "/home/zach/.sdkman/bin/sdkman-init.sh"
 
 # }}}
