@@ -550,7 +550,9 @@ alias g="git status"
 alias gl='git branch --verbose --all'
 alias gm='git commit --verbose'
 alias gma='git add --all && git commit --verbose'
-alias gp='git remote prune origin'
+alias gpl='git pull origin'
+alias gph='git push origin'
+alias ga='git add'
 alias gd='git diff'
 alias gdw='git diff --word-diff'
 
