@@ -365,3 +365,5 @@ export SDKMAN_DIR="/home/zach/.sdkman"
 [[ -s "/home/zach/.sdkman/bin/sdkman-init.sh" ]] && source "/home/zach/.sdkman/bin/sdkman-init.sh"
 
 #}}}
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
