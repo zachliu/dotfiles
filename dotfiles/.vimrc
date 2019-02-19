@@ -427,11 +427,20 @@ augroup END
 "     VISUAL
 "       J => join all lines
 
+" My custom litecorrect options
+let g:litecorrect_custom_user_dict = {
+      \ 'maybe': ['mabye'],
+      \ 'medieval': ['medival', 'mediaeval', 'medevil'],
+      \ 'then': ['hten'],
+      \ }
+
 augroup writing
   autocmd!
-  autocmd FileType markdown :setlocal wrap linebreak nolist
+  autocmd FileType markdown,rst,gitcommit
+        \ setlocal wrap linebreak nolist spell
+        \ | call textobj#sentence#init()
+        \ | call litecorrect#init(g:litecorrect_custom_user_dict)
   autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal wrap linebreak nolist
-  autocmd BufNewFile,BufRead *.html,*.txt :setlocal colorcolumn=0
 augroup END
 
 " }}}
