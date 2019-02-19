@@ -73,6 +73,13 @@
 " CTRL-U   delete all characters in front of the cursor
 " CTRL-L   delete character under cursor (I create this in general remappings)
 
+" CommandMode:
+" q: -> open the command editing window
+"
+" ExMode:
+" Q -> opens ex mode
+" To lean more about the ex editor, type 'man ex'
+
 " }}}
 " General: Leader mappings -------------------- {{{
 
