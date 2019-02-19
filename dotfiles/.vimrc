@@ -134,16 +134,14 @@ set noswapfile
 " Do not wrap lines by default
 set nowrap
 
-" Set column to light grey at 80 characters
-if (exists('+colorcolumn'))
-  set colorcolumn=80
-  highlight ColorColumn ctermbg=9
-endif
-
 " Search result highlighting
 set incsearch
-set hlsearch
 set inccommand=nosplit
+augroup zliu_incsearch_highlight
+  autocmd!
+  autocmd CmdlineEnter /,\? :set hlsearch
+  autocmd CmdlineLeave /,\? :set nohlsearch
+augroup END
 
 " Remove query for terminal version
 " This prevents un-editable garbage characters from being printed
@@ -155,6 +153,10 @@ filetype plugin indent on
 set dictionary=$HOME/.american-english-with-propcase.txt
 
 set spelllang=en_us
+
+" Do not add two spaces after '.', '!', and '?'
+" Useful when doing :%j (the opposite of gq)
+set nojoinspaces
 
 set showtabline=2
 
