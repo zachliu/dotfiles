@@ -405,6 +405,17 @@ augroup indentation_sr
 augroup END
 
 " }}}
+" General: colorColumn different widths for different filetypes --- {{{
+
+highlight ColorColumn ctermbg=9
+set colorcolumn=80
+augroup colorcolumn_configuration
+  autocmd!
+  autocmd FileType gitcommit setlocal colorcolumn=72 textwidth=72
+  autocmd Filetype html,text,markdown set colorcolumn=0
+augroup END
+
+" }}}
 " General: Writing (non-coding)------------------ {{{
 
 " note: indenting and de-indenting in insert mode are:
