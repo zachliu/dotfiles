@@ -81,6 +81,22 @@
 " To lean more about the ex editor, type 'man ex'
 
 " }}}
+" General: Terminal emulator difference functions --- {{{
+
+" s:is_console::
+" Checks to see if Vim is running in console mode
+function! IsConsole()
+  return $TERM == 'linux'
+endfunction
+
+" s:if_console::
+" The 88-bit ASCII/Not full unicode console is different than alacritty
+" Return different value the console is true
+function! IfConsole(lambda_true, lambda_false)
+  return IsConsole() ? a:lambda_true() : a:lambda_false()
+endfunction
+
+" }}}
 " General: Leader mappings -------------------- {{{
 
 let mapleader = ","
