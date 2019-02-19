@@ -512,9 +512,6 @@ alias igrep="grep --perl-regexp -Ir \
 --exclude-dir='node_modules' \
 --exclude-dir='venv'"
 
-# Tmux launch script
-alias t='~/.tmuxlaunch.sh'
-
 # enable color support of ls and also add handy aliases
 alias ls='exa --color=auto'
 alias dir='dir --color=auto'
