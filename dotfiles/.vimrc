@@ -207,6 +207,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 't9md/vim-choosewin'
 Plug 'mhinz/vim-startify'
 Plug 'wincent/terminus'
@@ -223,6 +224,7 @@ Plug 'fcpg/vim-altscreen'
 Plug 'sjl/strftimedammit.vim'
 Plug 'wincent/ferret'
 Plug 'bronson/vim-visual-star-search'
+Plug 'romainl/vim-devdocs'
 Plug 'chrisbra/Colorizer'
 Plug 'fidian/hexmode'
 Plug 'wellle/targets.vim'
@@ -244,6 +246,7 @@ Plug 'NLKNguyen/papercolor-theme'
 
 " Utils
 Plug 'tpope/vim-commentary'
+" Convert to snakecase/camelcase/etc
 Plug 'tpope/vim-abolish'
 Plug 'jiangmiao/auto-pairs'
 
@@ -255,6 +258,7 @@ Plug 'autowitch/hive.vim'
 Plug 'elzr/vim-json',
 Plug 'vimoutliner/vimoutliner'
 Plug 'cespare/vim-toml'
+Plug 'maralla/vim-toml-enhance'
 Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
@@ -273,7 +277,7 @@ Plug 'tomlion/vim-solidity'
 Plug 'jparise/vim-graphql'
 Plug 'magicalbanana/sql-syntax-vim'
 Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'groenewege/vim-less'
 Plug 'farfanoide/vim-kivy'
 Plug 'raimon49/requirements.txt.vim'
@@ -281,20 +285,15 @@ Plug 'chr4/nginx.vim'
 Plug 'othree/html5.vim'
 Plug 'pearofducks/ansible-vim'
 Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
-Plug 'cespare/vim-toml'
-Plug 'maralla/vim-toml-enhance'
-Plug 'mattn/vim-xxdcursor'
 Plug 'martinda/Jenkinsfile-vim-syntax'
+Plug 'mattn/vim-xxdcursor'
 
 " Autocompletion
 Plug 'davidhalter/jedi-vim'
-Plug 'marijnh/tern_for_vim', { 'do': 'npm install'  }  " for javascript
-" Additional requirements:
-"   ln -s /home/zliu/dotfiles/dotfiles/.tern-project /home/zliu/.tern-project
+Plug 'marijnh/tern_for_vim'
 Plug 'Rip-Rip/clang_complete'
 " for C header filename completion:
 Plug 'xaizek/vim-inccomplete'
-Plug 'eagletmt/neco-ghc'
 Plug 'racer-rust/vim-racer'
 " Addional requirements:
 "   cargo install racer
@@ -305,6 +304,10 @@ Plug 'wannesm/wmgraphviz.vim'  " dotlanguage
 " note: must run 'gem install neovim' to get this to work
 " might require the neovim headers
 Plug 'juliosueiras/vim-terraform-completion'
+Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ 'do': 'bash install.sh',
+      \ }
 
 " Tagbar
 Plug 'majutsushi/tagbar'
@@ -314,6 +317,7 @@ Plug 'lvht/tagbar-markdown'
 "   sudo apt install -y php
 
 " Indentation-only
+Plug 'vim-scripts/groovyindent-unix'
 Plug 'hynek/vim-python-pep8-indent'
 Plug 'Yggdroot/indentLine'
 
@@ -325,21 +329,23 @@ Plug 'heavenshell/vim-jsdoc'
 " Rainbow
 Plug 'junegunn/rainbow_parentheses.vim'
 
-" Writing
+" Writing helpers
 Plug 'dkarter/bullets.vim'
 Plug 'gu-fan/riv.vim'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'kana/vim-textobj-user'
+Plug 'reedes/vim-textobj-sentence'
+Plug 'reedes/vim-wordy'
+Plug 'reedes/vim-litecorrect'
+Plug 'tommcdo/vim-exchange'
 
 " Previewers
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'tyru/open-browser.vim'
 Plug 'weirongxu/plantuml-previewer.vim'
 
-" " Code prettifiers
-" Plug 'b4b4r07/vim-sqlfmt'
-" Plug 'tell-k/vim-autopep8'
-" Plug 'maksimr/vim-jsbeautify'
-" Plug 'alx741/vim-stylishask'
-
+" Code prettifiers
 Plug 'pappasam/vim-filetype-formatter'
 
 " C Programming
