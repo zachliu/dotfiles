@@ -394,7 +394,7 @@ augroup END
 augroup indentation_sr
   autocmd!
   autocmd Filetype * setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=8
-  autocmd Filetype python,c,elm,haskell,markdown,rust,rst,kv,nginx
+  autocmd Filetype python,c,elm,haskell,markdown,rust,rst,kv,nginx,asm,nasm
         \ setlocal shiftwidth=4 softtabstop=4 tabstop=8
   autocmd Filetype dot setlocal autoindent cindent
   autocmd Filetype make,tsv,votl,go
@@ -402,21 +402,6 @@ augroup indentation_sr
   " Prevent auto-indenting from occuring
   autocmd Filetype yaml setlocal indentkeys-=<:>
 
-  " Rust-specifc 'indentation overrides'
-  " This is no longer necessary, but keeping in case I need
-  " to do something with ctags again
-  "   assumes working with rust.vim, which uses ctags
-  "     cino-m
-  "       c = c1 && (
-  "           c2 ||
-  "           c3
-  "       ) && c4;
-  " autocmd Filetype rust setlocal cinoptions+='(s,m1'
-  "     cino-(
-  "        if (c1 && (c2 ||
-  "                   c3))
-  "        foo;
-  " autocmd Filetype rust setlocal cinoptions+='(0'
 augroup END
 
 " }}}
