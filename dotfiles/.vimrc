@@ -504,7 +504,7 @@ match EOLWS /\s\+$/
 augroup whitespace_color
   autocmd!
   autocmd ColorScheme * highlight EOLWS ctermbg=red guibg=red
-  autocmd InsertEnter * highlight EOLWS NONE
+  autocmd InsertEnter * highlight EOLWS ctermbg=240 guibg=240 " 240 is grey
   autocmd InsertLeave * highlight EOLWS ctermbg=red guibg=red
 augroup END
 
