@@ -1419,13 +1419,6 @@ let g:vim_filetype_formatter_commands = {
      \ 'terraform': 'terraform fmt -'
      \}
 
-" Key mappings (leader-f)
-augroup language_specific_file_beauty
- autocmd FileType python,rust,terraform
-       \ nnoremap <silent> <buffer> <leader>f :FiletypeFormat<cr>
- autocmd FileType ledger nnoremap <buffer> <leader>f :%LedgerAlign<cr>
-augroup END
-
 " }}}
 " Plugin: Miscellaneous global var config ------------ {{{
 
@@ -1717,6 +1710,12 @@ imap <C-h> <left>
 imap <C-j> <down>
 imap <C-k> <up>
 imap <C-l> <right>
+
+" FiletypeFormat: remap leader f to do filetype formatting
+nnoremap <leader>f :FiletypeFormat<cr>
+augroup language_specific_file_beauty
+  autocmd FileType ledger nnoremap <buffer> <leader>f :%LedgerAlign<cr>
+augroup END
 
 " }}}
 " General: Command abbreviations ------------------------ {{{
