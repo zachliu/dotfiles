@@ -709,6 +709,19 @@ function! ResizeWindowHeight()
 endfunction
 
 " }}}
+" General: Avoid saving 'lcd' --- {{{
+
+augroup stay_no_lcd
+  autocmd!
+  if exists(':tcd') == 2
+    autocmd User BufStaySavePre  if haslocaldir() | let w:lcd = getcwd() | exe 'cd '.fnameescape(getcwd(-1, -1)) | endif
+  else
+    autocmd User BufStaySavePre  if haslocaldir() | let w:lcd = getcwd() | cd - | cd - | endif
+  endif
+  autocmd User BufStaySavePost if exists('w:lcd') | execute 'lcd' fnameescape(w:lcd) | unlet w:lcd | endif
+augroup END
+
+" --- }}}
 "  General: Color Column and Text Width --- {{{
 
 augroup color_column_and_text_width
