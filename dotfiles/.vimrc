@@ -1414,10 +1414,12 @@ augroup END
 
 let g:vim_filetype_formatter_verbose = 0
 let g:vim_filetype_formatter_commands = {
-     \ 'python': 'yapf',
-     \ 'rust': 'rustfmt',
-     \ 'terraform': 'terraform fmt -'
-     \}
+      \ 'go': 'gofmt',
+      \ 'json': 'python3 -c "import json, sys; print(json.dumps(json.load(sys.stdin), indent=2), end=\"\")"',
+      \ 'python': 'yapf',
+      \ 'rust': 'rustfmt',
+      \ 'terraform': 'terraform fmt -',
+      \}
 
 " }}}
 " Plugin: Miscellaneous global var config ------------ {{{
