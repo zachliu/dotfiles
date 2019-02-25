@@ -758,14 +758,6 @@ endfunction
 command! PU call _PU()
 
 "  }}}
-"  General: Color Column and Text Width --- {{{
-
-augroup color_column_and_text_width
-  autocmd!
-  autocmd FileType gitcommit :setlocal colorcolumn=72 textwidth=72
-augroup END
-
-"  }}}
 " Plugin: Riv.Vim --- {{{
 
 " Notes (because this Plugin's documentation sucks)
