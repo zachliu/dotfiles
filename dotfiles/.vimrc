@@ -932,6 +932,7 @@ function! FZFBuffersAvoidNerdtree()
   execute 'Buffers'
 endfunction
 
+let g:fzf_height = 12
 let g:fzf_action = {
       \ 'ctrl-o': 'edit',
       \ 'ctrl-t': 'tab split',
