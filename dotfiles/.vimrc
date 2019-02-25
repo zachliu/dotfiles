@@ -748,14 +748,6 @@ function! DeleteInactiveBuffers()
 endfunction
 
 "  }}}
-"  General: Color Column and Text Width --- {{{
-
-augroup color_column_and_text_width
-  autocmd!
-  autocmd FileType gitcommit :setlocal colorcolumn=72 textwidth=72
-augroup END
-
-"  }}}
 "  Plugin: Vim-Plug --- {{{
 
 " Plug update and upgrade
@@ -764,6 +756,14 @@ function! _PU()
   exec 'PlugUpgrade'
 endfunction
 command! PU call _PU()
+
+"  }}}
+"  General: Color Column and Text Width --- {{{
+
+augroup color_column_and_text_width
+  autocmd!
+  autocmd FileType gitcommit :setlocal colorcolumn=72 textwidth=72
+augroup END
 
 "  }}}
 " Plugin: Riv.Vim --- {{{
