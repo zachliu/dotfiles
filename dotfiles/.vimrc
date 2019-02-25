@@ -1518,23 +1518,6 @@ let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_xxd_options = '-g 2'
 
 "  }}}
-"  Plugin: Language-specific file beautification --- {{{
-
-augroup language_specific_file_beauty
-  autocmd FileType javascript noremap <buffer> <leader>f :call JsBeautify()<cr>
-  autocmd FileType json noremap <buffer> <leader>f :call JsonBeautify()<cr>
-  autocmd FileType javascript.jsx,jsx noremap <buffer> <leader>f :call JsxBeautify()<cr>
-  autocmd FileType html noremap <buffer> <leader>f :call HtmlBeautify()<cr>
-  autocmd FileType css noremap <buffer> <leader>f :call CSSBeautify()<cr>
-  autocmd Filetype python nnoremap <buffer> <leader>f :Autopep8<cr>
-  autocmd Filetype elm nnoremap <buffer> <leader>f :ElmFormat<cr>
-  autocmd Filetype sql nnoremap <buffer> <leader>f :SQLFmt<cr>
-  autocmd Filetype rust nnoremap <buffer> <leader>f :RustFmt<cr>
-  autocmd Filetype terraform nnoremap <buffer> <leader>f :TerraformFmt<cr>
-  autocmd Filetype haskell nnoremap <buffer> <leader>f :Stylishask<cr>
-augroup END
-
-" }}}
 " General: Clean Unicode --- {{{
 
 function! CleanUnicode()
@@ -1545,6 +1528,20 @@ function! CleanUnicode()
   silent! %s/‘/'/g
 endfunction()
 command! CleanUnicode call CleanUnicode()
+
+" }}}
+" General: Neovim Terminal --- {{{
+
+function! s:openTerm(view_type)
+  exec a:view_type
+  terminal
+  setlocal nonumber nornu
+  startinsert
+endfunction
+
+command! Term call s:openTerm('split')
+command! Termv call s:openTerm('vsplit')
+command! Vtert call s:openTerm('tabnew')
 
 " }}}
 " General: Number width to 80 (including special characters)---- {{{
@@ -1691,6 +1688,87 @@ augroup language_specific_file_beauty
 augroup END
 
 " }}}
+" General: Macro repeater ---- {{{
+
+" Allow '.' to repeat macros. Finally!
+" Taken from here:
+" https://vi.stackexchange.com/questions/11210/can-i-repeat-a-macro-with-the-dot-operator
+" SR took it from GitHub: ckarnell/Antonys-macro-repeater
+"
+" When . repeats g@, repeat the last macro.
+fun! AtRepeat(_)
+  " If no count is supplied use the one saved in s:atcount.
+  " Otherwise save the new count in s:atcount, so it will be
+  " applied to repeats.
+  let s:atcount = v:count ? v:count : s:atcount
+  " feedkeys() rather than :normal allows finishing in Insert
+  " mode, should the macro do that. @@ is remapped, so 'opfunc'
+  " will be correct, even if the macro changes it.
+  call feedkeys(s:atcount.'@@')
+endfun
+
+fun! AtSetRepeat(_)
+  set operatorfunc=AtRepeat
+endfun
+
+" Called by g@ being invoked directly for the first time. Sets
+" 'opfunc' ready for repeats with . by calling AtSetRepeat().
+fun! AtInit()
+  " Make sure setting 'opfunc' happens here, after initial playback
+  " of the macro recording, in case 'opfunc' is set there.
+  set operatorfunc=AtSetRepeat
+  return 'g@l'
+endfun
+
+" Enable calling a function within the mapping for @
+nnoremap <expr> <plug>@init AtInit()
+" A macro could, albeit unusually, end in Insert mode.
+inoremap <expr> <plug>@init "\<c-o>".AtInit()
+
+fun! AtReg()
+  let s:atcount = v:count1
+  let l:c = nr2char(getchar())
+  return '@'.l:c."\<plug>@init"
+endfun
+
+
+" The following code allows pressing . immediately after
+" recording a macro to play it back.
+nmap <expr> @ AtReg()
+fun! QRepeat(_)
+  call feedkeys('@'.s:qreg)
+endfun
+
+fun! QSetRepeat(_)
+  set operatorfunc=QRepeat
+endfun
+
+fun! QStop()
+  set operatorfunc=QSetRepeat
+  return 'g@l'
+endfun
+
+nnoremap <expr> <plug>qstop QStop()
+inoremap <expr> <plug>qstop "\<c-o>".QStop()
+
+let s:qrec = 0
+fun! QStart()
+  if s:qrec == 1
+    let s:qrec = 0
+    return "q\<plug>qstop"
+  endif
+  let s:qreg = nr2char(getchar())
+  if s:qreg =~# '[0-9a-zA-Z"]'
+    let s:qrec = 1
+  endif
+  return 'q'.s:qreg
+endfun
+
+" Finally, remap q! Recursion is actually useful here I think,
+" otherwise I would use 'nnoremap'.
+nmap <expr> q QStart()
+
+" }}}
 " General: Command abbreviations ------------------------ {{{
 
 " creating tab, vertical, and horizontal buffer splits
@@ -1736,6 +1814,8 @@ let &t_SI .= "\<Esc>[5 q"
 let &t_SR .= "\<Esc>[4 q"
 "common - block
 let &t_EI .= "\<Esc>[3 q"
+" Turn off GUI cursor changes in console mode (tty)
+call IfConsole({-> execute('set guicursor=')}, {-> 0})
 
 " Configure updatetime
 " This is the amount of time vim waits to do something after you stop
