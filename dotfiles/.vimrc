@@ -839,12 +839,13 @@ let g:NERDTreeMapOpenInTab = '<C-t>'
 let g:NERDTreeMapOpenInTabSilent = ''
 let g:NERDTreeMapOpenSplit = '<C-s>'
 let g:NERDTreeMapOpenVSplit = '<C-v>'
-let g:NERDTreeShowHidden = 1
+let g:NERDTreeShowHidden = 0
 let g:NERDTreeShowLineNumbers = 1
 let g:NERDTreeSortOrder = ['*', '\/$']
 let g:NERDTreeWinPos = 'left'
 let g:NERDTreeWinSize = 31
-
+let g:NERDTreeMouseMode = 2
+let g:NERDTreeMinimalUI = 1
 let g:NERDTreeIgnore=[
       \'venv$[[dir]]',
       \'.venv$[[dir]]',
@@ -859,14 +860,20 @@ let g:NERDTreeIgnore=[
       \'\.o$[[file]]',
       \]
 
-function! NERDTreeToggleCustom()
+function! _CD(...)  " Like args in Python
+  let a:directory = get(a:, 1, expand('%:p:h'))
+  execute 'cd ' . a:directory
   if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
-    " if NERDTree is open in window in current tab...
-    exec 'NERDTreeClose'
+    execute 'NERDTreeCWD'
+    execute "normal! \<c-w>\<c-p>"
   else
-    exec 'NERDTree %'
+    execute 'NERDTreeCWD'
+    execute 'NERDTreeClose'
+    execute "normal! \<c-w>="
   endif
 endfunction
+
+command! -nargs=? CD call _CD(<f-args>)
 
 function! s:CloseIfOnlyControlWinLeft()
   if winnr("$") != 1
@@ -882,6 +889,19 @@ augroup CloseIfOnlyControlWinLeft
   au!
   au BufEnter * call s:CloseIfOnlyControlWinLeft()
 augroup END
+
+let g:NERDTreeIndicatorMapCustom = {
+      \ "Modified"  : "!",
+      \ "Staged"    : "=",
+      \ "Untracked" : "?",
+      \ "Renamed"   : "%",
+      \ "Unmerged"  : "=",
+      \ "Deleted"   : "!",
+      \ "Dirty"     : "^",
+      \ "Clean"     : "%",
+      \ 'Ignored'   : "%",
+      \ "Unknown"   : "?"
+      \ }
 
 "  }}}
 " Plugin: fzf --- {{{
