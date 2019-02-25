@@ -1295,6 +1295,17 @@ augroup autopairs_filetype_overrides
 augroup END
 
 "  }}}
+"  Plugin: RagTag --- {{{
+
+" Load mappings on every filetype
+let g:ragtag_global_maps = 1
+
+" Additional files for whice ragtag will initialize
+augroup ragtag_config
+  autocmd FileType javascript call RagtagInit()
+augroup end
+
+"  }}}
 "  Plugin: Terraform Syntax --- {{{
 
 let g:terraform_align=1
@@ -1377,9 +1388,6 @@ let g:haskell_enable_static_pointers = 1  " to highlight `static`
 " Python: highlighting
 let g:python_highlight_space_errors = 0
 let g:python_highlight_all = 1
-
-" Ragtag: on every filetype
-let g:ragtag_global_maps = 1
 
 " VimJavascript:
 let g:javascript_plugin_flow = 1
