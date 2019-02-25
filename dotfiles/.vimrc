@@ -781,15 +781,16 @@ command! PU call _PU()
 "     Header row + new row = <Alt>Enter
 "     New row = Just type the correct columns then get into normal mode
 
-let g:riv_disable_folding = 1
 let g:riv_global_leader = '<C-E>'
-let g:riv_web_browser = 'firefox'
-let g:riv_disable_indent = 0
-let g:riv_disable_del = 0
+let g:riv_disable_folding = 1
+let g:riv_disable_indent = 1
+let g:riv_disable_del = 1
+let g:riv_ignored_imaps = '<Tab>,<S-Tab>'
+let g:riv_ignored_nmaps = '<Tab>,<S-Tab>'
+let g:riv_ignored_vmaps = '<Tab>,<S-Tab>'
 let g:riv_auto_format_table = 1
 let g:riv_auto_rst2html = 0
-
-let g:instant_rst_localhost_only = 1
+let g:riv_web_browser = 'chrome'
 
 " }}}
 " Plugin: Preview Compiled Stuff in Viewer --- {{{
