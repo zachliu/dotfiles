@@ -1424,24 +1424,6 @@ let g:vim_filetype_formatter_commands = {
 " }}}
 " Plugin: Miscellaneous global var config ------------ {{{
 
-" GvVim:
-" :GV to open commit browser
-" You can pass git log options to the command, e.g. :GV -S foobar.
-" :GV! will only list commits that affected the current file
-" :GV? fills the location list with the revisions of the current file
-
-" :GV or :GV? can be used in visual mode to track the changes in the selected lines.
-
-" o or <cr> on a commit to display the content of it
-" o or <cr> on commits to display the diff in the range
-" O opens a new tab instead
-" gb for :Gbrowse
-" ]] and [[ to move between commits
-" . to start command-line with :Git [CURSOR] SHA à la fugitive
-" q to close
-
-let g:agit_max_log_lines = 500
-
 " UndoTree:
 let g:undotree_SetFocusWhenToggle = 1
 let g:undotree_WindowLayout = 3
@@ -1464,11 +1446,6 @@ let g:winresizer_start_key = '<C-E>'
 let g:winresizer_vert_resize = 1
 let g:winresizer_horiz_resize = 1
 
-" Taboo:
-" Tab format hardcoded to main for now since I often do this anyway
-let g:taboo_tab_format = ' [%N:tab]%m '
-let g:taboo_renamed_tab_format = ' [%N:%l]%m '
-
 " Haskell: 'neovimhaskell/haskell-vim'
 let g:haskell_enable_quantification = 1   " to highlight `forall`
 let g:haskell_enable_recursivedo = 1      " to highlight `mdo` and `rec`
@@ -1481,11 +1458,14 @@ let g:haskell_enable_static_pointers = 1  " to highlight `static`
 let g:python_highlight_space_errors = 0
 let g:python_highlight_all = 1
 
+" Ragtag: on every filetype
+let g:ragtag_global_maps = 1
+
 " VimJavascript:
 let g:javascript_plugin_flow = 1
 
-" JSX: for .js files in addition to .jsx
-let g:jsx_ext_required = 0
+" JSX: configure jsx-pretty
+let g:vim_jsx_pretty_colorful_config = 1
 
 " JsDoc:
 let g:jsdoc_enable_es6 = 1
@@ -1505,14 +1485,9 @@ let g:bullets_enabled_file_types = [
     \ 'markdown',
     \ 'text',
     \ 'gitcommit',
-    \ 'scratch'
+    \ 'scratch',
+    \ 'rst',
     \]
-
-" SQLFormat:
-" relies on 'pip install sqlformat'
-let g:sqlfmt_auto = 0
-let g:sqlfmt_command = "sqlformat"
-let g:sqlfmt_options = "--keywords=upper --identifiers=lower --use_space_around_operators"
 
 " Numbersvim: override default plugin settings
 let g:numbers_exclude = ['startify', 'gundo', 'vimshell', 'gina-commit',
@@ -1531,9 +1506,8 @@ let g:qs_max_chars = 10000
 " Go: random stuff
 let g:go_version_warning = 0
 
-" Autopep8: options
-let g:autopep8_disable_show_diff = 1
-let g:autopep8_on_save = 0
+" ChooseWin: options
+let g:choosewin_overlay_enable = 1
 
 " Colorizer: css color code highlighting
 let g:colorizer_auto_filetype='css,html'
@@ -1684,9 +1658,6 @@ nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
 
 " AutoPairs:
 imap <silent><CR> <CR><Plug>AutoPairsReturn
-
-" Taboo: rename files smartly
-nnoremap <leader><leader>t :TabooRename<space>
 
 " FZF: create shortcuts for finding stuff
 nnoremap <silent> <C-P> :call FZFFilesAvoidNerdtree()<CR>
