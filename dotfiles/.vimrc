@@ -1313,6 +1313,103 @@ let g:terraform_align=1
 let g:terraform_remap_spacebar=1
 
 " }}}
+"  Plugin: AutoCompletion config, multiple plugins ------------ {{{
+
+" NOTE: General remappings
+" 1) go to file containing definition: <C-]>
+" 2) Return from file (relies on tag stack): <C-O>
+
+" VimScript:
+" Autocompletion and show definition is built in to Vim
+" Set the same shortcuts as usual to find them
+augroup vimscript_complete
+  autocmd!
+  autocmd FileType vim nnoremap <buffer> <C-]> yiw:help <C-r>"<CR>
+  autocmd FileType vim inoremap <buffer> <C-@> <C-x><C-v>
+  autocmd FileType vim inoremap <buffer> <C-space> <C-x><C-v>
+augroup END
+
+" Python
+" Open module, e.g. :Pyimport os (opens the os module)
+let g:jedi#popup_on_dot = 0
+let g:jedi#show_call_signatures = 0
+let g:jedi#auto_close_doc = 0
+let g:jedi#smart_auto_mappings = 0
+" let g:jedi#force_py_version = 3
+" let g:jedi#use_tabs_not_buffers = 1
+
+" mappings
+" auto_vim_configuration creates space between where vim is opened and
+" closed in my bash terminal. This is annoying, so I disable and manually
+" configure. See 'set completeopt' in my global config for my settings
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#goto_command = "<C-]>"
+let g:jedi#documentation_command = "<leader>sd"
+let g:jedi#usages_command = "<leader>su"
+let g:jedi#rename_command = "<leader>sr"
+
+" Javascript
+let g:tern_show_argument_hints = 'on_move'
+let g:tern_show_signature_in_pum = 1
+augroup javascript_complete
+  autocmd!
+  autocmd FileType javascript nnoremap <buffer> <C-]> :TernDef<CR>
+augroup END
+
+" Elm:
+let g:elm_detailed_complete = 1
+let g:elm_format_autosave = 0
+augroup elm_complete
+  autocmd!
+  autocmd FileType elm nnoremap <buffer> <C-]> :ElmShowDocs<CR>
+augroup END
+
+" CPP:
+" Jumping back defaults to <C-O> or <C-T> (in is <C-I> per usual)
+" Defaults to <C-]> for goto definition
+" Additionally, jumping to Header file under cursor: gd
+let g:clang_library_path = '/usr/lib/llvm-6.0/lib'
+let g:clang_auto_user_options = 'compile_commands.json, path, .clang_complete'
+let g:clang_complete_auto = 0
+let g:clang_complete_macros = 1
+let g:clang_jumpto_declaration_key = "<C-]>"
+
+" Haskell
+" Disable haskell-vim omnifunc
+let g:haskellmode_completion_ghc = 0
+let g:necoghc_enable_detailed_browse = 1
+augroup haskell_complete
+  autocmd!
+  autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+augroup END
+
+" Rust:
+" rustup install racer
+let g:racer_cmd = $HOME . '/.cargo/bin/racer'
+" rustup component add rust-src
+let $RUST_SRC_PATH = $HOME .
+      \'/.multirust/toolchains/stable-x86_64-unknown-linux-gnu/' .
+      \'lib/rustlib/src/rust/src'
+let g:racer_experimental_completer = 1
+augroup rust_complete
+  autocmd!
+  " needs to be nmap; does not work with nnoremap
+  autocmd FileType rust nmap <buffer> <C-]> <Plug>(rust-def)
+augroup END
+
+" Writing: writing document
+" currently only supports markdown
+" jump to word definition for several text editors (including markdown)
+augroup writing_complete
+  autocmd FileType markdown,tex,rst,txt nnoremap <buffer> <C-]> :Def <cword><CR>
+augroup END
+
+" Terraform
+augroup terraform_complete
+  autocmd FileType terraform setlocal omnifunc=terraformcomplete#Complete
+augroup END
+
+"  }}}
 " Plugin: vim-filetype-formatter and autoformatting --- {{{
 
 let g:vim_filetype_formatter_verbose = 0
@@ -1450,103 +1547,6 @@ let g:colorizer_auto_filetype='css,html'
 " relevant command: Hexmode
 let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_xxd_options = '-g 2'
-
-"  }}}
-"  Plugin: AutoCompletion config, multiple plugins ------------ {{{
-
-" NOTE: General remappings
-" 1) go to file containing definition: <C-]>
-" 2) Return from file (relies on tag stack): <C-O>
-
-" VimScript:
-" Autocompletion and show definition is built in to Vim
-" Set the same shortcuts as usual to find them
-augroup vimscript_complete
-  autocmd!
-  autocmd FileType vim nnoremap <buffer> <C-]> yiw:help <C-r>"<CR>
-  autocmd FileType vim inoremap <buffer> <C-@> <C-x><C-v>
-  autocmd FileType vim inoremap <buffer> <C-space> <C-x><C-v>
-augroup END
-
-" Python
-" Open module, e.g. :Pyimport os (opens the os module)
-let g:jedi#popup_on_dot = 0
-let g:jedi#show_call_signatures = 0
-let g:jedi#auto_close_doc = 0
-let g:jedi#smart_auto_mappings = 0
-" let g:jedi#force_py_version = 3
-" let g:jedi#use_tabs_not_buffers = 1
-
-" mappings
-" auto_vim_configuration creates space between where vim is opened and
-" closed in my bash terminal. This is annoying, so I disable and manually
-" configure. See 'set completeopt' in my global config for my settings
-let g:jedi#auto_vim_configuration = 0
-let g:jedi#goto_command = "<C-]>"
-let g:jedi#documentation_command = "<leader>sd"
-let g:jedi#usages_command = "<leader>su"
-let g:jedi#rename_command = "<leader>sr"
-
-" Javascript
-let g:tern_show_argument_hints = 'on_move'
-let g:tern_show_signature_in_pum = 1
-augroup javascript_complete
-  autocmd!
-  autocmd FileType javascript nnoremap <buffer> <C-]> :TernDef<CR>
-augroup END
-
-" Elm:
-let g:elm_detailed_complete = 1
-let g:elm_format_autosave = 0
-augroup elm_complete
-  autocmd!
-  autocmd FileType elm nnoremap <buffer> <C-]> :ElmShowDocs<CR>
-augroup END
-
-" CPP:
-" Jumping back defaults to <C-O> or <C-T> (in is <C-I> per usual)
-" Defaults to <C-]> for goto definition
-" Additionally, jumping to Header file under cursor: gd
-let g:clang_library_path = '/usr/lib/llvm-6.0/lib'
-let g:clang_auto_user_options = 'compile_commands.json, path, .clang_complete'
-let g:clang_complete_auto = 0
-let g:clang_complete_macros = 1
-let g:clang_jumpto_declaration_key = "<C-]>"
-
-" Haskell
-" Disable haskell-vim omnifunc
-let g:haskellmode_completion_ghc = 0
-let g:necoghc_enable_detailed_browse = 1
-augroup haskell_complete
-  autocmd!
-  autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-augroup END
-
-" Rust:
-" rustup install racer
-let g:racer_cmd = $HOME . '/.cargo/bin/racer'
-" rustup component add rust-src
-let $RUST_SRC_PATH = $HOME .
-      \'/.multirust/toolchains/stable-x86_64-unknown-linux-gnu/' .
-      \'lib/rustlib/src/rust/src'
-let g:racer_experimental_completer = 1
-augroup rust_complete
-  autocmd!
-  " needs to be nmap; does not work with nnoremap
-  autocmd FileType rust nmap <buffer> <C-]> <Plug>(rust-def)
-augroup END
-
-" Writing: writing document
-" currently only supports markdown
-" jump to word definition for several text editors (including markdown)
-augroup writing_complete
-  autocmd FileType markdown,tex,rst,txt nnoremap <buffer> <C-]> :Def <cword><CR>
-augroup END
-
-" Terraform
-augroup terraform_complete
-  autocmd FileType terraform setlocal omnifunc=terraformcomplete#Complete
-augroup END
 
 "  }}}
 "  Plugin: Language-specific file beautification --- {{{
