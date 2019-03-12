@@ -394,8 +394,8 @@
 #   tmux_conf_battery_bar_palette=${tmux_conf_battery_bar_palette:-'gradient'}
 #   tmux_conf_battery_hbar_palette=${tmux_conf_battery_hbar_palette:-'gradient'} # red, orange, green
 #   tmux_conf_battery_vbar_palette=${tmux_conf_battery_vbar_palette:-'gradient'} # red, orange, green
-#   tmux_conf_battery_status_charging=${tmux_conf_battery_status_charging:-'↑'}       # U+2191
-#   tmux_conf_battery_status_discharging=${tmux_conf_battery_status_discharging:-'↓'} # U+2193
+#   tmux_conf_battery_status_charging=${tmux_conf_battery_status_charging:-'⟰'}       # U+1f845, upwards heavy arrow
+#   tmux_conf_battery_status_discharging=${tmux_conf_battery_status_discharging:-'⟱'} # U+1f847, downwards heavy arrow
 #
 #   case "$status_left $status_right" in
 #     *'#{battery_status}'*|*'#{battery_bar}'*|*'#{battery_hbar}'*|*'#{battery_vbar}'*|*'#{battery_percentage}'*)
