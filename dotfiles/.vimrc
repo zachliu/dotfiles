@@ -140,7 +140,7 @@ set inccommand=nosplit
 augroup zliu_incsearch_highlight
   autocmd!
   autocmd CmdlineEnter /,\? :set hlsearch
-  autocmd CmdlineLeave /,\? :set nohlsearch
+  " autocmd CmdlineLeave /,\? :set nohlsearch
 augroup END
 
 " Remove query for terminal version
