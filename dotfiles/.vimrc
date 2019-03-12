@@ -1566,6 +1566,13 @@ endfunction
 " and also makes PgUp PgDn toggle upper/lower case
 " nnoremap <silent> <esc> :noh<return><esc>
 
+" ScrollDropdown:
+" Enable scrolling dropdown menu with the mouse
+" Additionally, make clicking select the highlighted item
+inoremap <expr> <ScrollWheelUp> pumvisible() ? '<C-p>' : '<Esc><ScrollWheelUp>'
+inoremap <expr> <ScrollWheelDown> pumvisible() ? '<C-n>' : '<Esc><ScrollWheelDown>'
+inoremap <expr> <LeftMouse> pumvisible() ? '<CR><Backspace>' : '<Esc><LeftMouse>'
+
 " Omnicompletion:
 " imap <C-space> <C-x><C-o>
 " <C-@> is actually <C-space>
@@ -1673,6 +1680,14 @@ nnoremap gh :call CurtineIncSw()<CR>
 
 " Open split for writing (80 character window width for wrap)
 nnoremap <silent> <leader>v :call ResizeTo80()<CR>
+
+" MouseCopy: system copy mouse characteristics
+vnoremap <RightMouse> "+y
+
+" Mouse Open Close Folds: open folds with the mouse, and close the folds
+" open operation taken from: https://stackoverflow.com/a/13924974
+nnoremap <expr> <2-LeftMouse> foldclosed(line('.')) == -1 ? '\<2-LeftMouse>' : 'zo'
+nnoremap <RightMouse> <LeftMouse><LeftRelease>zc
 
 " Insert Mode moves
 imap <C-h> <left>
