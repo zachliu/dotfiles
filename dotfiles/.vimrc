@@ -748,6 +748,20 @@ function! DeleteInactiveBuffers()
 endfunction
 
 "  }}}
+" Plugin: Jinja2 {{{
+
+function! Jinja2Toggle()
+  let jinja2 = '.jinja2'
+  let jinja2_pattern = '\' . jinja2
+  if matchstr(&ft, jinja2_pattern) == ""
+    let new_filetype = &ft . jinja2
+  else
+    let new_filetype = substitute(&ft, jinja2_pattern, "", "")
+  endif
+  execute "set filetype=" . new_filetype
+endfunction
+
+" }}}
 "  Plugin: Vim-Plug --- {{{
 
 " Plug update and upgrade
@@ -1630,6 +1644,9 @@ nnoremap <silent> gM M
 " The following mappings make it easier to chage javascript plugin behavior
 nnoremap <leader>jx :set filetype=javascript.jsx<CR>
 nnoremap <leader>jj :set filetype=javascript<CR>
+
+" Jinja2Toggle: the following mapping toggles jinja2 for any filetype
+nnoremap <silent> <leader>j :call Jinja2Toggle()<CR>
 
 " ToggleRelativeNumber: uses custom functions
 nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
