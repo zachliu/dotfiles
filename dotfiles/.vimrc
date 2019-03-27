@@ -386,6 +386,18 @@ augroup filetype_vim
 augroup END
 
 " }}}
+" General: Comment Strings {{{
+
+" Notes:
+" commentstring: read by vim-commentary; must be one template
+" comments: csv of comments.
+augroup custom_comment_strings
+  autocmd!
+  autocmd FileType dosini setlocal commentstring=#\ %s
+  autocmd FileType dosini setlocal comments=:#,:;
+augroup END
+
+" }}}
 " General: Indentation (tabs, spaces, width, etc)------------- {{{
 
 " Note -> apparently BufRead, BufNewFile trumps Filetype
