@@ -1,5 +1,17 @@
 #!/bin/zsh
 
+# zmodload zsh/zprof
+#
+# zmodload zsh/datetime
+# setopt PROMPT_SUBST
+# PS4='+$EPOCHREALTIME %N:%i> '
+
+# logfile=$(mktemp zsh_profile.XXXXXXXX)
+# echo "Logging to $logfile"
+# exec 3>&2 2>$logfile
+
+# setopt XTRACE
+
 # Notes:
 #
 # Searching for a specific man page
@@ -403,7 +415,7 @@ function zshexit() {
 # }}}
 # ZShell Auto Completion --- {{{
 
-autoload -U compinit && compinit
+# autoload -U compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
 
@@ -582,7 +594,7 @@ alias top='gotop'
 alias lssl='ls -la | grep "\->"'
 
 # measure zsh startup time
-alias tzsh='time zsh -i -c exit'
+alias tzsh='time zsh -i -c echo'
 
 # customize psql
 alias psql='LESS="-iMSx4 -FXR" PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIGHT_CYAN}\1$NOCOLOR/; s/\([[:space:]]\+[0-9.\-]\+[[:space:]]\)/${LIGHT_CYAN}\1$NOCOLOR/g; s/|/$YELLOW|$NOCOLOR/g;s/^\([-+]\+\)/$YELLOW\1$NOCOLOR/\" 2>/dev/null | less" psql'
@@ -1033,3 +1045,7 @@ source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/autojump/autojump.zsh
 
 # }}}
+# zprof
+#
+# unsetopt XTRACE
+# exec 2>&3 3>&-
