@@ -244,10 +244,10 @@ then
   path_ladd "$HOME_BIN"
 fi
 
-STACK_LOC="$HOME/.local/bin"
-if [ -d "$STACK_LOC" ]; then
-  path_ladd "$STACK_LOC"
-fi
+# STACK_LOC="$HOME/.local/bin"
+# if [ -d "$STACK_LOC" ]; then
+#   path_ladd "$STACK_LOC"
+# fi
 
 # POETRY_LOC="$HOME/.poetry/bin"
 # if [ -d "$POETRY_LOC" ]; then
