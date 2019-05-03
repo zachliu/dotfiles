@@ -540,10 +540,11 @@ alias l='ls -CF'
 alias diff="diff -rupP --color"
 
 # Docker
+# the more powerful drm/drmi have been created under "Functions"
 # remove stopped containers
-alias drm="docker ps --no-trunc -aq | xargs docker rm"
+# alias drm="docker ps --no-trunc -aq | xargs docker rm"
 # remove all untagged images
-alias drmi="docker images -q --filter 'dangling=true' | xargs docker rmi"
+# alias drmi="docker images -q --filter 'dangling=true' | xargs docker rmi"
 
 # Set copy/paste helper functions
 # the perl step removes the final newline from the output
@@ -860,6 +861,35 @@ function quote() {
     shuf -n 1 ~/.gre_words.txt;)
   echo -e "$cowsay_quote" | cowsay -n | cowsay -n -f gnu | lolcat;
   echo;
+}
+
+function drm() {
+  local stopped_containers=$(docker ps --no-trunc -aq)
+  if [ -z "$stopped_containers" ]
+  then
+    echo "No stopped containers found"
+  else
+    docker rm $stopped_containers
+  fi
+}
+
+function drmi() {
+  if [ $# -eq 0 ]
+  then
+    local dangling=$(docker images -q --filter 'dangling=true')
+    if [ -z "$dangling" ]
+    then
+      echo "No dangling images found"
+    else
+      docker rmi $dangling
+    fi
+  else
+    for img in "$@"
+    do
+      docker image rm \
+        $(docker images --format "{{.Repository}}:{{.Tag}}" | grep $img)
+    done
+  fi
 }
 
 function deshake-video() {
