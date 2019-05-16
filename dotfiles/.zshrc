@@ -869,7 +869,7 @@ function drm() {
   then
     echo "No stopped containers found"
   else
-    docker rm $stopped_containers
+    echo $stopped_containers | xargs docker rm
   fi
 }
 
@@ -881,7 +881,7 @@ function drmi() {
     then
       echo "No dangling images found"
     else
-      docker rmi $dangling
+      echo $dangling | xargs docker rmi
     fi
   else
     for img in "$@"
