@@ -474,6 +474,9 @@ bindkey -M menuselect '^k' reverse-menu-complete
 bindkey -M menuselect '^h' backward-char
 bindkey -M menuselect '^l' forward-char
 
+# since <ctrl>+l is arrow right now, we need another clear-screen
+bindkey -M main '^u' clear-screen
+
 # delete function characters to include
 # Omitted: /=
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
