@@ -196,13 +196,21 @@ then
   path_radd "$LOCAL_BIN"
 fi
 
+pyenv_init() {
+  eval "$(pyenv init -)"
+}
+
 PYENV_ROOT="$HOME/.pyenv"
+PYTHON_VERSION="$PWD/.python-version"
 if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
-  eval "$(pyenv init -)"
-  if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
-    eval "$(pyenv virtualenv-init -)"
+  if [ -f "$PYTHON_VERSION" ]; then
+    # eval "$(pyenv init -)"
+    pyenv_init
+    if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
+      eval "$(pyenv virtualenv-init -)"
+    fi
   fi
 fi
 
@@ -217,15 +225,25 @@ NODENV_ROOT="$HOME/.nodenv"
 if [ -d "$NODENV_ROOT" ]; then
   export NODENV_ROOT
   path_radd "$NODENV_ROOT/bin"
-  eval "$(nodenv init -)"
+  # eval "$(nodenv init -)"
 fi
+
+nodenv() {
+  eval "$(command nodenv init -)"
+  nodenv "@"
+}
 
 RBENV_ROOT="$HOME/.rbenv"
 if [ -d "$RBENV_ROOT" ]; then
   export RBENV_ROOT
   path_ladd "$RBENV_ROOT/bin"
-  eval "$(rbenv init -)"
+  # eval "$(rbenv init -)"
 fi
+
+rbenv() {
+  eval "$(command rbenv init -)"
+  rbenv "@"
+}
 
 TFENV_ROOT="$HOME/.tfenv"
 if [ -d "$TFENV_ROOT" ]; then
@@ -733,7 +751,7 @@ PYTHON_DEV_PACKAGES=(pynvim bpython restview jedi autopep8 pre-commit boto3 awsc
 
 # [optionally] create and activate Python virtual environment
 function ve() {
-  python_version=$(pyenv version | head -n 1 | cut -d ' ' -f 1)
+  local python_version=$(pyenv version | head -n 1 | cut -d ' ' -f 1)
   if [ ${#} -ne 1 ]; then
     local pkg_base=$(basename $PWD)
     local pkg_hashval=$(\
@@ -1028,10 +1046,20 @@ PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
 PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
 PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
 
+function pyenv_python_version() {
+  echo $(pyenv version | head -n 1 | grep -o -P "\d+\.\d+\.\d+")
+}
+
+# See https://stackoverflow.com/questions/50735140/why-does-python-version-not-print-string
+# for doing string manipulation on python --version output
+function shell_python_version() {
+  echo $(python --version 2>&1) | awk '{print $2}'
+}
+
 # See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
 # for the reason of using single quotes here
-# PS1_PYV='%B%F{$COLOR_SILVER}$(pyenv version | head -n 1 | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")'
-PS1_PYV='%B%F{$COLOR_PINK}$(pyenv version | head -n 1 | grep -o -P "\d+\.\d+\.\d+")%f%b'
+# PS1_PYV='%B%F{$COLOR_SILVER}$(pyenv_python_version | head -n 1 | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")'
+PS1_PYV='%B%F{$COLOR_PINK}$(shell_python_version)%f%b'
 
 PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
 
@@ -1078,6 +1106,7 @@ source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/autojump/autojump.zsh
 
 # }}}
+
 # zprof
 #
 # unsetopt XTRACE
