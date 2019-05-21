@@ -1,16 +1,24 @@
 #!/bin/zsh
 
-# zmodload zsh/zprof
-#
-# zmodload zsh/datetime
-# setopt PROMPT_SUBST
-# PS4='+$EPOCHREALTIME %N:%i> '
+#######################################################################
+# Profiler Header
+#######################################################################
 
-# logfile=$(mktemp zsh_profile.XXXXXXXX)
-# echo "Logging to $logfile"
-# exec 3>&2 2>$logfile
+# Profiler Header --- {{{
 
-# setopt XTRACE
+ # zmodload zsh/zprof
+
+ # zmodload zsh/datetime
+ # setopt PROMPT_SUBST
+ # PS4='+$EPOCHREALTIME %N:%i> '
+
+ # logfile=$(mktemp zsh_profile.XXXXXXXX)
+ # echo "Logging to $logfile"
+ # exec 3>&2 2>$logfile
+
+ # setopt XTRACE
+
+# }}}
 
 # Notes:
 #
@@ -206,7 +214,6 @@ if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
   if [ -f "$PYTHON_VERSION" ]; then
-    # eval "$(pyenv init -)"
     pyenv_init
     if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
       eval "$(pyenv virtualenv-init -)"
@@ -262,11 +269,6 @@ then
   path_ladd "$HOME_BIN"
 fi
 
-# STACK_LOC="$HOME/.local/bin"
-# if [ -d "$STACK_LOC" ]; then
-#   path_ladd "$STACK_LOC"
-# fi
-
 # POETRY_LOC="$HOME/.poetry/bin"
 # if [ -d "$POETRY_LOC" ]; then
 #   path_ladd "$POETRY_LOC"
@@ -281,10 +283,14 @@ export PATH
 typeset -aU path
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/zach/google-cloud-sdk/path.zsh.inc' ]; then . '/home/zach/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/home/zach/google-cloud-sdk/path.zsh.inc' ]; then
+  . '/home/zach/google-cloud-sdk/path.zsh.inc';
+fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/home/zach/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/zach/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/home/zach/google-cloud-sdk/completion.zsh.inc' ]; then
+  . '/home/zach/google-cloud-sdk/completion.zsh.inc';
+fi
 
 # }}}
 
@@ -303,43 +309,13 @@ include ~/.bash/sensitive
 # }}}
 # Plugins --- {{{
 
-# -----------------------------------------------------------------------------
-# This block makes the init of zshell a bit slow
-# I don't know why
-# -----------------------------------------------------------------------------
-#if [ -f ~/.zplug/init.zsh ]; then
-#  source ~/.zplug/init.zsh
+# zplug slows zsh down, me no like
 
-#  # BEGIN: List plugins
+# Syntax highlighting for zsh
+source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-#  # use double quotes: the plugin manager author says we must for some reason
-#  zplug "paulirish/git-open", as:plugin
-#  zplug "greymd/docker-zsh-completion", as:plugin
-#  zplug "zsh-users/zsh-completions", as:plugin
-#  zplug "zsh-users/zsh-syntax-highlighting", as:plugin
-#  zplug "nobeans/zsh-sdkman", as:plugin
-#  zplug "junegunn/fzf-bin", \
-#    from:gh-r, \
-#    as:command, \
-#    rename-to:fzf
-
-
-#  #END: List plugins
-
-#  # Install plugins if there are plugins that have not been installed
-#  if ! zplug check --verbose; then
-#      printf "Install? [y/N]: "
-#      if read -q; then
-#          echo; zplug install
-#      fi
-#  fi
-
-#  # Then, source plugins and add commands to $PATH
-#  zplug load
-#else
-#  echo "zplug not installed, so no plugins available"
-#fi
-# -----------------------------------------------------------------------------
+# Autojump for zsh
+source /usr/share/autojump/autojump.zsh
 
 # }}}
 # ZShell Options --- {{{
@@ -433,7 +409,18 @@ function zshexit() {
 # }}}
 # ZShell Auto Completion --- {{{
 
-# autoload -U compinit && compinit
+autoload -Uz compinit
+# if [ $(date '+%s' --date="1 day ago") -le $(stat -c "%Z" ${HOME}/.zcompdump) ]; then
+# if [[ -n $(ls $HOME/.zcompdump(Nmh+24)) ]]; then
+setopt EXTENDEDGLOB
+if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
+  echo "re-load .zcompdump"
+  compinit
+else
+  # echo "within 24"
+  compinit -C
+fi
+unsetopt EXTENDEDGLOB
 autoload -U +X bashcompinit && bashcompinit
 zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
 
@@ -464,9 +451,6 @@ _vault_complete() {
   reply=( "${(ps:\n:)completions}" )
 }
 compctl -f -K _vault_complete vault
-
-# stack
-# eval "$(stack --bash-completion-script stack)"
 
 # Add autocompletion path
 fpath+=~/.zfunc
@@ -1099,15 +1083,17 @@ if [[ -o interactive ]]; then
   stty -ixon
 fi
 
-# Syntax highlighting for zsh
-source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Autojump for zsh
-source /usr/share/autojump/autojump.zsh
-
 # }}}
 
-# zprof
-#
-# unsetopt XTRACE
-# exec 2>&3 3>&-
+#######################################################################
+# Profiler Footer
+#######################################################################
+
+# Profiler Footer --- {{{
+
+ # zprof
+
+ # unsetopt XTRACE
+ # exec 2>&3 3>&-
+
+# }}}
