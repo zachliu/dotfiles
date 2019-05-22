@@ -237,7 +237,7 @@ fi
 
 nodenv() {
   eval "$(command nodenv init -)"
-  nodenv "@"
+  nodenv $@
 }
 
 RBENV_ROOT="$HOME/.rbenv"
@@ -249,7 +249,7 @@ fi
 
 rbenv() {
   eval "$(command rbenv init -)"
-  rbenv "@"
+  rbenv $@
 }
 
 TFENV_ROOT="$HOME/.tfenv"
