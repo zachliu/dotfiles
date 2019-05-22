@@ -200,6 +200,9 @@ augroup END
 " }}}
 " General: Plugin Install --------------------- {{{
 
+let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
+let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
+
 call plug#begin('~/.vim/plugged')
 
 " Basics
