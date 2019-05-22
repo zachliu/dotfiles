@@ -228,17 +228,19 @@ if [ -d "$SDKMAN_DIR" ]; then
     source "$SDKMAN_DIR/bin/sdkman-init.sh"
 fi
 
+nodenv_init() {
+  eval "$(nodenv init -)"
+}
+
 NODENV_ROOT="$HOME/.nodenv"
+IS_GIT_HERE="$PWD/.git"
 if [ -d "$NODENV_ROOT" ]; then
   export NODENV_ROOT
   path_radd "$NODENV_ROOT/bin"
-  # eval "$(nodenv init -)"
+  if [ -d "$IS_GIT_HERE" ]; then
+    nodenv_init
+  fi
 fi
-
-nodenv() {
-  eval "$(command nodenv init -)"
-  nodenv $@
-}
 
 RBENV_ROOT="$HOME/.rbenv"
 if [ -d "$RBENV_ROOT" ]; then
@@ -754,6 +756,7 @@ function ve() {
   $(pyenv which pip) install --upgrade pip $PYTHON_DEV_PACKAGES
   # pyenv deactivate  # seems useless???
   echo $venv_name > .python-version
+  cat ~/.pyenv/version >> .python-version
 }
 
 # Print out the Github-recommended gitignore
