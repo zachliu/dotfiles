@@ -200,9 +200,6 @@ augroup END
 " }}}
 " General: Plugin Install --------------------- {{{
 
-let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
-let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
-
 call plug#begin('~/.vim/plugged')
 
 " Basics
@@ -1452,6 +1449,10 @@ let g:vim_filetype_formatter_commands = {
 
 " }}}
 " Plugin: Miscellaneous global var config ------------ {{{
+
+" Python: configure python paths
+let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
+let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
 
 " UndoTree:
 let g:undotree_SetFocusWhenToggle = 1
