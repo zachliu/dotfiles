@@ -418,6 +418,7 @@ setopt EXTENDEDGLOB
 if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
   echo "re-load .zcompdump"
   compinit
+  compdump  # update the timestamp on compdump file
 else
   # echo "within 24"
   compinit -C
