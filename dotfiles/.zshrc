@@ -208,17 +208,24 @@ pyenv_init() {
   eval "$(pyenv init -)"
 }
 
+# activate virtual environment from any directory from current and up
 PYENV_ROOT="$HOME/.pyenv"
-PYTHON_VERSION="$PWD/.python-version"
+PYTHON_VERSION=".python-version"
 if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
-  if [ -f "$PYTHON_VERSION" ]; then
-    pyenv_init
-    if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
-      eval "$(pyenv virtualenv-init -)"
+  SLASHES=${PWD//[^\/]/}
+  DIR="$PWD"
+  for (( n=${#SLASHES}; n>0; --n )); do
+    if [ -f "$DIR/$PYTHON_VERSION" ]; then
+      pyenv_init
+      if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
+        eval "$(pyenv virtualenv-init -)"
+      fi
+      break
     fi
-  fi
+    DIR="$DIR/.."
+  done
 fi
 
 SDKMAN_DIR="$HOME/.sdkman"
