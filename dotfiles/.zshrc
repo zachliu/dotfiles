@@ -214,7 +214,8 @@ PYTHON_VERSION=".python-version"
 if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
-  SLASHES=${PWD//[^\/]/}
+  SLASHES=${PWD//[^\/]/}  # slashes from the root, eg. returns "////" if
+                          # we are at /home/zach/dotfiles/dotfiles
   DIR="$PWD"
   for (( n=${#SLASHES}; n>0; --n )); do
     if [ -f "$DIR/$PYTHON_VERSION" ]; then
