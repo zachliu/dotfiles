@@ -324,6 +324,12 @@ include ~/.bash/sensitive
 # Syntax highlighting for zsh
 source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# git open for zsh
+source /home/zach/Downloads/git-open/git-open.plugin.zsh
+
+# docker zsh completion
+source /home/zach/Downloads/docker-zsh-completion/docker-zsh-completion.plugin.zsh
+
 # Autojump for zsh
 source /usr/share/autojump/autojump.zsh
 
@@ -446,11 +452,11 @@ zstyle ':completion:*' matcher-list '' \
   'm:{a-z\-A-Z}={A-Z\_a-z}' \
   'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-A-Z}={A-Z\_a-z}' \
   'r:|?=** m:{a-z\-A-Z}={A-Z\_a-z}'
-fpath=(/usr/local/share/zsh-completions $fpath)
+fpath=(/home/zach/Downloads/zsh-completions $fpath)
 zmodload -i zsh/complist
 
 # docker completion
-fpath=(~/.zsh/completion $fpath)
+# fpath=(~/.zsh/completion $fpath)
 
 # Manual libraries
 
