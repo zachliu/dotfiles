@@ -1,5 +1,5 @@
 \pset null 'NULL'
-\set HISTFILE ~/.psql_history
+\set HISTFILE ~/.psql_history- :HOST- :DBNAME
 \set HISTSIZE 20000
 \timing
 \set PROMPT1 '%[%033[38;5;27m%]%(%n@%`echo $FRIENDLY_HOSTNAME`:%>) %[%033[38;5;102m%][DB: %/]%[%033[0m%] \n%# '
