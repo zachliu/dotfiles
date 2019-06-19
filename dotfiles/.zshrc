@@ -588,7 +588,7 @@ alias gpl='git pull origin'
 alias gph='git push origin'
 alias ga='git add'
 alias gd='git diff'
-alias gdw='git diff --word-diff'
+alias gdw='git diff --word-diff=color'
 
 # upgrade
 alias upgrade='sudo mintupdate'
