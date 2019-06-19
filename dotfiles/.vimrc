@@ -285,7 +285,7 @@ Plug 'chr4/nginx.vim'
 Plug 'othree/html5.vim'
 Plug 'pearofducks/ansible-vim'
 Plug 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
-Plug 'martinda/Jenkinsfile-vim-syntax'
+Plug 'khalliday7/Jenkinsfile-vim-syntax'
 Plug 'mattn/vim-xxdcursor'
 
 " Autocompletion
