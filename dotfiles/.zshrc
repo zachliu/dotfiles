@@ -152,7 +152,19 @@ export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
 # Configure man pager
 # export MANPAGER='nvim -c "set ft=man" -'
-alias man='man psql | nvim -c "set ft=man" -'
+function vman() {
+  # sudo apt install moreutils for ifne command
+  man --pager=cat $@ | ifne nvim -c "set ft=man" -
+}
+# function vman() {
+#   man --location $@ &> /dev/null
+#   if [ $? -eq 0 ]; then
+#     man --pager=cat $@ | nvim -c 'set ft=man' -
+#   else
+#     man $@
+#   fi
+# }
+alias man='vman'
 
 # tmuxinator
 export EDITOR=/usr/bin/nvim
@@ -211,23 +223,13 @@ pyenv_init() {
 
 # activate virtual environment from any directory from current and up
 PYENV_ROOT="$HOME/.pyenv"
-PYTHON_VERSION=".python-version"
+PYTHON_VENV=".venv"
 if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
-  SLASHES=${PWD//[^\/]/}  # slashes from the root, eg. returns "////" if
-                          # we are at /home/zach/dotfiles/dotfiles
-  DIR="$PWD"
-  for (( n=${#SLASHES}; n>0; --n )); do
-    if [ -f "$DIR/$PYTHON_VERSION" ]; then
-      pyenv_init
-      if [ -d "$PYENV_ROOT/plugins/pyenv-virtualenv" ]; then
-        eval "$(pyenv virtualenv-init -)"
-      fi
-      break
-    fi
-    DIR="$DIR/.."
-  done
+  if [ -d "$DIR/$PYTHON_VENV" ]; then
+    pyenv_init
+  fi
 fi
 
 SDKMAN_DIR="$HOME/.sdkman"
@@ -391,6 +393,9 @@ autoload -Uz zcalc
 # Executed whenever the current working directory is changed
 function chpwd() {
   ls --color=auto
+
+  # Magically find Python's virtual environment based on name
+  va
 }
 
 # Executed every $PERIOD seconds, just before a prompt.
@@ -624,12 +629,24 @@ alias tzsh='time zsh -i -c echo'
 alias psql='LESS="-iMSx4 -FXR" PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIGHT_CYAN}\1$NOCOLOR/; s/\([[:space:]]\+[0-9.\-]\+[[:space:]]\)/${LIGHT_CYAN}\1$NOCOLOR/g; s/|/$YELLOW|$NOCOLOR/g;s/^\([-+]\+\)/$YELLOW\1$NOCOLOR/\" 2>/dev/null | less" psql'
 
 # Python
+# Enable things like "pip install 'requests[security]'"
 alias pip='noglob pip'
 alias pipr='pip install -r'
 alias pipi='pip install'
 
 # }}}
 # Functions --- {{{
+
+# Get pyenv python version if in pyenv
+function pyenv_python_version() {
+  echo $(pyenv version | head -n 1 | grep -o -P "\d+\.\d+\.\d+")
+}
+
+# See https://stackoverflow.com/questions/50735140/why-does-python-version-not-print-string
+# for doing string manipulation on python --version output
+function shell_python_version() {
+  echo $(python --version 2>&1) | awk '{print $2}'
+}
 
 # Tmux Launch
 # NOTE: I use the option "-2" to force Tmux to accept 256 colors. This is
@@ -748,31 +765,56 @@ function gn() {  # arg1: filename
   fi
 }
 
-# [optionally] create and activate Python virtual environment
-PYTHON_DEV_PACKAGES=(pynvim bpython restview jedi autopep8 pre-commit boto3 awscli grip)
+# activate virtual environment from any directory from current and up
+PYTHON_ENV_PACKAGES=(pynvim ptpython restview jedi)
 
-# [optionally] create and activate Python virtual environment
-function ve() {
-  local python_version=$(pyenv version | head -n 1 | cut -d ' ' -f 1)
-  if [ ${#} -ne 1 ]; then
-    local pkg_base=$(basename $PWD)
-    local pkg_hashval=$(\
-      pwd |\
-      sha1sum |\
-      base32 |\
-      cut -c1-5 |\
-      tr '[:upper:]' '[:lower:]')
-    local pkg="$pkg_base-$pkg_hashval-$python_version"
+# Name of virtualenv
+VIRTUAL_ENV_DEFAULT=.venv
+
+function va() {  # arg1: virtual environment path (optional)
+  if [ $# -eq 0 ]; then
+    local venv_name="$VIRTUAL_ENV_DEFAULT"
   else
-    local pkg=$@
+    local venv_name="$1"
   fi
-  venv_name=$pkg
-  pyenv virtualenv $venv_name
-  pyenv activate $venv_name
-  $(pyenv which pip) install --upgrade pip $PYTHON_DEV_PACKAGES
-  # pyenv deactivate  # seems useless???
-  echo $venv_name > .python-version
-  cat ~/.pyenv/version >> .python-version
+  local old_venv=$VIRTUAL_ENV
+  local slashes=${PWD//[^\/]/}
+  local current_directory="$PWD"
+  for (( n=${#slashes}; n>0; --n ))
+  do
+    if [ -d "$current_directory/$venv_name" ]; then
+      source "$current_directory/$venv_name/bin/activate"
+      if [[ "$old_venv" != "$VIRTUAL_ENV" ]]; then
+        echo "Activated $(python --version) virtualenv in $VIRTUAL_ENV"
+      fi
+      return
+    fi
+    local current_directory="$current_directory/.."
+  done
+  # If reached this step, no virtual environment found from here to root
+  if [[ -z $VIRTUAL_ENV ]]; then
+  else
+    deactivate
+    echo "Disabled existing virtualenv $old_venv"
+  fi
+}
+
+function ve() {
+  local python_version=$(shell_python_version)
+  if [[ $python_version == "2.7.15+" ]]; then
+    echo "You're using system python. Please use pyenv!"
+    return
+  elif [[ $python_version =~ ^"2.7."* ]]; then
+    echo "now you're talking"
+    return
+  elif [[ $python_version =~ ^"3."* ]]; then
+    return
+  fi
+  # python -m venv $VIRTUAL_ENV_DEFAULT
+  # source $VIRTUAL_ENV_DEFAULT/bin/activate
+  # pip install --upgrade pip $PYTHON_ENV_PACKAGES
+  # deactivate
+  # source $VIRTUAL_ENV_DEFAULT/bin/activate
 }
 
 # Print out the Github-recommended gitignore
@@ -1049,16 +1091,6 @@ PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
 PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
 PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
 
-function pyenv_python_version() {
-  echo $(pyenv version | head -n 1 | grep -o -P "\d+\.\d+\.\d+")
-}
-
-# See https://stackoverflow.com/questions/50735140/why-does-python-version-not-print-string
-# for doing string manipulation on python --version output
-function shell_python_version() {
-  echo $(python --version 2>&1) | awk '{print $2}'
-}
-
 # See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
 # for the reason of using single quotes here
 # PS1_PYV='%B%F{$COLOR_SILVER}$(pyenv_python_version | head -n 1 | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")'
@@ -1100,6 +1132,10 @@ if [[ -o interactive ]]; then
   fi
   # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
   stty -ixon
+
+  # Try activate virtual environment, don't worry about console output
+  va &> /dev/null
+
 fi
 
 # }}}
