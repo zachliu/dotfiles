@@ -1454,6 +1454,9 @@ let g:vim_filetype_formatter_commands = {
 let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
 let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
 
+" Netrw: disable netrw's gx mapping, prefer tyru/open-browser.vim
+let g:netrw_nogx = 1
+
 " UndoTree:
 let g:undotree_SetFocusWhenToggle = 1
 let g:undotree_WindowLayout = 3
@@ -1734,6 +1737,10 @@ nnoremap <leader>f :FiletypeFormat<cr>
 augroup language_specific_file_beauty
   autocmd FileType ledger nnoremap <buffer> <leader>f :%LedgerAlign<cr>
 augroup END
+
+" Open Browser: override netrw
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
 
 " }}}
 " General: Macro repeater ---- {{{
