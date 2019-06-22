@@ -227,9 +227,16 @@ PYTHON_VENV=".venv"
 if [ -d "$PYENV_ROOT" ]; then
   export PYENV_ROOT
   path_radd "$PYENV_ROOT/bin"
-  if [ -d "$DIR/$PYTHON_VENV" ]; then
-    pyenv_init
-  fi
+  SLASHES=${PWD//[^\/]/}  # slashes from the root, eg. returns "////" if
+                          # we are at /home/zach/dotfiles/dotfiles
+  DIR="$PWD"
+  for (( n=${#SLASHES}; n>0; --n )); do
+    if [ -d "$DIR/$PYTHON_VENV" ]; then
+      pyenv_init
+      break
+    fi
+    DIR="$DIR/.."
+  done
 fi
 
 SDKMAN_DIR="$HOME/.sdkman"
@@ -765,18 +772,26 @@ function gn() {  # arg1: filename
   fi
 }
 
-# activate virtual environment from any directory from current and up
-PYTHON_ENV_PACKAGES=(pynvim ptpython restview jedi)
+# pydev-install: install only env dependencies
+# pydev-install dev: install only dev dependencies
+# pydev-install all: install all deps
+function pydev-install() {  ## Install default python dependencies
+  local env=(pynvim restview 'python-language-server[rope]' bpython)
+  local dev=(pylint mypy pre-commit)
+  if [[ "$1" == 'all' ]]; then
+    pip install -U $env $dev
+  elif [[ "$1" == 'dev' ]]; then
+    pip install -U $dev
+  else
+    pip install -U $env
+  fi
+}
 
+# activate virtual environment from any directory from current and up
 # Name of virtualenv
 VIRTUAL_ENV_DEFAULT=.venv
-
-function va() {  # arg1: virtual environment path (optional)
-  if [ $# -eq 0 ]; then
-    local venv_name="$VIRTUAL_ENV_DEFAULT"
-  else
-    local venv_name="$1"
-  fi
+function va() {  # No arguments
+  local venv_name="$VIRTUAL_ENV_DEFAULT"
   local old_venv=$VIRTUAL_ENV
   local slashes=${PWD//[^\/]/}
   local current_directory="$PWD"
@@ -799,22 +814,39 @@ function va() {  # arg1: virtual environment path (optional)
   fi
 }
 
-function ve() {
+# Create and activate a virtual environment with all Python dependencies
+# installed. Optionally change Python interpreter.
+function ve() {  # Optional arg: python interpreter name
+  local venv_name="$VIRTUAL_ENV_DEFAULT"
   local python_version=$(shell_python_version)
-  if [[ $python_version == "2.7.15+" ]]; then
-    echo "You're using system python. Please use pyenv!"
-    return
-  elif [[ $python_version =~ ^"2.7."* ]]; then
-    echo "now you're talking"
-    return
-  elif [[ $python_version =~ ^"3."* ]]; then
-    return
+  if [ -z "$1" ]; then
+    local python_name='python'
+  else
+    local python_name="$1"
   fi
-  # python -m venv $VIRTUAL_ENV_DEFAULT
-  # source $VIRTUAL_ENV_DEFAULT/bin/activate
-  # pip install --upgrade pip $PYTHON_ENV_PACKAGES
-  # deactivate
-  # source $VIRTUAL_ENV_DEFAULT/bin/activate
+  if [ ! -d "$venv_name" ]; then
+    if [[ $python_version == "2.7.15+" ]]; then
+      echo "You're using system python. Please use pyenv!"
+      return
+    elif [[ $python_version =~ ^"2.7."* ]]; then
+      pip install virtualenv
+      virtualenv -p python "$venv_name"
+    elif [[ $python_version =~ ^"3."* ]]; then
+      $python_name -m venv "$venv_name"
+      if [ $? -ne 0 ]; then
+        local error_code=$?
+        echo "Virtualenv creation failed, aborting"
+        return error_code
+      fi
+    fi
+    source "$venv_name/bin/activate"
+    pip install -U pip
+    pydev-install  # install dependencies for editing
+    deactivate
+  else
+    echo "$venv_name already exists, activating"
+  fi
+  source $venv_name/bin/activate
 }
 
 # Print out the Github-recommended gitignore
