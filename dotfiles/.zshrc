@@ -847,6 +847,8 @@ function ve() {  # Optional arg: python interpreter name
     echo "$venv_name already exists, activating"
   fi
   source $venv_name/bin/activate
+  # See https://github.com/pyenv/pyenv/issues/268#issuecomment-62367841
+  pyenv shell --unset
 }
 
 # Print out the Github-recommended gitignore
