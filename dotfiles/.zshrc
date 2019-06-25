@@ -1160,10 +1160,11 @@ bindkey '^I' $fzf_default_completion
 
 # if you want to see less of "quote"
 if [[ -o interactive ]]; then
-  if [[ "$TMUX_PANE" == "%0" ]]; then
-    # if you're in the first tmux pane within all of tmux
-    quote
-  fi
+  # if [[ "$TMUX_PANE" == "%0" ]]; then
+  #   # if you're in the first tmux pane within all of tmux
+  #   quote
+  # fi
+  quote
   # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
   stty -ixon
 
