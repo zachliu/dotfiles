@@ -772,11 +772,11 @@ function gn() {  # arg1: filename
   fi
 }
 
-# pydev-install: install only env dependencies
-# pydev-install dev: install only dev dependencies
-# pydev-install all: install all deps
-function pydev-install() {  ## Install default python dependencies
-  local env=(pynvim restview 'python-language-server[rope]' bpython)
+# pydev_install: install only env dependencies
+# pydev_install dev: install only dev dependencies
+# pydev_install all: install all deps
+function pydev_install() {  ## Install default python dependencies
+  local env=(pynvim restview 'python-language-server[rope]' bpython poetry)
   local dev=(pylint mypy pre-commit)
   if [[ "$1" == 'all' ]]; then
     pip install -U $env $dev
@@ -841,7 +841,7 @@ function ve() {  # Optional arg: python interpreter name
     fi
     source "$venv_name/bin/activate"
     pip install -U pip
-    pydev-install  # install dependencies for editing
+    pydev_install  # install dependencies for editing
     deactivate
   else
     echo "$venv_name already exists, activating"
