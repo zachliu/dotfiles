@@ -12,7 +12,9 @@ JS="
 // First make sure the wrapper app is loaded
 document.addEventListener('DOMContentLoaded', function() {
   // Fetch our CSS in parallel ahead of time
+  // From https://github.com/widget-/slack-black-theme/issues/98
   const cssPath = 'https://raw.githubusercontent.com/caiceA/slack-raw/master/slack-4';
+  // From Nockiro/slack-black-theme which I have been using for a while
   // const cssPath = 'https://raw.githubusercontent.com/Nockiro/slack-black-theme/master/custom.css';
   let cssPromise = fetch(cssPath).then((response) => response.text());
 
