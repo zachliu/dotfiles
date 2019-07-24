@@ -1439,11 +1439,10 @@ augroup END
 " Plugin: vim-filetype-formatter and autoformatting --- {{{
 
 let g:vim_filetype_formatter_verbose = 0
+let g:vim_filetype_formatter_ft_no_defaults = [
+      \ 'markdown',
+      \ ]
 let g:vim_filetype_formatter_commands = {
-      \ 'javascript': {-> printf('npx prettier --stdin --stdin-filepath="%s"', expand('%:p'))},
-      \ 'json': 'python3 -c "import json, sys; print(json.dumps(json.load(sys.stdin), indent=2), end=\"\")"',
-      \ 'python': {start, end -> printf('yapf --lines=%d-%d', start, end)},
-      \ 'terraform': 'terraform fmt -',
       \ }
 
 " }}}
