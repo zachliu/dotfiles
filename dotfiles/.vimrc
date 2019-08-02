@@ -3,7 +3,7 @@
 " Notes:
 "   * To toggle sections below, scroll over a folded section and type 'za'
 "     when in Normal mode.
-" Additional Notes --------- {{{
+" Additional Notes {{{
 "
 " This is not entirely my own .vimrc. I copied and pasted from others.
 " I always use the latest Linux Mint.
@@ -81,47 +81,20 @@
 " To lean more about the ex editor, type 'man ex'
 
 " }}}
-" General: Terminal emulator difference functions --- {{{
-
-" s:is_console::
-" Checks to see if Vim is running in console mode
-function! IsConsole()
-  return $TERM == 'linux'
-endfunction
-
-" s:if_console::
-" The 88-bit ASCII/Not full unicode console is different than alacritty
-" Return different value the console is true
-function! IfConsole(lambda_true, lambda_false)
-  return IsConsole() ? a:lambda_true() : a:lambda_false()
-endfunction
-
-" }}}
-" General: Leader mappings -------------------- {{{
+" General: Leader mappings {{{
 
 let mapleader = ","
 let maplocalleader = "\\"
 
 " }}}
-" General: global config ------------ {{{
+" General: Global config {{{
 
-"A comma separated list of options for Insert mode completion
-"   menuone  Use the popup menu also when there is only one match.
-"            Useful when there is additional information about the
-"            match, e.g., what file it comes from.
-
-"   longest  Only insert the longest common text of the matches.  If
-"            the menu is displayed you can use CTRL-L to add more
-"            characters.  Whether case is ignored depends on the kind
-"            of completion.  For buffer text the 'ignorecase' option is
-"            used.
-
-"   preview  Show extra information about the currently selected
-"            completion in the preview window.  Only works in
-"            combination with 'menu' or 'menuone'.
+" Code Completion:
 set completeopt=menuone,longest,preview
+set wildmode=longest,list,full
+set wildmenu
 
-" Enable buffer deletion instead of having to write each buffer
+" Hidden Buffer: enable instead of having to write each buffer
 set hidden
 
 " Mouse: enable GUI mouse support in all modes
@@ -131,10 +104,10 @@ set mouse=a
 set nobackup
 set noswapfile
 
-" Do not wrap lines by default
+" Line Wrapping: do not wrap lines by default
 set nowrap
 
-" Search result highlighting
+" Highlight Search:
 set incsearch
 set inccommand=nosplit
 augroup zliu_incsearch_highlight
@@ -143,48 +116,33 @@ augroup zliu_incsearch_highlight
   " autocmd CmdlineLeave /,\? :set nohlsearch
 augroup END
 
-" Remove query for terminal version
-" This prevents un-editable garbage characters from being printed
-" after the 80 character highlight line
-set t_RV=
-
 filetype plugin indent on
 
+" Spell Checking:
 set dictionary=$HOME/.american-english-with-propcase.txt
-
 set spelllang=en_us
 
-" Do not add two spaces after '.', '!', and '?'
-" Useful when doing :%j (the opposite of gq)
+" Single Space After Punctuation: useful when doing :%j (the opposite of gq)
 set nojoinspaces
 
 set showtabline=2
 
 set autoread
 
-" When you type the first tab hit will complete as much as possible,
-" the second tab hit will provide a list, the third and subsequent tabs
-" will cycle through completion options so you can complete the file
-" without further keys
-set wildmode=longest,list,full
-set wildmenu
-
-" Grep: program is 'git grep'
-" set grepprg=git\ grep\ -n\ $*
 set grepprg=rg\ --vimgrep
 
-" Pasting: enable pasting without having to do 'set paste'
-" NOTE: this is actually typed <C-/>, but vim thinks this is <C-_>
+" Paste: this is actually typed <C-/>, but term nvim thinks this is <C-_>
 set pastetoggle=<C-_>
 
-" Turn off complete vi compatibility
-set nocompatible
+set notimeout   " don't timeout on mappings
+set ttimeout    " do timeout on terminal key codes
 
-" Enable using local vimrc
+" Local Vimrc: If exrc is set, the current directory is searched for 3 files
+" in order (Unix), using the first it finds: '.nvimrc', '_nvimrc', '.exrc'
 set exrc
 
-" Make terminal zsh
-set shell=/usr/bin/zsh
+" Default Shell:
+set shell=$SHELL
 
 " Make sure numbering is set
 set number
@@ -197,12 +155,62 @@ augroup redraw_on_refocus
   au FocusGained * :redraw!
 augroup END
 
+" Terminal Color Support: only set guicursor if truecolor
+if $COLORTERM ==# 'truecolor'
+  set termguicolors
+else
+  set guicursor=
+endif
+
+" Set Background: for PaperColor, also sets handler
+function! AlacrittySetBackground()
+  let g:alacritty_background = system('alacritty-which-colorscheme')
+  if !v:shell_error
+    let &background = g:alacritty_background
+  else
+    echo 'error calling "alacritty-which-colorscheme"'
+    echo 'default to set background=dark'
+    set background=dark
+  endif
+endfunction
+call AlacrittySetBackground()
+call jobstart(
+      \ 'ls ' . $HOME . '/.alacritty.yml | entr -ps "echo alacritty_change"',
+      \ {'on_stdout': { j, d, e -> AlacrittySetBackground() }})
+
+" Status Line: specifics for custom status line
+set laststatus=2
+set ttimeoutlen=50
+set noshowmode
+
+" ShowCommand: turn off character printing to vim status line
+set noshowcmd
+
+" Configure Updatetime: time Vim waits to do something after I stop moving
+set updatetime=750
+
+" Linux Dev Path: system libraries
+set path+=/usr/include/x86_64-linux-gnu/
+
+" Vim history for command line; can't imagine that more than 100 is needed
+set history=100
+
 " }}}
-" General: Plugin Install --------------------- {{{
+" General: Vim-Plug {{{
+
+" Notes:
+" To use tags: , { 'tag': '*' }
+
+let g:plug_url_format = 'git@github.com:%s.git'
+let g:plug_shallow = 0
 
 call plug#begin('~/.vim/plugged')
 
+" Help for vim-plug
+Plug 'junegunn/vim-plug'
+
 " Basics
+Plug 'kh3phr3n/tabline'
 Plug 'itchyny/lightline.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
@@ -353,14 +361,83 @@ Plug 'ericcurtin/CurtineIncSw.vim'
 
 call plug#end()
 
+" Plug update and upgrade
+function! s:plug_update_upgrade()
+  execute 'PlugUpdate'
+  execute 'PlugUpgrade'
+endfunction
+command! PU call <SID>plug_update_upgrade()
+
+" Check if plugin exists
+function! s:plugin_exists(name)
+  return &rtp =~ a:name
+endfunction
+
 " }}}
-" General: Filetype specification ------------ {{{
+" General: Status Line and Tab Line {{{
+
+" Tab Line
+set tabline=%t
+
+" Status Line
+set laststatus=2
+set statusline=
+set statusline+=\ %{mode()}\  " spaces after mode
+set statusline+=%#CursorLine#
+set statusline+=\   " space
+set statusline+=%{&paste?'[PASTE]':''}
+set statusline+=%{&spell?'[SPELL]':''}
+set statusline+=%r
+set statusline+=%m
+set statusline+=%{get(b:,'gitbranch','')}
+set statusline+=\   " space
+set statusline+=%*  " Default color
+set statusline+=\ %f
+set statusline+=%=
+set statusline+=%n  " buffer number
+set statusline+=\ %y\  " File type
+set statusline+=%#CursorLine#
+set statusline+=\ %{&ff}\  " Unix or Dos
+set statusline+=%*  " Default color
+set statusline+=\ %{strlen(&fenc)?&fenc:'none'}\  " file encoding
+augroup statusline_local_overrides
+  autocmd!
+  autocmd FileType nerdtree setlocal statusline=\ NERDTree\ %#CursorLine#
+augroup END
+
+" Strip newlines from a string
+function! StripNewlines(instring)
+  return substitute(a:instring, '\v^\n*(.{-})\n*$', '\1', '')
+endfunction
+
+function! StatuslineGitBranch()
+  let b:gitbranch = ''
+  if &modifiable
+    try
+      let branch_name = StripNewlines(system(
+            \ 'git -C ' .
+            \ expand('%:p:h') .
+            \ ' rev-parse --abbrev-ref HEAD'))
+      if !v:shell_error
+        let b:gitbranch = '[git::' . branch_name . ']'
+      endif
+    catch
+    endtry
+  endif
+endfunction
+
+augroup get_git_branch
+  autocmd!
+  autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
+augroup END
+
+" }}}
+" General: Filetype specification {{{
 
 augroup filetype_recognition
   autocmd!
   autocmd BufNewFile,BufRead,BufEnter *.hql,*.q set filetype=hive
   autocmd BufNewFile,BufRead,BufEnter *.config set filetype=yaml
-  " autocmd BufNewFile,BufRead,BufEnter *.md,*.markdown set filetype=markdown
   autocmd BufNewFile,BufRead,BufEnter *.bowerrc,*.babelrc,*.eslintrc,*.slack-term
         \ set filetype=json
   autocmd BufNewFile,BufRead,BufEnter *.asm set filetype=nasm
@@ -371,42 +448,39 @@ augroup filetype_recognition
   autocmd BufNewFile,BufRead,BufEnter *.cfg,*.ini,.coveragerc,*pylintrc
         \ set filetype=dosini
   autocmd BufNewFile,BufRead,BufEnter *.tsv set filetype=tsv
+  autocmd BufNewFile,BufRead,BufEnter *.toml set filetype=toml
   autocmd BufNewFile,BufRead,BufEnter Dockerfile.* set filetype=Dockerfile
   autocmd BufNewFile,BufRead,BufEnter Makefile.* set filetype=make
   autocmd BufNewFile,BufRead,BufEnter poetry.lock set filetype=toml
-  " autocmd BufNewFile,BufRead,BufEnter .zshrc set filetype=sh
-augroup END
-
-augroup filetype_vim
-  autocmd!
-  autocmd BufWritePost *vimrc so $MYVIMRC |
-        \ if has('gui_running') |
-        \ so $MYGVIMRC |
-        \ endif
+  autocmd BufNewFile,BufRead,BufEnter .gitignore,.dockerignore
+        \ set filetype=conf
 augroup END
 
 " }}}
-" General: Comment Strings {{{
+" General: Comment / Text Format Options {{{
 
 " Notes:
 " commentstring: read by vim-commentary; must be one template
 " comments: csv of comments.
-augroup custom_comment_strings
+" formatoptions: influences how Vim formats text
+"   ':help fo-table' will get the desired result
+augroup custom_comment_config
   autocmd!
   autocmd FileType dosini setlocal commentstring=#\ %s
   autocmd FileType dosini setlocal comments=:#,:;
+  autocmd FileType sh setlocal formatoptions=jcroql
 augroup END
 
 " }}}
-" General: Indentation (tabs, spaces, width, etc)------------- {{{
+" General: Indentation (tabs, spaces, width, etc) {{{
 
 " Note -> apparently BufRead, BufNewFile trumps Filetype
 " Eg, if BufRead,BufNewFile * ignores any Filetype overwrites
 " This is why default settings are chosen with Filetype *
+set expandtab shiftwidth=2 softtabstop=2 tabstop=8
 augroup indentation_sr
   autocmd!
-  autocmd Filetype * setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=8
-  autocmd Filetype python,c,elm,haskell,markdown,rust,rst,kv,nginx,asm,nasm
+  autocmd Filetype python,c,elm,haskell,markdown,rust,rst,kv,nginx,asm,nasm,gdscript3
         \ setlocal shiftwidth=4 softtabstop=4 tabstop=8
   autocmd Filetype dot setlocal autoindent cindent
   autocmd Filetype make,tsv,votl,go
@@ -414,24 +488,30 @@ augroup indentation_sr
   " Prevent auto-indenting from occuring
   autocmd Filetype yaml setlocal indentkeys-=<:>
 
+  autocmd Filetype ron setlocal cindent
+        \ cinkeys=0{,0},0(,0),0[,0],:,0#,!^F,o,O,e
+        \ cinoptions+='(s,m2'
+        \ cinoptions+='(s,U1'
+        \ cinoptions+='j1'
+        \ cinoptions+='J1'
 augroup END
 
 " }}}
-" General: colorColumn different widths for different filetypes --- {{{
+" General: colorColumn different widths for different filetypes {{{
 
-highlight ColorColumn ctermbg=9
 set colorcolumn=80
 augroup colorcolumn_configuration
   autocmd!
-  autocmd FileType gitcommit setlocal colorcolumn=72 textwidth=72
+  autocmd FileType gitcommit setlocal colorcolumn=73 textwidth=72
   autocmd Filetype html,text,markdown set colorcolumn=0
 augroup END
 
 " }}}
-" General: Writing (non-coding)------------------ {{{
-
-" note: indenting and de-indenting in insert mode are:
-"   <C-t> and <C-d>
+" General: Writing (non-coding) {{{
+"
+" Notes:
+"   indenting and de-indenting in insert mode are:
+"     <C-t> and <C-d>
 "   formatting hard line breaks
 "     NORMAL
 "       gqap => format current paragraph
@@ -444,25 +524,27 @@ let g:litecorrect_custom_user_dict = {
       \ 'maybe': ['mabye'],
       \ 'medieval': ['medival', 'mediaeval', 'medevil'],
       \ 'then': ['hten'],
+      \ 'environment': ['environemnt'],
       \ }
 
 augroup writing
   autocmd!
-  autocmd FileType markdown,rst,gitcommit
+  autocmd FileType markdown,rst,text,gitcommit
         \ setlocal wrap linebreak nolist spell
         \ | call textobj#sentence#init()
         \ | call litecorrect#init(g:litecorrect_custom_user_dict)
-  autocmd BufNewFile,BufRead *.html,*.txt,*.tex :setlocal wrap linebreak nolist
+  autocmd FileType requirements setlocal nospell
+  autocmd BufNewFile,BufRead *.html,*.tex setlocal wrap linebreak nolist
 augroup END
 
 " }}}
-" General: Word definition and meaning lookup --- {{{
+" General: Word definition and meaning lookup {{{
 
 " Enable looking up values in either a dictionary or a thesaurus
 " these are expected to be either:
 "   Dict: dict-gcide
 "   Thesaurus: dict-moby-thesaurus
-function! ReadDictToPreview(word, dict) range
+function! s:read_dict_to_preview(word, dict) range
   let dst = tempname()
   execute "silent ! dict -d " . a:dict . " " . string(a:word) . " > " . dst
   pclose! |
@@ -472,30 +554,28 @@ function! ReadDictToPreview(word, dict) range
         \ call append(0, 'This is a scratch buffer in a preview window') |
         \ set buftype=nofile nomodifiable noswapfile readonly nomodified |
         \ setlocal nobuflisted |
-        \ wincmd p
+        \ execute "resize " . (line('$') + 1)
   execute ":redraw!"
 endfunction
 
-command! -nargs=1 Def call ReadDictToPreview(<q-args>, "gcide")
-command! -nargs=1 Syn call ReadDictToPreview(<q-args>, "moby-thesaurus")
+command! -nargs=1 Def call <SID>read_dict_to_preview(<q-args>, "gcide")
+command! -nargs=1 Syn call <SID>read_dict_to_preview(<q-args>, "moby-thesaurus")
 
  " }}}
-" General: Folding Settings --------------- {{{
+" General: Folding Settings {{{
 
 augroup fold_settings
   autocmd!
-  autocmd FileType vim,tmux setlocal foldmethod=marker
-  autocmd FileType vim,tmux setlocal foldlevelstart=0
-  autocmd FileType vim,tmux setlocal foldnestmax=1
-  autocmd FileType ledger setlocal foldmethod=syntax
-  autocmd BufNewFile,BufRead .zprofile,.profile,.bashrc,.zshrc,sensitive setlocal foldmethod=marker
-  autocmd BufNewFile,BufRead .zprofile,.profile,.bashrc,.zshrc,sensitive setlocal foldlevelstart=0
+  autocmd FileType vim,tmux,bash,zsh,sh
+        \ setlocal foldmethod=marker foldlevelstart=0 foldnestmax=1
+  autocmd FileType markdown,rst
+        \ setlocal nofoldenable
 augroup END
 
 " }}}
-" General: Trailing whitespace ------------- {{{
+" General: Trailing whitespace {{{
 
-function! TrimWhitespace()
+function! s:trim_whitespace()
   let l:save = winsaveview()
   if &ft == 'markdown'
     " Replace lines with only trailing spaces
@@ -511,6 +591,13 @@ function! TrimWhitespace()
   call winrestview(l:save)
 endfunction
 
+command! TrimWhitespace call <SID>trim_whitespace()
+
+augroup fix_whitespace_save
+  autocmd!
+  autocmd BufWritePre * TrimWhitespace
+augroup END
+
 highlight EOLWS ctermbg=red guibg=red
 match EOLWS /\s\+$/
 augroup whitespace_color
@@ -520,72 +607,10 @@ augroup whitespace_color
   autocmd InsertLeave * highlight EOLWS ctermbg=red guibg=red
 augroup END
 
-augroup fix_whitespace_at_save
-  autocmd!
-  autocmd BufWritePre * call TrimWhitespace()
-augroup END
-
 " }}}
-" General: Syntax highlighting ---------------- {{{
+" General: Syntax highlighting {{{
 
-"NR-16   NR-8    COLOR NAME ~
-"0	    0	    Black
-"1	    4	    DarkBlue
-"2	    2	    DarkGreen
-"3	    6	    DarkCyan
-"4	    1	    DarkRed
-"5	    5	    DarkMagenta
-"6	    3	    Brown, DarkYellow
-"7	    7	    LightGray, LightGrey, Gray, Grey
-"8	    0*	    DarkGray, DarkGrey
-"9	    4*	    Blue, LightBlue
-"10	    2*	    Green, LightGreen
-"11	    6*	    Cyan, LightCyan
-"12	    1*	    Red, LightRed
-"13	    5*	    Magenta, LightMagenta
-"14	    3*	    Yellow, LightYellow
-"15	    7*	    White
-
-"The number under NR-16 is used for 16-color terminals ('t_Co'
-"greater than or equal to 16).  The number under NR-8 is used for
-"8-color terminals ('t_Co' less than 16).  The '*' indicates that the
-"bold attribute is set for ctermfg.  In many 8-color terminals (e.g.,
-""linux"), this causes the bright colors to appear.  This doesn't work
-"for background colors!	Without the '*' the bold attribute is removed.
-"If you want to set the bold attribute in a different way, put a
-""cterm=" argument AFTER the ctermfg= or ctermbg= argument.	Or use
-"a number instead of a color name.
-
-"Note that for 16 color ansi style terminals (including xterms), the
-"numbers in the NR-8 column is used.  Here '*' means 'add 8' so that Blue
-"is 12, DarkGray is 8 etc.
-
-" Papercolor: options
-let g:PaperColor_Theme_Options = {}
-let g:PaperColor_Theme_Options.theme = {}
-
-" Bold and italics are enabled by default
-let g:PaperColor_Theme_Options.theme.default = {
-      \ 'allow_bold': 1,
-      \ 'allow_italic': 1,
-      \ 'transparent_background': 1
-      \ }
-
-" Enable language-specific overrides
-let g:PaperColor_Theme_Options.language = {
-      \    'python': {
-      \      'highlight_builtins' : 1
-      \    },
-      \    'cpp': {
-      \      'highlight_standard_library': 1
-      \    },
-      \    'c': {
-      \      'highlight_builtins' : 1
-      \    }
-      \ }
-
-" Python: Highlight self, cls, args, kwargs anywhere in Python
-
+" Python: Highlight args and kwargs, since they are conventionally special
 augroup python_syntax
   autocmd!
   autocmd ColorScheme * highlight OhMyPython ctermfg=167
@@ -598,127 +623,125 @@ augroup end
 " Javascript: Highlight this keyword in object / function definitions
 augroup javascript_syntax
   autocmd!
-  autocmd FileType javascript syn keyword jsBooleanTrue this
-  autocmd FileType javascript highlight jsxElement ctermfg=Green
-  autocmd FileType javascript highlight jsxTag ctermfg=Blue
-  autocmd FileType javascript highlight jsxTagName ctermfg=Cyan
-  autocmd FileType javascript highlight jsxComponentName ctermfg=DarkBlue
-  autocmd FileType javascript highlight jsxAttrib ctermfg=Green
-  autocmd FileType javascript highlight jsxEqual ctermfg=Yellow
-  autocmd FileType javascript highlight jsxCloseTag ctermfg=Green
-  " autocmd FileType javascript highlight jsxCloseString ctermfg=
-  " autocmd FileType javascript highlight jsxDot ctermfg=
-  " autocmd FileType javascript highlight jsxNamespace ctermfg=
-  " autocmd FileType javascript highlight jsxPunct ctermfg=
-  " autocmd FileType javascript highlight jsxString ctermfg=
+  autocmd FileType javascript syntax keyword jsBooleanTrue this
 augroup end
 
 " QuickScope: choose primary and secondary colors
 augroup qs_colors
   autocmd!
-  autocmd ColorScheme * highlight QuickScopePrimary ctermfg=Green
-  autocmd ColorScheme * highlight QuickScopeSecondary ctermfg=Cyan
-  if !IsConsole()
-    autocmd ColorScheme * highlight QuickScopePrimary cterm=underline
-    autocmd ColorScheme * highlight QuickScopeSecondary cterm=underline
-  endif
+  autocmd ColorScheme * highlight QuickScopePrimary guifg='LimeGreen' ctermfg=Green gui=underline
+  autocmd ColorScheme * highlight QuickScopeSecondary guifg='turquoise1' ctermfg=Cyan gui=underline
 augroup END
 
+" Spell Checking:
 augroup spelling_options
   autocmd!
   autocmd ColorScheme * highlight clear SpellBad
   autocmd ColorScheme * highlight clear SpellRare
   autocmd ColorScheme * highlight clear SpellCap
   autocmd ColorScheme * highlight clear SpellLocal
-  autocmd ColorScheme * highlight SpellBad ctermfg=DarkRed
-  autocmd ColorScheme * highlight SpellRare ctermfg=DarkGreen
-  autocmd ColorScheme * highlight SpellCap ctermfg=Yellow
-  autocmd ColorScheme * highlight SpellLocal ctermfg=DarkMagenta
-  if !IsConsole()
-    autocmd ColorScheme * highlight SpellBad cterm=underline,italic
-    autocmd ColorScheme * highlight SpellRare cterm=underline,italic
-    autocmd ColorScheme * highlight SpellCap cterm=underline,italic
-    autocmd ColorScheme * highlight SpellLocal cterm=underline,italic
-  endif
+  autocmd ColorScheme * highlight SpellBad ctermfg=DarkRed guifg='red1' gui=underline,italic
+  autocmd ColorScheme * highlight SpellRare ctermfg=DarkGreen guifg='ForestGreen' gui=underline,italic
+  autocmd ColorScheme * highlight SpellCap ctermfg=Yellow guifg='yellow' gui=underline,italic
+  autocmd ColorScheme * highlight SpellLocal ctermfg=DarkMagenta guifg='magenta' gui=underline,italic
 augroup END
 
-" Number doesn't matter which color is used to start highlight group.
-" It gets overridden in the whitespace color section below
-highlight EOLWS ctermbg=DarkCyan
-match EOLWS /\s\+$/
-augroup whitespace_color
-  autocmd!
-  " mkdLineBreak is a link group; special 'link' syntax required here
-  autocmd ColorScheme * highlight link mkdLineBreak NONE
-  autocmd ColorScheme * highlight EOLWS ctermbg=DarkCyan
-
-  autocmd InsertEnter * highlight clear EOLWS
-  autocmd InsertLeave * highlight EOLWS ctermbg=DarkCyan
-augroup END
-
-
-" Syntax: select global syntax scheme
-" Make sure this is at end of section
-try
-  call IfConsole(
-        \ {-> execute('set t_Co=16')},
-        \ {-> execute('set t_Co=256')}
-        \ )
-  " set t_Co=256 " says terminal has 256 colors
-  set background=dark
-  colorscheme PaperColor
-catch
-  echo 'An error occured while configuring PaperColor'
-endtry
-
-hi CursorLine cterm=NONE
-
+" Cursorline: disable, then override if necessary
+highlight CursorLine cterm=NONE
 augroup cursorline_setting
   autocmd!
   autocmd WinEnter,BufEnter * setlocal cursorline
   autocmd WinLeave * setlocal nocursorline
 augroup END
 
+" ********************************************************************
+" Papercolor: options
+" ********************************************************************
+let g:PaperColor_Theme_Options = {}
+let g:PaperColor_Theme_Options.theme = {}
+
+" Bold And Italics:
+let g:PaperColor_Theme_Options.theme.default = {
+      \ 'allow_bold': 1,
+      \ 'allow_italic': 1,
+      \ }
+
+" Folds And Highlights:
+let g:PaperColor_Theme_Options.theme['default.dark'] = {}
+let g:PaperColor_Theme_Options.theme['default.dark'].override = {
+      \ 'folded_bg' : ['gray22', '0'],
+      \ 'folded_fg' : ['gray69', '6'],
+      \ 'visual_fg' : ['gray12', '0'],
+      \ 'visual_bg' : ['gray', '6'],
+      \ }
+" Language Specific Overrides:
+let g:PaperColor_Theme_Options.language = {
+      \    'python': {
+      \      'highlight_builtins' : 1,
+      \    },
+      \    'cpp': {
+      \      'highlight_standard_library': 1,
+      \    },
+      \    'c': {
+      \      'highlight_builtins' : 1,
+      \    }
+      \ }
+
+" Load:
+try
+  colorscheme PaperColor
+catch
+  echo 'An error occured while configuring PaperColor'
+endtry
+
 " }}}
-" General: Resize Window --- {{{
+" General: Resize Window {{{
 
 " WindowWidth: Resize window to a couple more than longest line
 " modified function from:
 " https://stackoverflow.com/questions/2075276/longest-line-in-vim
-function! ResizeWindowWidth()
+function! s:resize_window_width()
+  normal! m`
   let maxlength   = 0
   let linenumber  = 1
-  while linenumber <= line("$")
-    exe ":" . linenumber
-    let linelength  = virtcol("$")
+  while linenumber <= line('$')
+    exe ':' . linenumber
+    let linelength  = virtcol('$')
     if maxlength < linelength
       let maxlength = linelength
     endif
     let linenumber  = linenumber+1
   endwhile
-  exe ":vertical resize " . (maxlength + 4)
+  exe ':vertical resize ' . (maxlength + 4)
+  normal! ``
 endfunction
 
-function! ResizeWindowHeight()
+function! s:resize_window_height()
+  normal! m`
   let initial = winnr()
 
   " this duplicates code but avoids polluting global namespace
   wincmd k
   if winnr() != initial
-    exe initial . "wincmd w"
-    exe ":1"
-    exe "resize " . (line('$') + 1)
+    execute initial . 'wincmd w'
+    1
+    execute 'resize ' . (line('$') + 1)
+    normal! ``
     return
   endif
 
   wincmd j
   if winnr() != initial
-    exe initial . "wincmd w"
-    exe ":1"
-    exe "resize " . (line('$') + 1)
+    execute initial . 'wincmd w'
+    1
+    execute 'resize ' . (line('$') + 1)
+    normal! ``
     return
   endif
 endfunction
+
+command! ResizeWindowWidth call <SID>resize_window_width()
+command! ResizeWindowHeight call <SID>resize_window_height()
 
 " }}}
 " General: Avoid saving 'lcd' --- {{{
@@ -726,18 +749,32 @@ endfunction
 augroup stay_no_lcd
   autocmd!
   if exists(':tcd') == 2
-    autocmd User BufStaySavePre  if haslocaldir() | let w:lcd = getcwd() | exe 'cd '.fnameescape(getcwd(-1, -1)) | endif
+    autocmd User BufStaySavePre
+          \ if haslocaldir() |
+          \ let w:lcd = getcwd() |
+          \ execute 'cd '.fnameescape(getcwd(-1, -1)) |
+          \ endif
   else
-    autocmd User BufStaySavePre  if haslocaldir() | let w:lcd = getcwd() | cd - | cd - | endif
+    autocmd User BufStaySavePre
+          \ if haslocaldir() |
+          \ let w:lcd = getcwd() |
+          \ cd - |
+          \ cd - |
+          \ endif
   endif
-  autocmd User BufStaySavePost if exists('w:lcd') | execute 'lcd' fnameescape(w:lcd) | unlet w:lcd | endif
+  autocmd User BufStaySavePost
+        \ if exists('w:lcd') |
+        \ execute 'lcd' fnameescape(w:lcd) |
+        \ unlet w:lcd |
+        \ endif
 augroup END
 
 " --- }}}
 "  General: Delete hidden buffers --- {{{
 
 " From: https://stackoverflow.com/a/7321131
-function! DeleteInactiveBuffers()
+"
+function! s:delete_inactive_buffers()
   "From tabpagebuflist() help, get a list of all buffers in all tabs
   let tablist = []
   for i in range(tabpagenr('$'))
@@ -759,10 +796,257 @@ function! DeleteInactiveBuffers()
   echomsg nWipeouts . ' buffer(s) wiped out'
 endfunction
 
+command! DeleteInactiveBuffers call <SID>delete_inactive_buffers()
+
 "  }}}
+" General: Clean Unicode {{{
+
+" Replace unicode symbols with cleaned, ascii versions
+function! s:clean_unicode()
+  silent! %s/”/"/g
+  silent! %s/“/"/g
+  silent! %s/’/'/g
+  silent! %s/‘/'/g
+  silent! %s/—/-/g
+  silent! %s/…/.../g
+endfunction()
+command! CleanUnicode call <SID>clean_unicode()
+
+" }}}
+" General: Neovim Terminal {{{
+
+function! s:open_term(view_type)
+  execute a:view_type
+  terminal
+  setlocal nonumber nornu
+  startinsert
+endfunction
+
+command! Term call s:open_term('split')
+command! Termv call s:open_term('vsplit')
+command! Vtert call s:open_term('tabnew')
+
+" }}}
+" General: Macro repeater {{{
+
+" Allow '.' to repeat macros. Finally!
+" Taken from here:
+" https://vi.stackexchange.com/questions/11210/can-i-repeat-a-macro-with-the-dot-operator
+" SR took it from GitHub: ckarnell/Antonys-macro-repeater
+"
+" When . repeats g@, repeat the last macro.
+function! AtRepeat(_)
+  " If no count is supplied use the one saved in s:atcount.
+  " Otherwise save the new count in s:atcount, so it will be
+  " applied to repeats.
+  let s:atcount = v:count ? v:count : s:atcount
+  " feedkeys() rather than :normal allows finishing in Insert
+  " mode, should the macro do that. @@ is remapped, so 'opfunc'
+  " will be correct, even if the macro changes it.
+  call feedkeys(s:atcount.'@@')
+endfunction
+
+function! AtSetRepeat(_)
+  set operatorfunc=AtRepeat
+endfunction
+
+" Called by g@ being invoked directly for the first time. Sets
+" 'opfunc' ready for repeats with . by calling AtSetRepeat().
+function! AtInit()
+  " Make sure setting 'opfunc' happens here, after initial playback
+  " of the macro recording, in case 'opfunc' is set there.
+  set operatorfunc=AtSetRepeat
+  return 'g@l'
+endfunction
+
+" Enable calling a function within the mapping for @
+nnoremap <expr> <plug>@init AtInit()
+" A macro could, albeit unusually, end in Insert mode.
+inoremap <expr> <plug>@init "\<c-o>".AtInit()
+
+function! AtReg()
+  let s:atcount = v:count1
+  let l:c = nr2char(getchar())
+  return '@'.l:c."\<plug>@init"
+endfunction
+
+function! QRepeat(_)
+  call feedkeys('@'.s:qreg)
+endfunction
+
+function! QSetRepeat(_)
+  set operatorfunc=QRepeat
+endfunction
+
+function! QStop()
+  set operatorfunc=QSetRepeat
+  return 'g@l'
+endfunction
+
+nnoremap <expr> <plug>qstop QStop()
+inoremap <expr> <plug>qstop "\<c-o>".QStop()
+
+let s:qrec = 0
+function! QStart()
+  if s:qrec == 1
+    let s:qrec = 0
+    return "q\<plug>qstop"
+  endif
+  let s:qreg = nr2char(getchar())
+  if s:qreg =~# '[0-9a-zA-Z"]'
+    let s:qrec = 1
+  endif
+  return 'q'.s:qreg
+endfunction
+
+" }}}
+" General: Language builder / runner {{{
+
+let s:language_builders = {
+      \ 'rust': 'rustc %',
+      \ 'go': 'go build %',
+      \ }
+
+let s:language_runners = {
+      \ 'rust': '%:p:r',
+      \ 'go': 'go run %',
+      \ 'python': 'python3 %',
+      \ }
+
+function! s:code_term_cmd(str_command)
+  vsplit
+  execute 'terminal ' . a:str_command
+  nnoremap <buffer> q :bd!<CR>
+  cnoremap <buffer> q bd!
+endfunction
+
+" Build source code
+function! s:code_build()
+  if !has_key(s:language_builders, &filetype)
+    echo 'Build not configured for filetype "' . &filetype . '"'
+    return
+  endif
+  call s:code_term_cmd(s:language_builders[&filetype])
+endfunction
+
+" Run source code
+function! s:code_run()
+  let filepath = expand('%:p')
+  if executable(filepath) == 1
+    call s:code_term_cmd(filepath)
+  elseif !has_key(s:language_runners, &filetype)
+    echo 'Run not configured for filetype "' . &filetype . '"'
+  else
+    call s:code_term_cmd(s:language_runners[&filetype])
+  endif
+endfunction
+
+command! Build call <SID>code_build()
+command! Run call <SID>code_run()
+
+" }}}
+" General: Command abbreviations {{{
+
+" Fix highlighting
+command! FixHighlight syntax sync fromstart
+
+" }}}
+" General: View available colors {{{
+
+" From https://vim.fandom.com/wiki/View_all_colors_available_to_gvim
+" There are some sort options at the end you can uncomment to your preference
+"
+" Create a new scratch buffer:
+" - Read file $VIMRUNTIME/rgb.txt
+" - Delete lines where color name is not a single word (duplicates).
+" - Delete 'grey' lines (duplicate 'gray'; there are a few more 'gray').
+" Add syntax so each color name is highlighted in its color.
+function! s:vim_colors()
+  vnew
+  set modifiable
+  setlocal filetype=vimcolors buftype=nofile bufhidden=delete noswapfile
+  0read $VIMRUNTIME/rgb.txt
+  let find_color = '^\s*\(\d\+\s*\)\{3}\zs\w*$'
+  silent execute 'v/'.find_color.'/d'
+  silent g/grey/d
+  let namedcolors=[]
+  1
+  while search(find_color, 'W') > 0
+    let w = expand('<cword>')
+    call add(namedcolors, w)
+  endwhile
+  for w in namedcolors
+    execute 'hi col_'.w.' guifg=black guibg='.w
+    execute 'hi col_'.w.'_fg guifg='.w.' guibg=NONE'
+    execute '%s/\<'.w.'\>/'.printf("%-36s%s", w, w.'_fg').'/g'
+    execute 'syn keyword col_'.w w
+    execute 'syn keyword col_'.w.'_fg' w.'_fg'
+  endfor
+  " Add hex value column (and format columns nicely)
+  %s/^\s*\(\d\+\)\s\+\(\d\+\)\s\+\(\d\+\)\s\+/\=printf(" %3d %3d %3d   #%02x%02x%02x   ", submatch(1), submatch(2), submatch(3), submatch(1), submatch(2), submatch(3))/
+  1
+  nohlsearch
+  nnoremap <buffer> d <C-d>
+  nnoremap <buffer> u <C-u>
+  file VimColors
+  set nomodifiable
+endfunction
+
+command! VimColors silent call <SID>vim_colors()
+
+" }}}
+" General: Toggle numbers {{{
+
+function! s:toggle_number()
+  if &number == 0
+    set number
+  else
+    set nonumber
+  endif
+endfunction
+
+function! s:toggle_relative_number()
+  if &relativenumber == 0
+    set relativenumber
+  else
+    set norelativenumber
+  endif
+endfunction
+
+command! ToggleNumber call <SID>toggle_number()
+command! ToggleRelativeNumber call <SID>toggle_relative_number()
+
+" }}}
+" General: keywordprg {{{
+
+" Map DevDocs command to the keyword program for select programs
+" Enables 'K' for said programs
+augroup keywordprogram-overrides
+  autocmd!
+  " DevDocs: all
+  autocmd FileType javascript setlocal keywordprg=:DD!
+  " DevDocs: specific filetype
+  autocmd FileType rust setlocal keywordprg=:DD
+  " Dictioary: my custom Def function
+  autocmd FileType markdown,rst,tex,txt setlocal keywordprg=dict\ -d\ gcide
+augroup END
+
+" }}}
+" General: UpdateRemotePlugins {{{
+
+" Always update remote plugins on Vim start
+" It's not very difficult and will help me not pay attention
+augroup AutoUpdatePlugins
+  autocmd!
+  if has('nvim')
+    autocmd VimEnter,VimLeave * silent UpdateRemotePlugins
+  endif
+augroup END
+
+" }}}
 " Plugin: Jinja2 {{{
 
-function! Jinja2Toggle()
+function! s:jinja2_toggle()
   let jinja2 = '.jinja2'
   let jinja2_pattern = '\' . jinja2
   if matchstr(&ft, jinja2_pattern) == ""
@@ -773,50 +1057,19 @@ function! Jinja2Toggle()
   execute "set filetype=" . new_filetype
 endfunction
 
+command! Jinja2Toggle call <SID>jinja2_toggle()
+
 " }}}
-"  Plugin: Vim-Plug --- {{{
+" Plugin: Man pager / help (builtins) {{{
 
-" Plug update and upgrade
-function! _PU()
-  exec 'PlugUpdate'
-  exec 'PlugUpgrade'
-endfunction
-command! PU call _PU()
-
-"  }}}
-" Plugin: Riv.Vim --- {{{
-
-" Notes (because this Plugin's documentation sucks)
-"
-" Titles:
-"   <C-e>s{0,1,2,3,4,5,6} is the 7 levels of titles
-" Lists:
-"   Commands:
-"     '=' makes list re-number
-"     <C-e>l{1,2,3,4,5} sets list to different list types
-"   List Types:
-"     1) '*'
-"     2) '1.'
-"     3) 'a.'
-"     4) 'A)'
-"     5) 'i)'
-" Tables:
-"   <C-e>tc <- creates a table
-"   Insert Mode:
-"     typing | creates a new column
-"     Header row + new row = <Alt>Enter
-"     New row = Just type the correct columns then get into normal mode
-
-let g:riv_global_leader = '<C-E>'
-let g:riv_disable_folding = 1
-let g:riv_disable_indent = 1
-let g:riv_disable_del = 1
-let g:riv_ignored_imaps = '<Tab>,<S-Tab>'
-let g:riv_ignored_nmaps = '<Tab>,<S-Tab>'
-let g:riv_ignored_vmaps = '<Tab>,<S-Tab>'
-let g:riv_auto_format_table = 1
-let g:riv_auto_rst2html = 0
-let g:riv_web_browser = 'chrome'
+augroup man_page_custom
+  autocmd!
+  autocmd FileType man nnoremap <buffer> <silent> <C-]> :silent! Man<CR>
+  autocmd FileType man setlocal number relativenumber
+  autocmd FileType man,help nnoremap <buffer> <expr> d &modifiable == 0 ? '<C-d>' : 'd'
+  autocmd FileType man,help nnoremap <buffer> <expr> u &modifiable == 0 ? '<C-u>' : 'u'
+  autocmd FileType help nnoremap <buffer> <expr> q &modifiable == 0 ? ':q<cr>' : 'q'
+augroup END
 
 " }}}
 " Plugin: Preview Compiled Stuff in Viewer --- {{{
@@ -853,7 +1106,7 @@ augroup rainbow_settings
 augroup END
 
 "  }}}
-"  Plugin: NERDTree --- {{{
+"  Plugin: NERDTree {{{
 
 let g:NERDTreeAutoDeleteBuffer = 1
 let g:NERDTreeCaseSensitiveSort = 0
@@ -872,21 +1125,38 @@ let g:NERDTreeWinPos = 'left'
 let g:NERDTreeWinSize = 31
 let g:NERDTreeMouseMode = 2
 let g:NERDTreeMinimalUI = 1
-let g:NERDTreeIgnore=[
-      \'venv$[[dir]]',
-      \'.venv$[[dir]]',
-      \'__pycache__$[[dir]]',
-      \'.egg-info$[[dir]]',
-      \'node_modules$[[dir]]',
-      \'elm-stuff$[[dir]]',
-      \'\.aux$[[file]]',
-      \'\.toc$[[file]]',
-      \'\.pdf$[[file]]',
-      \'\.out$[[file]]',
-      \'\.o$[[file]]',
-      \]
+let g:NERDTreeIgnore = [
+      \ 'venv$[[dir]]',
+      \ '.venv$[[dir]]',
+      \ '__pycache__$[[dir]]',
+      \ '.egg-info$[[dir]]',
+      \ 'node_modules$[[dir]]',
+      \ 'elm-stuff$[[dir]]',
+      \ 'build$[[dir]]',
+      \ 'target$[[dir]]',
+      \ 'pip-wheel-metadata$[[dir]]',
+      \ 'fonts$[[dir]]',
+      \ '\.aux$[[file]]',
+      \ '\.toc$[[file]]',
+      \ '\.pdf$[[file]]',
+      \ '\.out$[[file]]',
+      \ '\.o$[[file]]',
+      \ '\.pyc$[[file]]',
+      \ ]
+let g:NERDTreeIndicatorMapCustom = {
+      \ 'Modified'  : '!',
+      \ 'Staged'    : '=',
+      \ 'Untracked' : '?',
+      \ 'Renamed'   : '%',
+      \ 'Unmerged'  : '=',
+      \ 'Deleted'   : '!',
+      \ 'Dirty'     : '^',
+      \ 'Clean'     : '%',
+      \ 'Ignored'   : '%',
+      \ 'Unknown'   : '?',
+      \ }
 
-function! _CD(...)  " Like args in Python
+function! s:cd_func(...)  " Like args in Python
   let a:directory = get(a:, 1, expand('%:p:h'))
   execute 'cd ' . a:directory
   if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
@@ -895,39 +1165,43 @@ function! _CD(...)  " Like args in Python
   else
     execute 'NERDTreeCWD'
     execute 'NERDTreeClose'
-    execute "normal! \<c-w>="
+    execute 'normal! \<c-w>='
   endif
 endfunction
 
-command! -nargs=? CD call _CD(<f-args>)
+command! -nargs=? CD call <SID>cd_func(<f-args>)
 
-function! s:CloseIfOnlyControlWinLeft()
-  if winnr("$") != 1
+function! s:close_if_only_control_win_left()
+  if winnr('$') != 1
     return
   endif
-  if (exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1)
+  if (exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1)
         \ || &buftype == 'quickfix'
-    q
+    quit
   endif
 endfunction
 
 augroup CloseIfOnlyControlWinLeft
-  au!
-  au BufEnter * call s:CloseIfOnlyControlWinLeft()
+  autocmd!
+  autocmd BufEnter * call <SID>close_if_only_control_win_left()
 augroup END
 
-let g:NERDTreeIndicatorMapCustom = {
-      \ "Modified"  : "!",
-      \ "Staged"    : "=",
-      \ "Untracked" : "?",
-      \ "Renamed"   : "%",
-      \ "Unmerged"  : "=",
-      \ "Deleted"   : "!",
-      \ "Dirty"     : "^",
-      \ "Clean"     : "%",
-      \ 'Ignored'   : "%",
-      \ "Unknown"   : "?"
-      \ }
+" https://stackoverflow.com/a/16378375
+function! NERDTreeYankCurrentNode()
+  let n = g:NERDTreeFileNode.GetSelected()
+  if n != {}
+    call setreg('"', './' . fnamemodify(n.path.str(), ':.'))
+  endif
+endfunction
+
+if s:plugin_exists('nerdtree')
+  autocmd VimEnter * call NERDTreeAddKeyMap({
+        \ 'key': 'yy',
+        \ 'callback': 'NERDTreeYankCurrentNode',
+        \ 'quickhelpText':
+        \   'put relative path of current node into the default register'
+        \ })
+endif
 
 "  }}}
 " Plugin: fzf --- {{{
@@ -954,7 +1228,6 @@ function! FZFBuffersAvoidNerdtree()
   if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
     exe "normal! \<c-w>\<c-w>"
   endif
-  " getcwd(-1, -1) tells it to always use the global working directory
   execute 'Buffers'
 endfunction
 
@@ -1096,59 +1369,6 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
   let g:lightline.fname = a:fname
   return lightline#statusline(0)
 endfunction
-
-" }}}
-" Plugin: Gina --- {{{
-" This plugin is awesome
-" Just Gina followed by whatever I'd normally type in Git
-
-for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
-  call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
-endfor
-
-for gina_cmd in ['diff']
-  call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
-endfor
-
-call gina#custom#command#option('commit', '--verbose')
-call gina#custom#command#option('branch', '--verbose|--all')
-
-let g:gina#command#blame#use_default_mappings = 0
-call gina#custom#command#option('blame', '--width', '79')
-
-" Custom mappings for Gina blame buffer
-call gina#custom#mapping#nmap(
-      \ 'blame', 'c',
-      \ '<Plug>(gina-blame-echo)'
-      \)
-call gina#custom#mapping#nmap(
-      \ 'blame', '<CR>',
-      \ '<Plug>(gina-blame-open)'
-      \)
-call gina#custom#mapping#nmap(
-      \ 'blame', '<c-i>',
-      \ '<Plug>(gina-blame-open)'
-      \)
-call gina#custom#mapping#nmap(
-      \ 'blame', '<Backspace>',
-      \ '<Plug>(gina-blame-back)'
-      \)
-call gina#custom#mapping#nmap(
-      \ 'blame', '<c-o>',
-      \ '<Plug>(gina-blame-back)'
-      \)
-
-let g:gina#command#blame#formatter#format = '%in|%ti|%au|%su'
-let g:gina#command#blame#formatter#timestamp_months = 0
-let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%d"
-let g:gina#command#blame#formatter#timestamp_format2 = "%Y-%m-%d"
-
-function! _Gblame()
-  let current_file = expand('%:t')
-  execute 'Gina blame'
-endfunction
-
-command! Gblame call _Gblame()
 
 " }}}
 "  Plugin: Tagbar ------ {{{
@@ -1332,6 +1552,18 @@ augroup ragtag_config
 augroup end
 
 "  }}}
+" Plugin: Vim-markdown {{{
+
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_json_frontmatter = 1
+let g:vim_markdown_no_default_key_mappings = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_new_list_item_indent = 0
+
+" }}}
 "  Plugin: Terraform Syntax --- {{{
 
 let g:terraform_align=1
@@ -1344,6 +1576,7 @@ let g:terraform_remap_spacebar=1
 " NOTE: General remappings
 " 1) go to file containing definition: <C-]>
 " 2) Return from file (relies on tag stack): <C-O>
+" 3) Print the documentation of something under the cursor: <leader>gd
 
 " VimScript:
 " Autocompletion and show definition is built in to Vim
@@ -1436,7 +1669,7 @@ augroup terraform_complete
 augroup END
 
 "  }}}
-" Plugin: vim-filetype-formatter and autoformatting --- {{{
+" Plugin: Vim-filetype-formatter {{{
 
 let g:vim_filetype_formatter_verbose = 0
 let g:vim_filetype_formatter_ft_no_defaults = [
@@ -1549,32 +1782,6 @@ let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_xxd_options = '-g 2'
 
 "  }}}
-" General: Clean Unicode --- {{{
-
-function! CleanUnicode()
-  " Replace unicode symbols with cleaned versions
-  silent! %s/”/"/g
-  silent! %s/“/"/g
-  silent! %s/’/'/g
-  silent! %s/‘/'/g
-endfunction()
-command! CleanUnicode call CleanUnicode()
-
-" }}}
-" General: Neovim Terminal --- {{{
-
-function! s:openTerm(view_type)
-  exec a:view_type
-  terminal
-  setlocal nonumber nornu
-  startinsert
-endfunction
-
-command! Term call s:openTerm('split')
-command! Termv call s:openTerm('vsplit')
-command! Vtert call s:openTerm('tabnew')
-
-" }}}
 " General: Number width to 80 (including special characters)---- {{{
 
 function! ResizeTo80()
@@ -1741,87 +1948,6 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 " }}}
-" General: Macro repeater ---- {{{
-
-" Allow '.' to repeat macros. Finally!
-" Taken from here:
-" https://vi.stackexchange.com/questions/11210/can-i-repeat-a-macro-with-the-dot-operator
-" SR took it from GitHub: ckarnell/Antonys-macro-repeater
-"
-" When . repeats g@, repeat the last macro.
-fun! AtRepeat(_)
-  " If no count is supplied use the one saved in s:atcount.
-  " Otherwise save the new count in s:atcount, so it will be
-  " applied to repeats.
-  let s:atcount = v:count ? v:count : s:atcount
-  " feedkeys() rather than :normal allows finishing in Insert
-  " mode, should the macro do that. @@ is remapped, so 'opfunc'
-  " will be correct, even if the macro changes it.
-  call feedkeys(s:atcount.'@@')
-endfun
-
-fun! AtSetRepeat(_)
-  set operatorfunc=AtRepeat
-endfun
-
-" Called by g@ being invoked directly for the first time. Sets
-" 'opfunc' ready for repeats with . by calling AtSetRepeat().
-fun! AtInit()
-  " Make sure setting 'opfunc' happens here, after initial playback
-  " of the macro recording, in case 'opfunc' is set there.
-  set operatorfunc=AtSetRepeat
-  return 'g@l'
-endfun
-
-" Enable calling a function within the mapping for @
-nnoremap <expr> <plug>@init AtInit()
-" A macro could, albeit unusually, end in Insert mode.
-inoremap <expr> <plug>@init "\<c-o>".AtInit()
-
-fun! AtReg()
-  let s:atcount = v:count1
-  let l:c = nr2char(getchar())
-  return '@'.l:c."\<plug>@init"
-endfun
-
-
-" The following code allows pressing . immediately after
-" recording a macro to play it back.
-nmap <expr> @ AtReg()
-fun! QRepeat(_)
-  call feedkeys('@'.s:qreg)
-endfun
-
-fun! QSetRepeat(_)
-  set operatorfunc=QRepeat
-endfun
-
-fun! QStop()
-  set operatorfunc=QSetRepeat
-  return 'g@l'
-endfun
-
-nnoremap <expr> <plug>qstop QStop()
-inoremap <expr> <plug>qstop "\<c-o>".QStop()
-
-let s:qrec = 0
-fun! QStart()
-  if s:qrec == 1
-    let s:qrec = 0
-    return "q\<plug>qstop"
-  endif
-  let s:qreg = nr2char(getchar())
-  if s:qreg =~# '[0-9a-zA-Z"]'
-    let s:qrec = 1
-  endif
-  return 'q'.s:qreg
-endfun
-
-" Finally, remap q! Recursion is actually useful here I think,
-" otherwise I would use 'nnoremap'.
-nmap <expr> q QStart()
-
-" }}}
 " General: Command abbreviations ------------------------ {{{
 
 " creating tab, vertical, and horizontal buffer splits
@@ -1868,7 +1994,7 @@ let &t_SR .= "\<Esc>[4 q"
 "common - block
 let &t_EI .= "\<Esc>[3 q"
 " Turn off GUI cursor changes in console mode (tty)
-call IfConsole({-> execute('set guicursor=')}, {-> 0})
+" call IfConsole({-> execute('set guicursor=')}, {-> 0})
 
 " Configure updatetime
 " This is the amount of time vim waits to do something after you stop
