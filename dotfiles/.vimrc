@@ -664,6 +664,7 @@ let g:PaperColor_Theme_Options.theme = {}
 let g:PaperColor_Theme_Options.theme.default = {
       \ 'allow_bold': 1,
       \ 'allow_italic': 1,
+      \ 'transparent_background': 1
       \ }
 
 " Folds And Highlights:
@@ -671,8 +672,8 @@ let g:PaperColor_Theme_Options.theme['default.dark'] = {}
 let g:PaperColor_Theme_Options.theme['default.dark'].override = {
       \ 'folded_bg' : ['gray22', '0'],
       \ 'folded_fg' : ['gray69', '6'],
-      \ 'visual_fg' : ['gray12', '0'],
       \ 'visual_bg' : ['gray', '6'],
+      \ 'visual_fg' : ['gray12', '0'],
       \ }
 " Language Specific Overrides:
 let g:PaperColor_Theme_Options.language = {
