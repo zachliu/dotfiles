@@ -297,25 +297,23 @@ Plug 'khalliday7/Jenkinsfile-vim-syntax'
 Plug 'mattn/vim-xxdcursor'
 
 " Autocompletion
-Plug 'davidhalter/jedi-vim'
-Plug 'marijnh/tern_for_vim'
-Plug 'Rip-Rip/clang_complete'
-" for C header filename completion:
-Plug 'xaizek/vim-inccomplete'
-Plug 'racer-rust/vim-racer'
-" Addional requirements:
-"   cargo install racer
-"   rustup component add rust-src
-Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
-Plug 'fatih/vim-go'
-Plug 'wannesm/wmgraphviz.vim'  " dotlanguage
-" note: must run 'gem install neovim' to get this to work
-" might require the neovim headers
-Plug 'juliosueiras/vim-terraform-completion'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'deoplete-plugins/deoplete-dictionary', { 'do': ':UpdateRemotePlugins' }
 Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ 'do': 'bash install.sh',
       \ }
+Plug 'marijnh/tern_for_vim'
+Plug 'Rip-Rip/clang_complete'
+" for C header filename completion:
+Plug 'xaizek/vim-inccomplete'
+" After vim-go, run GoUpdateBinaries
+Plug 'fatih/vim-go'
+" dotlanguage
+Plug 'wannesm/wmgraphviz.vim'
+" note: must run 'gem install neovim' to get this to work
+" might require the neovim headers
+Plug 'juliosueiras/vim-terraform-completion'
 
 " Tagbar
 Plug 'majutsushi/tagbar'
@@ -1572,48 +1570,70 @@ let g:terraform_align=1
 let g:terraform_remap_spacebar=1
 
 " }}}
-"  Plugin: AutoCompletion config, multiple plugins ------------ {{{
+" Plugin: AutoCompletion config and key remappings {{{
 
 " NOTE: General remappings
 " 1) go to file containing definition: <C-]>
 " 2) Return from file (relies on tag stack): <C-O>
 " 3) Print the documentation of something under the cursor: <leader>gd
 
+" LanguageClientServer: configure it for relevant languages
+set runtimepath+=$HOME/.vim/plugged/LanguageClient-neovim
+let g:deoplete#enable_at_startup = 1
+call deoplete#custom#option({
+      \ 'auto_complete_delay': 300,
+      \ })
+call deoplete#custom#source('dictionary', 'matchers', ['matcher_head'])
+call deoplete#custom#source('dictionary', 'filetypes', ['markdown'])
+call deoplete#custom#source('dictionary', 'min_pattern_length', 4)
+let g:LanguageClient_serverCommands = {
+      \ 'haskell': ['stack', 'exec', 'hie-wrapper'],
+      \ 'java': [$HOME . '/java/java-language-server/dist/mac/bin/launcher', '--quiet'],
+      \ 'python': ['pyls'],
+      \ 'python.jinja2': ['pyls'],
+      \ 'ruby': ['solargraph', 'stdio'],
+      \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+      \ 'typescript': ['npx', '-q', 'typescript-language-server', '--stdio'],
+      \ }
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_hoverPreview = 'auto'
+let g:LanguageClient_diagnosticsEnable = 0
+
+function! ConfigureLanguageClient()
+  nnoremap <buffer> <C-]> :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <buffer> <leader>sd :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <buffer> <leader>sr :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <buffer> <leader>sf :call LanguageClient#textDocument_formatting()<CR>
+  nnoremap <buffer> <leader>su :call LanguageClient#textDocument_references()<CR>
+  nnoremap <buffer> <leader>sa :call LanguageClient#textDocument_codeAction()<CR>
+  nnoremap <buffer> <leader>ss :call LanguageClient#textDocument_documentSymbol()<CR>
+  nnoremap <buffer> <leader>sc :call LanguageClient_contextMenu()<CR>
+  setlocal omnifunc=LanguageClient#complete
+endfunction
+
+augroup langserverLanguages
+  autocmd!
+  execute 'autocmd FileType '
+        \ . join(keys(g:LanguageClient_serverCommands), ',')
+        \ . ' call ConfigureLanguageClient()'
+augroup END
+
 " VimScript:
-" Autocompletion and show definition is built in to Vim
-" Set the same shortcuts as usual to find them
+" Autocompletion is built into Vim. Get defintions with 'K'
 augroup vimscript_complete
   autocmd!
-  autocmd FileType vim nnoremap <buffer> <C-]> yiw:help <C-r>"<CR>
   autocmd FileType vim inoremap <buffer> <C-@> <C-x><C-v>
   autocmd FileType vim inoremap <buffer> <C-space> <C-x><C-v>
 augroup END
 
-" Python
-" Open module, e.g. :Pyimport os (opens the os module)
-let g:jedi#popup_on_dot = 0
-let g:jedi#show_call_signatures = 0
-let g:jedi#auto_close_doc = 0
-let g:jedi#smart_auto_mappings = 0
-" let g:jedi#force_py_version = 3
-" let g:jedi#use_tabs_not_buffers = 1
-
-" mappings
-" auto_vim_configuration creates space between where vim is opened and
-" closed in my bash terminal. This is annoying, so I disable and manually
-" configure. See 'set completeopt' in my global config for my settings
-let g:jedi#auto_vim_configuration = 0
-let g:jedi#goto_command = "<C-]>"
-let g:jedi#documentation_command = "<leader>sd"
-let g:jedi#usages_command = "<leader>su"
-let g:jedi#rename_command = "<leader>sr"
-
-" Javascript
-let g:tern_show_argument_hints = 'on_move'
-let g:tern_show_signature_in_pum = 1
+" Javascript:
+let g:tern#command = ['npx', '--no-install', 'tern']
+let g:tern_show_argument_hints = 'no'
+let g:tern_show_signature_in_pum = 0
 augroup javascript_complete
   autocmd!
   autocmd FileType javascript nnoremap <buffer> <C-]> :TernDef<CR>
+  autocmd FileType javascript nnoremap <buffer> <leader>sd :TernDoc<CR>
 augroup END
 
 " Elm:
@@ -1624,52 +1644,31 @@ augroup elm_complete
   autocmd FileType elm nnoremap <buffer> <C-]> :ElmShowDocs<CR>
 augroup END
 
-" CPP:
+" C_CPP:
 " Jumping back defaults to <C-O> or <C-T> (in is <C-I> per usual)
 " Defaults to <C-]> for goto definition
-" Additionally, jumping to Header file under cursor: gd
+" Additionally, jumping to Header file under cursor: gf
 let g:clang_library_path = '/usr/lib/llvm-6.0/lib'
 let g:clang_auto_user_options = 'compile_commands.json, path, .clang_complete'
 let g:clang_complete_auto = 0
 let g:clang_complete_macros = 1
 let g:clang_jumpto_declaration_key = "<C-]>"
 
-" Haskell
-" Disable haskell-vim omnifunc
-let g:haskellmode_completion_ghc = 0
-let g:necoghc_enable_detailed_browse = 1
-augroup haskell_complete
-  autocmd!
-  autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-augroup END
-
-" Rust:
-" rustup install racer
-let g:racer_cmd = $HOME . '/.cargo/bin/racer'
-" rustup component add rust-src
-let $RUST_SRC_PATH = $HOME .
-      \'/.multirust/toolchains/stable-x86_64-unknown-linux-gnu/' .
-      \'lib/rustlib/src/rust/src'
-let g:racer_experimental_completer = 1
-augroup rust_complete
-  autocmd!
-  " needs to be nmap; does not work with nnoremap
-  autocmd FileType rust nmap <buffer> <C-]> <Plug>(rust-def)
-augroup END
-
-" Writing: writing document
-" currently only supports markdown
-" jump to word definition for several text editors (including markdown)
-augroup writing_complete
-  autocmd FileType markdown,tex,rst,txt nnoremap <buffer> <C-]> :Def <cword><CR>
-augroup END
-
-" Terraform
+" Terraform:
 augroup terraform_complete
+  autocmd!
   autocmd FileType terraform setlocal omnifunc=terraformcomplete#Complete
 augroup END
 
-"  }}}
+" Syntaxfile Completion: if you can't get good autocompletion, hack it :p
+" Note: Only completes keywords prefixed by the language name itself.
+" For example: markdownYolo, markdownHello, but NOT mkdHello
+augroup syntaxfile_complete
+  autocmd!
+  autocmd FileType plantuml setlocal omnifunc=syntaxcomplete#Complete
+augroup END
+
+" }}}
 " Plugin: Vim-filetype-formatter {{{
 
 let g:vim_filetype_formatter_verbose = 0
