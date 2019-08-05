@@ -743,7 +743,7 @@ command! ResizeWindowWidth call <SID>resize_window_width()
 command! ResizeWindowHeight call <SID>resize_window_height()
 
 " }}}
-" General: Avoid saving 'lcd' --- {{{
+" General: Avoid saving 'lcd' {{{
 
 augroup stay_no_lcd
   autocmd!
@@ -769,7 +769,7 @@ augroup stay_no_lcd
 augroup END
 
 " --- }}}
-"  General: Delete hidden buffers --- {{{
+"  General: Delete hidden buffers {{{
 
 " From: https://stackoverflow.com/a/7321131
 "
@@ -1071,7 +1071,7 @@ augroup man_page_custom
 augroup END
 
 " }}}
-" Plugin: Preview Compiled Stuff in Viewer --- {{{
+" Plugin: Preview Compiled Stuff in Viewer {{{
 
 function! _Preview()
   if &filetype ==? 'rst'
@@ -1093,7 +1093,7 @@ endfunction
 command! Preview call _Preview()
 
 " }}}
-"  Plugin: Rainbow Parentheses --- {{{
+"  Plugin: Rainbow Parentheses {{{
 
 let g:rainbow#max_level = 16
 let g:rainbow#pairs = [['(', ')'], ['[', ']']]
@@ -1203,7 +1203,7 @@ if s:plugin_exists('nerdtree')
 endif
 
 "  }}}
-" Plugin: fzf --- {{{
+" Plugin: fzf {{{
 
 command! -bang -nargs=* Grep call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --case-sensitive --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
 command! -bang -nargs=* GrepIgnoreCase call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
@@ -1240,7 +1240,7 @@ let g:fzf_action = {
       \}
 
 " }}}
-" Plugin: Lightline ---------------- {{{
+" Plugin: Lightline {{{
 
 " This is a giant section
 " that configures the status line for my vim editing.
@@ -1370,7 +1370,7 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
 endfunction
 
 " }}}
-"  Plugin: Tagbar ------ {{{
+"  Plugin: Tagbar {{{
 
 let g:tagbar_map_showproto = '`'
 let g:tagbar_show_linenumbers = -1
@@ -1428,7 +1428,7 @@ let g:tagbar_type_rst = {
       \ }
 
 "  }}}
-" Plugin: Startify ------------ {{{
+" Plugin: Startify {{{
 
 let g:startify_list_order = []
 let g:startify_fortune_use_unicode = 1
@@ -1456,7 +1456,7 @@ let g:startify_custom_header = [
       \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
 
 " }}}
-"  Plugin: VimTex --- {{{
+"  Plugin: VimTex {{{
 
 let g:vimtex_compiler_latexmk = {'callback' : 0}
 let g:tex_flavor = 'latex'
@@ -1473,7 +1473,7 @@ function! MyVimTexDocHandler(context)
 endfunction
 
 "  }}}
-"  Plugin: AutoPairs --- {{{
+"  Plugin: AutoPairs {{{
 
 " AutoPairs:
 " unmap CR due to incompatibility with clang-complete
@@ -1560,7 +1560,7 @@ augroup END
 let g:textobj_sandwich_no_default_key_mappings = 1
 
 " }}}
-"  Plugin: RagTag --- {{{
+"  Plugin: RagTag {{{
 
 " Load mappings on every filetype
 let g:ragtag_global_maps = 1
@@ -1583,7 +1583,7 @@ let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 
 " }}}
-"  Plugin: Terraform Syntax --- {{{
+"  Plugin: Terraform Syntax {{{
 
 let g:terraform_align=1
 " Use spacebar to fold/unfold resources
@@ -1717,7 +1717,7 @@ let g:vim_filetype_formatter_commands = {
       \ }
 
 " }}}
-" Plugin: Miscellaneous global var config ------------ {{{
+" Plugin: Miscellaneous global var config {{{
 
 " Python: configure python paths
 let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
@@ -1820,7 +1820,7 @@ let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_xxd_options = '-g 2'
 
 "  }}}
-" General: Number width to 80 (including special characters)---- {{{
+" General: Number width to 80 (including special characters {{{
 
 function! ResizeTo80()
   let cols = 80
@@ -1834,7 +1834,7 @@ function! ResizeTo80()
 endfunction
 
 " }}}
-" General: Key remappings ----------------------- {{{
+" General: Key remappings {{{
 
 " Escape:
 " Make escape also clear highlighting
@@ -1997,7 +1997,7 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 " }}}
-" General: Command abbreviations ------------------------ {{{
+" General: Command abbreviations {{{
 
 " creating tab, vertical, and horizontal buffer splits
 " command! BT tab sb
@@ -2016,7 +2016,7 @@ command! CD cd %:h
 command! Run !./%
 
 " }}}
-" General: Global Config + Cleanup ------------------ {{{
+" General: Global Config + Cleanup {{{
 " commands that need to run at the end of my vimrc
 
 " disable unsafe commands in your project-specific .vimrc files
