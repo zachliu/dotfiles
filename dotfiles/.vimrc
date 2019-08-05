@@ -1540,6 +1540,26 @@ augroup autopairs_filetype_overrides
 augroup END
 
 "  }}}
+" Plugin: Sandwich {{{
+
+" LatexNotes:
+"   textobject:
+"     replace inner text of `text' with cisl'
+"     if auto detection of nearest surrounding is fine cib
+"   add to text:
+"     saiwl' single apostrophes to get `text'
+"     The pattern of the command is sa{motion/textobject}{surrounding}
+"     means invoke operator add  surrounding on inner word and surround type
+"     is latex single quote.
+"   delete:
+"     with sdl' or with sdb
+"   change:
+"     with srl'l" or with srbl"
+
+" Keymappings set in keymappings section
+let g:textobj_sandwich_no_default_key_mappings = 1
+
+" }}}
 "  Plugin: RagTag --- {{{
 
 " Load mappings on every filetype
@@ -1920,6 +1940,18 @@ nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
 
 " AutoPairs:
 imap <silent><CR> <CR><Plug>AutoPairsReturn
+
+" Sandwich: below mappings address the issue raised here:
+" https://github.com/machakann/vim-sandwich/issues/62
+xmap ib <Plug>(textobj-sandwich-auto-i)
+omap ib <Plug>(textobj-sandwich-auto-i)
+xmap ab <Plug>(textobj-sandwich-auto-a)
+omap ab <Plug>(textobj-sandwich-auto-a)
+
+xmap iq <Plug>(textobj-sandwich-query-i)
+omap iq <Plug>(textobj-sandwich-query-i)
+xmap aq <Plug>(textobj-sandwich-query-a)
+omap aq <Plug>(textobj-sandwich-query-a)
 
 " FZF: create shortcuts for finding stuff
 nnoremap <silent> <C-P> :call FZFFilesAvoidNerdtree()<CR>
