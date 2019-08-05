@@ -335,16 +335,28 @@ Plug 'heavenshell/vim-jsdoc'
 " Rainbow
 Plug 'junegunn/rainbow_parentheses.vim'
 
+" Text Objects
+Plug 'machakann/vim-sandwich'
+Plug 'kana/vim-textobj-user'
+" al/il for the current line
+Plug 'kana/vim-textobj-line'
+" as/is for a sentence of prose (overrides hard-coded native object & motion)
+Plug 'reedes/vim-textobj-sentence'
+" az/iz for a block of folded lines; iz does not include fold marker lines
+Plug 'somini/vim-textobj-fold'
+" ao/io for a block of indentation (i.e. spaces)
+Plug 'glts/vim-textobj-indblock'
+
 " Writing helpers
 Plug 'dkarter/bullets.vim'
-Plug 'gu-fan/riv.vim'
+Plug 'matthew-brett/vim-rst-sections'
+Plug 'nvie/vim-rst-tables'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'reedes/vim-textobj-sentence'
 Plug 'reedes/vim-wordy'
 Plug 'reedes/vim-litecorrect'
 Plug 'tommcdo/vim-exchange'
+Plug 'dbmrq/vim-ditto'
 
 " Previewers
 Plug 'JamshedVesuna/vim-markdown-preview'
@@ -534,6 +546,11 @@ augroup writing
   autocmd FileType requirements setlocal nospell
   autocmd BufNewFile,BufRead *.html,*.tex setlocal wrap linebreak nolist
 augroup END
+
+" }}}
+" General: Digraphs {{{
+
+" digraph
 
 " }}}
 " General: Word definition and meaning lookup {{{
@@ -1031,18 +1048,6 @@ augroup keywordprogram-overrides
 augroup END
 
 " }}}
-" General: UpdateRemotePlugins {{{
-
-" Always update remote plugins on Vim start
-" It's not very difficult and will help me not pay attention
-augroup AutoUpdatePlugins
-  autocmd!
-  if has('nvim')
-    autocmd VimEnter,VimLeave * silent UpdateRemotePlugins
-  endif
-augroup END
-
-" }}}
 " Plugin: Jinja2 {{{
 
 function! s:jinja2_toggle()
@@ -1068,6 +1073,127 @@ augroup man_page_custom
   autocmd FileType man,help nnoremap <buffer> <expr> d &modifiable == 0 ? '<C-d>' : 'd'
   autocmd FileType man,help nnoremap <buffer> <expr> u &modifiable == 0 ? '<C-u>' : 'u'
   autocmd FileType help nnoremap <buffer> <expr> q &modifiable == 0 ? ':q<cr>' : 'q'
+augroup END
+
+" }}}
+" Plugin: Restructured Text {{{
+
+" Vim-rst-sections AND vim-rst-tables documentation
+
+" Shortcuts:
+" ,,d: create a section, or advance down hierarchy if section already defined
+" ,,u: create a section, or advance up hierarchy if section already defined
+" ,,r: reformat existing section
+" ,,c: create a new table from a table example
+" ,,f: re-flow the table
+
+" Vim Rst Tables: documentation
+" -----------------------------------------------------------------------
+" Conventional Markup Hierarchy:
+"   # with overline, for parts
+"   * with overline, for chapters
+"   =, for sections
+"   -, for subsections
+"   ^, for subsubsections
+"   ", for paragraphs
+
+" Vim Rst Tables: documentation
+" -----------------------------------------------------------------------
+" Create New Table:
+"   1. Open a reStructuredText file
+"   2. Create some kind of table outline:
+"
+"     This is paragraph text *before* the table.
+"
+"     Column 1  Column 2
+"     Foo  Put two (or more) spaces as a field separator.
+"     Bar  Even long lines are fine if you do not put in line endings here.
+"     Qux  This is the last line.
+"
+"     This is paragraph text *after* the table.
+"   3. Put your cursor somewhere in the table.
+"   4. To create the table, press ,,c (or \c if vim's <Leader> is set to the
+"      default value). The output will look something like this:
+"
+"     This is paragraph text *before* the table.
+"
+"     +----------+---------------------------------------------------------+
+"     | Column 1 | Column 2                                                |
+"     +==========+=========================================================+
+"     | Foo      | Put two (or more) spaces as a field separator.          |
+"     +----------+---------------------------------------------------------+
+"     | Bar      | Even very very long lines like these are fine, as long  |
+"     |          | as you do not put in line endings here.                 |
+"     +----------+---------------------------------------------------------+
+"     | Qux      | This is the last line.                                  |
+"     +----------+---------------------------------------------------------+
+"
+"     This is paragraph text *after* the table.
+"
+" Update Existing Table:
+"   1. Change the number of '---' signs in the top row of your table to match
+"      the column widths you would prefer.
+"   2. Put your cursor somewhere in the table.
+"   3. Press ,,f to re-flow the table (or \f if vim's <Leader> is set to the
+"      default value; see also the :map command).
+
+let g:rst_prefer_python_version = 3
+
+" Source: https://stackoverflow.com/a/30772902
+function! LineMatchCount(pat,...)
+  " searches for pattern matches in the active buffer, with optional start and
+  " end line number specifications
+
+  " useful command-line for testing against last-used pattern within last-used
+  " visual selection: echo LineMatchCount(@/,getpos("'<")[1],getpos("'>")[1])
+
+  if (a:0 > 2) | echoerr 'too many arguments for function: LineMatchCount()'
+        \ | return| endif
+  let start = a:0 >= 1 ? a:000[0] : 1
+  let end = a:0 >= 2 ? a:000[1] : line('$')
+  "" validate args
+  if (type(start) != type(0))
+        \ | echoerr 'invalid type of argument: start' | return | endif
+  if (type(end) != type(0))
+        \ | echoerr 'invalid type of argument: end' | return | endif
+  if (end < start)| echoerr 'invalid arguments: end < start'| return | endif
+  "" save current cursor position
+  let wsv = winsaveview()
+  "" set cursor position to start (defaults to start-of-buffer)
+  call setpos('.',[0,start,1,0])
+  "" accumulate line count in local var
+  let lineCount = 0
+  "" keep searching until we hit end-of-buffer
+  let ret = search(a:pat,'cW')
+  while (ret != 0)
+    " break if the latest match was past end; must do this prior to
+    " incrementing lineCount for it, because if the match start is past end,
+    " it's not a valid match for the caller
+    if (ret > end)
+      break
+    endif
+    let lineCount += 1
+    " always move the cursor to the start of the line following the latest
+    " match; also, break if we're already at end; otherwise next search would
+    " be unnecessary, and could get stuck in an infinite loop if end ==
+    " line('$')
+    if (ret == end)
+      break
+    endif
+    call setpos('.',[0,ret+1,1,0])
+    let ret = search(a:pat,'cW')
+  endwhile
+  "" restore original cursor position
+  call winrestview(wsv)
+  "" return result
+  return lineCount
+endfunction
+
+command! HovercraftSlide echo 'Slide ' . LineMatchCount('^----$', 1, line('.'))
+
+augroup hovercraft
+  autocmd!
+  autocmd FileType rst nnoremap <buffer> <leader>w :HovercraftSlide<CR>
 augroup END
 
 " }}}
