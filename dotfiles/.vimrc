@@ -1581,11 +1581,29 @@ let g:terraform_remap_spacebar=1
 set runtimepath+=$HOME/.vim/plugged/LanguageClient-neovim
 let g:deoplete#enable_at_startup = 1
 call deoplete#custom#option({
-      \ 'auto_complete_delay': 300,
+      \ 'auto_complete': 1,
+      \ 'auto_complete_delay': 0,
+      \ 'max_list': 500,
+      \ 'num_processes': 8,
       \ })
 call deoplete#custom#source('dictionary', 'matchers', ['matcher_head'])
 call deoplete#custom#source('dictionary', 'filetypes', ['markdown'])
 call deoplete#custom#source('dictionary', 'min_pattern_length', 4)
+call deoplete#custom#source('LanguageClient', 'min_pattern_length', 1)
+
+" Deoplete, never insert bracket
+call deoplete#custom#source('_', 'converters', ['converter_remove_paren'])
+
+" Sources to ignore (I don't want buffers to auto complete)
+call deoplete#custom#option('ignore_sources', {
+      \ '_': ['buffer', 'around'],
+      \ })
+
+augroup deoplete_disable
+  autocmd!
+  autocmd FileType markdown, toml let b:deoplete_disable_auto_complete = 1
+augroup END
+
 let g:LanguageClient_serverCommands = {
       \ 'haskell': ['stack', 'exec', 'hie-wrapper'],
       \ 'java': [$HOME . '/java/java-language-server/dist/mac/bin/launcher', '--quiet'],
@@ -1811,9 +1829,8 @@ inoremap <expr> <ScrollWheelUp> pumvisible() ? '<C-p>' : '<Esc><ScrollWheelUp>'
 inoremap <expr> <ScrollWheelDown> pumvisible() ? '<C-n>' : '<Esc><ScrollWheelDown>'
 inoremap <expr> <LeftMouse> pumvisible() ? '<CR><Backspace>' : '<Esc><LeftMouse>'
 
-" Omnicompletion:
-" imap <C-space> <C-x><C-o>
-" <C-@> is actually <C-space>
+" Omnicompletion: <C-@> is signal sent by some terms when pressing <C-Space>
+" Disable below for now; I'm using deoplete to get this automatically
 inoremap <C-@> <C-x><C-o>
 inoremap <C-space> <C-x><C-o>
 
