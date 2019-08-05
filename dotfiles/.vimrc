@@ -1989,21 +1989,7 @@ let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_xxd_options = '-g 2'
 
 "  }}}
-" General: Number width to 80 (including special characters {{{
-
-function! ResizeTo80()
-  let cols = 80
-  if &number ==# 1 || &relativenumber ==# 1
-    let numberwidth = float2nr(log10(line("$"))) + 2
-    let columns = &numberwidth + cols
-    execute 'vertical res ' columns
-  else
-    execute 'vertical res ' cols
-  endif
-endfunction
-
-" }}}
-" General: Key remappings {{{
+" General: Global Key remappings {{{
 
 " Escape:
 " Make escape also clear highlighting
@@ -2137,9 +2123,6 @@ nnoremap <leader>d :DeleteHiddenBuffers<CR>
 " Jumping to header file
 nnoremap gh :call CurtineIncSw()<CR>
 
-" Open split for writing (80 character window width for wrap)
-nnoremap <silent> <leader>v :call ResizeTo80()<CR>
-
 " MouseCopy: system copy mouse characteristics
 vnoremap <RightMouse> "+y
 
@@ -2166,7 +2149,7 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 " }}}
-" General: Command abbreviations {{{
+" General: Abbreviations {{{
 
 " creating tab, vertical, and horizontal buffer splits
 " command! BT tab sb
@@ -2193,14 +2176,6 @@ command! Run !./%
 " run inside project-specific .vimrc files unless they’re owned by you.
 set secure
 
-" Lightline: specifics for Lightline
-set laststatus=2
-set ttimeoutlen=50
-set noshowmode
-
-" ShowCommand: turn off character printing to vim status line
-set noshowcmd
-
 " Backspace setting
 set backspace=indent,eol,start
 
@@ -2213,13 +2188,5 @@ let &t_SR .= "\<Esc>[4 q"
 let &t_EI .= "\<Esc>[3 q"
 " Turn off GUI cursor changes in console mode (tty)
 " call IfConsole({-> execute('set guicursor=')}, {-> 0})
-
-" Configure updatetime
-" This is the amount of time vim waits to do something after you stop
-" acting. Default is 4000, this works well for my fast system
-set updatetime=750
-
-" Update path for Linux-specific libraries
-set path+=/usr/include/x86_64-linux-gnu/
 
 " }}}
