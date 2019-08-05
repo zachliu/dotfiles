@@ -366,8 +366,14 @@ Plug 'weirongxu/plantuml-previewer.vim'
 " Code prettifiers
 Plug 'pappasam/vim-filetype-formatter'
 
+" Linting
+Plug 'pappasam/ale', { 'branch': 'languagetool_autodetect_breaks_ngrams' }
+
 " C Programming
 Plug 'ericcurtin/CurtineIncSw.vim'
+
+" Repl Integration
+Plug 'jpalardy/vim-slime'
 
 call plug#end()
 
@@ -1707,6 +1713,43 @@ let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
+
+" }}}
+" Plugin: Ale {{{
+
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_filetype_changed = 1
+let g:ale_lint_on_insert_leave = 0
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 'normal'
+
+let g:ale_lint_delay = 0
+let g:ale_warn_about_trailing_whitespace = 0
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_languagetool_options = ''
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+      \ 'markdown': ['write-good', 'languagetool'],
+      \ 'python': ['pylint'],
+      \ 'rst': ['write-good'],
+      \ 'text': ['write-good', 'languagetool'],
+      \ }
+
+" }}}
+" Plugin: Slime {{{
+
+let g:slime_target = "tmux"
+let g:slime_paste_file = tempname()
+let g:slime_default_config = {
+      \ "socket_name": "default",
+      \ "target_pane": "{right-of}",
+      \ }
+let g:slime_dont_ask_default = 1
+
+" Set key mappings in GlobalKeyMappings
+let g:slime_no_mappings = 1
 
 " }}}
 "  Plugin: Terraform Syntax {{{
