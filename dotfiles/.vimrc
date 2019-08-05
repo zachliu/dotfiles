@@ -2179,14 +2179,4 @@ set secure
 " Backspace setting
 set backspace=indent,eol,start
 
-" Cursor Line
-" insert mode - line
-let &t_SI .= "\<Esc>[5 q"
-"replace mode - underline
-let &t_SR .= "\<Esc>[4 q"
-"common - block
-let &t_EI .= "\<Esc>[3 q"
-" Turn off GUI cursor changes in console mode (tty)
-" call IfConsole({-> execute('set guicursor=')}, {-> 0})
-
 " }}}
