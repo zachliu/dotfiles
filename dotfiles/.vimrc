@@ -1228,7 +1228,7 @@ command! Preview call _Preview()
 "  Plugin: Rainbow Parentheses {{{
 
 let g:rainbow#max_level = 16
-let g:rainbow#pairs = [['(', ')'], ['[', ']']]
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 augroup rainbow_settings
   " Section to turn on rainbow parentheses
   autocmd!
@@ -1625,12 +1625,13 @@ augroup autopairs_filetype_overrides
         \ '(':')',
         \ '[':']',
         \ '{':'}',
-        \ "'":"'",
+        \ '{!':'!}',
         \ '"':'"',
+        \ "'":"'",
         \ '`':'`',
         \ '"""': '"""',
         \ "'''": "'''",
-        \ '```': '```'
+        \ '```': '```',
         \ }
   autocmd FileType plantuml let b:AutoPairs = {
         \ '(':')',
@@ -1639,7 +1640,7 @@ augroup autopairs_filetype_overrides
         \ '"':'"',
         \ '`':'`'
         \ }
-  autocmd FileType python let b:AutoPairs = {
+  autocmd FileType *.jinja2,python,toml let b:AutoPairs = {
         \ '(':')',
         \ '[':']',
         \ '{':'}',
@@ -1647,7 +1648,9 @@ augroup autopairs_filetype_overrides
         \ '"':'"',
         \ '`':'`',
         \ '"""': '"""',
-        \ "'''": "'''"
+        \ "'''": "'''",
+        \ '{%':'%}',
+        \ '{{':'}}',
         \ }
   autocmd FileType rust let b:AutoPairs = {
         \ '(':')',
@@ -2094,7 +2097,10 @@ nnoremap <silent> <leader><leader>h mz:call ResizeWindowHeight()<CR>`z
 nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
 
 " AutoPairs:
-imap <silent><CR> <CR><Plug>AutoPairsReturn
+" AutoPairs:
+if s:plugin_exists('auto-pairs')
+  imap <silent><CR> <CR><Plug>AutoPairsReturn
+endif
 
 " Sandwich: below mappings address the issue raised here:
 " https://github.com/machakann/vim-sandwich/issues/62
