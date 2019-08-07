@@ -1502,6 +1502,46 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
 endfunction
 
 " }}}
+" Plugin: Gina {{{
+" This plugin is awesome
+" Just Gina followed by whatever I'd normally type in Git
+
+for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
+  call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
+endfor
+
+for gina_cmd in ['diff']
+  call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
+endfor
+
+call gina#custom#command#option('commit', '--verbose')
+call gina#custom#command#option('branch', '--verbose|--all')
+
+call gina#custom#command#option('blame', '--width', '79')
+let gina#command#blame#formatter#format = '%ti|%au|%su'
+let g:gina#command#blame#formatter#timestamp_months = 0
+let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%dT%H:%M:%S"
+let g:gina#command#blame#formatter#timestamp_format2 = "%Y-%m-%dT%H:%M:%S"
+
+function! _Gpush()
+  let current_branch = gina#component#repo#branch()
+  execute 'Gina push -u origin' current_branch
+endfunction
+
+function! _Gpull()
+  let current_branch = gina#component#repo#branch()
+  execute 'Gina pull origin' current_branch
+endfunction
+
+function! _Gblame()
+  execute 'Gina blame'
+endfunction
+
+command! Gpush call _Gpush()
+command! Gpull call _Gpull()
+command! Gblame call _Gblame()
+
+" }}}
 "  Plugin: Tagbar {{{
 
 let g:tagbar_map_showproto = '`'
