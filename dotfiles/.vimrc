@@ -1791,11 +1791,6 @@ call deoplete#custom#option('ignore_sources', {
       \ '_': ['buffer', 'around'],
       \ })
 
-augroup deoplete_disable
-  autocmd!
-  autocmd FileType markdown, toml let b:deoplete_disable_auto_complete = 1
-augroup END
-
 let g:LanguageClient_serverCommands = {
       \ 'haskell': ['stack', 'exec', 'hie-wrapper'],
       \ 'java': [$HOME . '/java/java-language-server/dist/mac/bin/launcher', '--quiet'],
