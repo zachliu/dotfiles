@@ -164,13 +164,16 @@ endif
 
 " Set Background: for PaperColor, also sets handler
 function! AlacrittySetBackground()
-  let g:alacritty_background = system('alacritty-which-colorscheme')
-  if !v:shell_error
-    let &background = g:alacritty_background
-  else
-    echo 'error calling "alacritty-which-colorscheme"'
-    echo 'default to set background=dark'
-    set background=dark
+  if $TERM == 'screen-256color'
+    " check if using Terminal or Alacritty
+    let g:alacritty_background = system('alacritty-which-colorscheme')
+    if !v:shell_error
+      let &background = g:alacritty_background
+    else
+      echo 'error calling "alacritty-which-colorscheme"'
+      echo 'default to set background=dark'
+      set background=dark
+    endif
   endif
 endfunction
 call AlacrittySetBackground()
