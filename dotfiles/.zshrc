@@ -289,6 +289,18 @@ then
   path_ladd "$HOME_BIN"
 fi
 
+GO_BIN="/usr/local/go/bin"
+if [ -d "$GO_BIN" ]
+then
+  export GO_BIN
+  path_radd "$GO_BIN"
+fi
+
+IS_DIRENV_HERE="$PWD/.envrc"
+if [ -f "$IS_DIRENV_HERE" ]; then
+  eval "$(direnv hook zsh)"
+fi
+
 # POETRY_LOC="$HOME/.poetry/bin"
 # if [ -d "$POETRY_LOC" ]; then
 #   path_ladd "$POETRY_LOC"
@@ -403,6 +415,9 @@ function chpwd() {
 
   # Magically find Python's virtual environment based on name
   va
+
+  # activate direnv if there is a .envrc
+  activate_direnv
 }
 
 # Executed every $PERIOD seconds, just before a prompt.
@@ -1009,6 +1024,13 @@ function deshake-video() {
   ffmpeg2 -i "$infile" -vf \
     vidstabtransform=smoothing=10:input="$transfile" \
     "$outfile"
+}
+
+function activate_direnv() {
+  local is_direnv_here="$PWD/.envrc"
+  if [ -f "$is_direnv_here" ]; then
+    eval "$(direnv hook zsh)"
+  fi
 }
 
 # }}}
