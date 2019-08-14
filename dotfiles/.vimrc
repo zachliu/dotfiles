@@ -90,7 +90,7 @@ let maplocalleader = "\\"
 " General: Global config {{{
 
 " Code Completion:
-set completeopt=menuone,longest,preview
+set completeopt=menuone,longest
 set wildmode=longest,list,full
 set wildmenu
 
