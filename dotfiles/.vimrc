@@ -1837,11 +1837,14 @@ call deoplete#custom#option('ignore_sources', {
 let g:LanguageClient_serverCommands = {
       \ 'haskell': ['stack', 'exec', 'hie-wrapper'],
       \ 'java': [$HOME . '/java/java-language-server/dist/mac/bin/launcher', '--quiet'],
-      \ 'python': ['pyls'],
-      \ 'python.jinja2': ['pyls'],
+      \ 'javascript': ['npx', '--no-install', 'flow', 'lsp'],
+      \ 'javascript.jsx': ['npx', '--no-install', 'flow', 'lsp'],
+      \ 'python': ['jedi-language-server'],
+      \ 'python.jinja2': ['jedi-language-server'],
       \ 'ruby': ['solargraph', 'stdio'],
       \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
       \ 'typescript': ['npx', '-q', 'typescript-language-server', '--stdio'],
+      \ 'text': ['custom-lsp'],
       \ }
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_hoverPreview = 'auto'
