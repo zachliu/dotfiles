@@ -131,25 +131,16 @@ export LS_COLORS
 export REACT_EDITOR='less'
 
 # colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+# colored GCC warnings and errors
+GCC_COLORS="error=01;31:warning=01;35:note=01;36:caret=01"
+GCC_COLORS="$GCC_COLORS;32:locus=01:quote=01"
+export GCC_COLORS
 
 # Configure less (de-initialization clears the screen)
 # Gives nicely-colored man pages
-export PAGER=less
-
-export YELLOW=`echo -e '\033[1;33m'`
-export LIGHT_CYAN=`echo -e '\033[1;36m'`
-export GREEN=`echo -e '\033[0;32m'`
-export NOCOLOR=`echo -e '\033[0m'`
-# export LESS="-iMSx4 -FXR"
-export LESS='--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --clear-screen'
-
-# export PAGER="sed \"s/^\(([0-9]\+ [rows]\+)\)/$GREEN\1$NOCOLOR/;s/^\(-\[\ RECORD\ [0-9]\+\ \][-+]\+\)/$GREEN\1$NOCOLOR/;s/|/$GREEN|$NOCOLOR/g;s/^\([-+]\+\)/$GREEN\1$NOCOLOR/\" 2>/dev/null | less"
-# export PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIGHT_CYAN}\1$NOCOLOR/;s/\([[:space:]]\+[0-9.\-]\+[[:space:]]\)/${LIGHT_CYAN}\1$NOCOLOR/g;s/|/$YELLOW|$NOCOLOR/g;s/^\([-+]\+\)/$YELLOW\1$NOCOLOR/\" 2>/dev/null | less"
-# export PAGER='vim -R -u ~/.vimrc -'
-
-# export LESS='--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --clear-screen'
-
+LESS="--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS"
+LESS="$LESS --HILITE-UNREAD --tabs=4 --quit-if-one-screen"
+export LESS
 export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
 export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
 export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -157,6 +148,24 @@ export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
 export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+export PAGER=less
+
+export YELLOW=`echo -e '\033[1;33m'`
+export LIGHT_CYAN=`echo -e '\033[1;36m'`
+export GREEN=`echo -e '\033[0;32m'`
+export NOCOLOR=`echo -e '\033[0m'`
+
+# export PAGER="sed \"s/^\(([0-9]\+ [rows]\+)\)/$GREEN\1$NOCOLOR/;s/^\(-\[\ RECORD\ [0-9]\+\ \][-+]\+\)/$GREEN\1$NOCOLOR/;s/|/$GREEN|$NOCOLOR/g;s/^\([-+]\+\)/$GREEN\1$NOCOLOR/\" 2>/dev/null | less"
+# export PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIGHT_CYAN}\1$NOCOLOR/;s/\([[:space:]]\+[0-9.\-]\+[[:space:]]\)/${LIGHT_CYAN}\1$NOCOLOR/g;s/|/$YELLOW|$NOCOLOR/g;s/^\([-+]\+\)/$YELLOW\1$NOCOLOR/\" 2>/dev/null | less"
+# export PAGER='vim -R -u ~/.vimrc -'
+# export LESS='--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --clear-screen'
+
+# Configure Man Pager
+export MANWIDTH=79
+export MANPAGER=less
+
+# Git
+export GIT_PAGER=less
 
 # Configure man pager
 # export MANPAGER='nvim -c "set ft=man" -'
