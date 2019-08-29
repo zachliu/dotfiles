@@ -2170,8 +2170,11 @@ nnoremap <leader>d :DeleteHiddenBuffers<CR>
 " Jumping to header file
 nnoremap gh :call CurtineIncSw()<CR>
 
-" MouseCopy: system copy mouse characteristics
+" Mouse Copy: system copy mouse characteristics
 vnoremap <RightMouse> "+y
+
+" Mouse Paste: make it come from the system register
+nnoremap <MiddleMouse> "+<MiddleMouse>
 
 " Mouse Open Close Folds: open folds with the mouse, and close the folds
 " open operation taken from: https://stackoverflow.com/a/13924974
