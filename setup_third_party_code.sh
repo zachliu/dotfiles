@@ -100,6 +100,7 @@ sudo apt install fonts-hack-ttf
 #######################################################################
 # Tmux
 #######################################################################
+sudo apt remove tmux
 sudo apt install autoconf automake pkg-config libevent-dev
 cd ~/src/lib
 git clone git@github.com:tmux/tmux.git
