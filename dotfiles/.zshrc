@@ -227,102 +227,21 @@ export BAT_PAGER=''
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
-LOCAL_BIN="$HOME/.local/bin"
-if [ -d "$LOCAL_BIN" ]
-then
-  export LOCAL_BIN
-  path_radd "$LOCAL_BIN"
-fi
-
-pyenv_init() {
-  eval "$(pyenv init -)"
-}
-
-# activate virtual environment from any directory from current and up
-PYENV_ROOT="$HOME/.pyenv"
-PYTHON_VENV=".venv"
-if [ -d "$PYENV_ROOT" ]; then
-  export PYENV_ROOT
-  path_radd "$PYENV_ROOT/bin"
-  SLASHES=${PWD//[^\/]/}  # slashes from the root, eg. returns "////" if
-                          # we are at /home/zach/dotfiles/dotfiles
-  DIR="$PWD"
-  for (( n=${#SLASHES}; n>0; --n )); do
-    if [ -d "$DIR/$PYTHON_VENV" ]; then
-      pyenv_init
-      break
-    fi
-    DIR="$DIR/.."
-  done
-fi
-
-SDKMAN_DIR="$HOME/.sdkman"
-if [ -d "$SDKMAN_DIR" ]; then
-  export SDKMAN_DIR
-  [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && \
-    source "$SDKMAN_DIR/bin/sdkman-init.sh"
-fi
-
-nodenv_init() {
-  eval "$(nodenv init -)"
-}
-
-NODENV_ROOT="$HOME/.nodenv"
-IS_GIT_HERE="$PWD/.git"
-if [ -d "$NODENV_ROOT" ]; then
-  export NODENV_ROOT
-  path_radd "$NODENV_ROOT/bin"
-  if [ -d "$IS_GIT_HERE" ]; then
-    nodenv_init
-  fi
-fi
-
-RBENV_ROOT="$HOME/.rbenv"
-if [ -d "$RBENV_ROOT" ]; then
-  export RBENV_ROOT
-  path_ladd "$RBENV_ROOT/bin"
-  # eval "$(rbenv init -)"
-fi
-
-rbenv() {
-  eval "$(command rbenv init -)"
-  rbenv $@
-}
-
-TFENV_ROOT="$HOME/.tfenv"
-if [ -d "$TFENV_ROOT" ]; then
-  export TFENV_ROOT
-  path_radd "$TFENV_ROOT/bin"
-fi
-
 RUST_CARGO="$HOME/.cargo/bin"
 if [ -d "$RUST_CARGO" ]; then
   path_ladd "$RUST_CARGO"
 fi
 
 HOME_BIN="$HOME/bin"
-if [ -d "$HOME_BIN" ]
-then
+if [ -d "$HOME_BIN" ]; then
   path_ladd "$HOME_BIN"
 fi
 
-GO_BIN="/usr/local/go/bin"
-if [ -d "$GO_BIN" ]
-then
-  export GO_BIN
-  path_radd "$GO_BIN"
+POETRY_LOC="$HOME/.poetry/bin"
+if [ -d "$POETRY_LOC" ]; then
+  path_ladd "$POETRY_LOC"
+  source $HOME/.poetry/env
 fi
-
-IS_DIRENV_HERE="$PWD/.envrc"
-if [ -f "$IS_DIRENV_HERE" ]; then
-  eval "$(direnv hook zsh)"
-fi
-
-# POETRY_LOC="$HOME/.poetry/bin"
-# if [ -d "$POETRY_LOC" ]; then
-#   path_ladd "$POETRY_LOC"
-#   source $HOME/.poetry/env
-# fi
 
 # EXPORT THE FINAL, MODIFIED PATH
 export PATH
@@ -443,6 +362,8 @@ function chpwd() {
 # scheduled time is not reset if the list of functions is altered.
 # Hence the set of functions is always called together.
 function periodic() {
+  # Magically find Python's virtual environment based on name
+  va
 }
 
 # Executed just after a command has been read and is about to be executed
@@ -544,6 +465,12 @@ bindkey -M main '^u' clear-screen
 # delete function characters to include
 # Omitted: /=
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+
+# }}}
+# ASDF: needs to run after ZSH setup {{{
+
+source $HOME/.asdf/asdf.sh
+source $HOME/.asdf/completions/asdf.bash
 
 # }}}
 # Aliases --- {{{
@@ -1149,7 +1076,14 @@ function +vi-git-stash() {
   fi
 }
 
-function precmd() { vcs_info }
+# Executed before each prompt. Note that precommand functions are not
+# re-executed simply because the command line is redrawn, as happens, for
+# example, when a notification about an exiting job is displayed.
+function precmd() {
+  # Gather information about the version control system
+  vcs_info
+}
+
 #######################################################################
 # END: Git formatting
 #######################################################################
