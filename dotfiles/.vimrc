@@ -1851,6 +1851,7 @@ let g:LanguageClient_serverCommands = {
 let g:LanguageClient_autoStart = v:true
 let g:LanguageClient_hoverPreview = 'auto'
 let g:LanguageClient_diagnosticsEnable = v:false
+let g:LanguageClient_selectionUI = 'quickfix'
 
 function! ConfigureLanguageClient()
   nnoremap <buffer> <C-]> :call LanguageClient#textDocument_definition()<CR>
