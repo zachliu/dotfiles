@@ -1785,6 +1785,11 @@ let g:ale_linters = {
       \ 'text': ['write-good', 'languagetool'],
       \ }
 
+augroup ale_disable_initially
+  autocmd!
+  autocmd FileType markdown,rst,text ALEDisableBuffer
+augroup END
+
 " }}}
 " Plugin: Slime {{{
 
@@ -2193,9 +2198,10 @@ imap <C-l> <right>
 
 " FiletypeFormat: remap leader f to do filetype formatting
 nnoremap <leader>f :FiletypeFormat<cr>
-augroup language_specific_file_beauty
-  autocmd FileType ledger nnoremap <buffer> <leader>f :%LedgerAlign<cr>
-augroup END
+vnoremap <leader>f :FiletypeFormat<cr>
+
+" Ale: shortcuts
+nnoremap <leader>a :ALEToggleBuffer<cr>
 
 " Open Browser: override netrw
 nmap gx <Plug>(openbrowser-smart-search)
