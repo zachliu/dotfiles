@@ -8,6 +8,7 @@ if [ "$TERM" = "xterm-256color" ]; then
     xdotool windowminimize $old_wid
   fi
   wid=$(xdotool getactivewindow)
+  wmctrl -ir $wid -b add,maximized_vert,maximized_horz
   xprop \
     -id $wid \
     -f _MOTIF_WM_HINTS 32c \
