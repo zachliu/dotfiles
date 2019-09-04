@@ -46,25 +46,12 @@ draw_bold_text_with_bright_colors: true
 
 # Font configuration (changes require restart)
 font:
-  # The normal (roman) font face to use.
   normal:
-    family: monospace # should be "Menlo" or something on macOS.
-    # Style can be specified to pick a specific face.
     style: Regular
-
-  # The bold font face
   bold:
-    family: monospace # should be "Menlo" or something on macOS.
-    # Style can be specified to pick a specific face.
-    # style: Bold
-
-  # The italic font face
+    style: Bold
   italic:
-    family: monospace # should be "Menlo" or something on macOS.
-    # Style can be specified to pick a specific face.
     style: Italic
-
-  # Point size of the font
   size: 9
 
   # Offset is the extra space around each character. offset.y can be thought of
@@ -85,8 +72,9 @@ font:
   # false.
   use_thin_strokes: true
 
-# Should display the render timer
-debug.render_timer: false
+debug:
+  # Should display the render timer
+  render_timer: false
 
 cursor:
   # Cursor style
@@ -101,17 +89,14 @@ cursor:
   # window is not focused.
   unfocused_hollow: true
 
+# color_start
+# /home/zach/.config/alacritty-theme/themes/tomorrow_night_bright.yaml
 # Colors (Tomorrow Night Bright)
 colors:
   # Default colors
   primary:
     background: '0x000000'
     foreground: '0xeaeaea'
-
-  # Colors the cursor will use if `custom_cursor_colors` is true
-  cursor:
-    text: '0x000000'
-    cursor: '0xffffff'
 
   # Normal colors
   normal:
@@ -122,7 +107,7 @@ colors:
     blue:    '0x7aa6da'
     magenta: '0xc397d8'
     cyan:    '0x70c0ba'
-    white:   '0xffffff'
+    white:   '0x424242'
 
   # Bright colors
   bright:
@@ -133,18 +118,9 @@ colors:
     blue:    '0x7aa6da'
     magenta: '0xb77ee0'
     cyan:    '0x54ced6'
-    white:   '0xffffff'
+    white:   '0x2a2a2a'
 
-  # Dim colors (Optional)
-  dim:
-￼   black:   '0x333333'
-￼   red:     '0xf2777a'
-￼   green:   '0x99cc99'
-￼   yellow:  '0xffcc66'
-￼   blue:    '0x6699cc'
-￼   magenta: '0xcc99cc'
-￼   cyan:    '0x66cccc'
-￼   white:   '0xdddddd'
+# color_end
 
 # Visual Bell
 #
@@ -220,8 +196,8 @@ mouse:
   double_click: { threshold: 300 }
   triple_click: { threshold: 300 }
   url:
-    launcher: "gio open"
-    # modifiers: Shift
+    launcher: xdg-open
+    modifiers: Shift
   hide_when_typing: false
 
 
@@ -323,19 +299,23 @@ live_config_reload: true
 key_bindings:
   - { key: V,        mods: Control|Shift,    action: Paste               }
   - { key: C,        mods: Control|Shift,    action: Copy                }
+  - { key: Paste,                   action: Paste                        }
+  - { key: Copy,                    action: Copy                         }
   - { key: Q,        mods: Command, action: Quit                         }
   - { key: W,        mods: Command, action: Quit                         }
   - { key: Insert,   mods: Shift,   action: PasteSelection               }
   - { key: Home,                    chars: "\x1bOH",   mode: AppCursor   }
   - { key: Home,                    chars: "\x1b[H",   mode: ~AppCursor  }
+  - { key: Home,     mods: Shift,   action: ScrollToTop                  }
   - { key: End,                     chars: "\x1bOF",   mode: AppCursor   }
   - { key: End,                     chars: "\x1b[F",   mode: ~AppCursor  }
-  - { key: PageUp,   mods: Shift,   chars: "\x1b[5;2~"                   }
   - { key: PageUp,   mods: Control, chars: "\x1b[5;5~"                   }
+  - { key: PageUp,   mods: Shift,   action: ScrollPageUp                 }
   - { key: PageUp,                  chars: "\x1b[5~"                     }
-  - { key: PageDown, mods: Shift,   chars: "\x1b[6;2~"                   }
   - { key: PageDown, mods: Control, chars: "\x1b[6;5~"                   }
+  - { key: PageDown, mods: Shift,   action: ScrollPageDown               }
   - { key: PageDown,                chars: "\x1b[6~"                     }
+  - { key: End,      mods: Shift,   action: ScrollToBottom               }
   - { key: Left,     mods: Shift,   chars: "\x1b[1;2D"                   }
   - { key: Left,     mods: Control, chars: "\x1b[1;5D"                   }
   - { key: Left,     mods: Alt,     chars: "\x1b[1;3D"                   }
@@ -373,11 +353,7 @@ key_bindings:
   - { key: Back,     mods: Alt,     chars: "\x1b\x7f"                    }
   - { key: Insert,                  chars: "\x1b[2~"                     }
   - { key: Delete,                  chars: "\x1b[3~"                     }
-  - { key: Equals,   mods: Control, action: IncreaseFontSize             }
-  - { key: Subtract, mods: Control, action: DecreaseFontSize             }
-  - { key: Key0,     mods: Control, action: ResetFontSize                }
-  - { key: PageUp,   mods: Shift,   action: ScrollPageUp                 }
-  - { key: PageDown, mods: Shift,   action: ScrollPageDown               }
-  - { key: End,      mods: Shift,   action: ScrollToBottom               }
-  - { key: Home,     mods: Shift,   action: ScrollToTop                  }
+  - { key: Equals,   mods: Control,       action: IncreaseFontSize       }
+  - { key: Subtract, mods: Control,       action: DecreaseFontSize       }
+  - { key: Key0,     mods: Control,       action: ResetFontSize          }
 

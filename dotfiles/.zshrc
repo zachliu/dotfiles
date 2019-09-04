@@ -1,5 +1,20 @@
 #!/bin/zsh
 
+# If we are using gnome-terminal, hide the headerbar
+if [ "$TERM" = "xterm-256color" ]; then
+  old_wid=$(xdotool getactivewindow)
+  wname=$(xdotool getwindowname $old_wid)
+  if [ "$wname" != "Terminal" ]; then
+    xdotool windowminimize $old_wid
+  fi
+  wid=$(xdotool getactivewindow)
+  wmctrl -ir $wid -b add,maximized_vert,maximized_horz
+  xprop \
+    -id $wid \
+    -f _MOTIF_WM_HINTS 32c \
+    -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"
+fi
+
 #######################################################################
 # Profiler Header
 #######################################################################
@@ -123,25 +138,16 @@ export LS_COLORS
 export REACT_EDITOR='less'
 
 # colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+# colored GCC warnings and errors
+GCC_COLORS="error=01;31:warning=01;35:note=01;36:caret=01"
+GCC_COLORS="$GCC_COLORS;32:locus=01:quote=01"
+export GCC_COLORS
 
 # Configure less (de-initialization clears the screen)
 # Gives nicely-colored man pages
-export PAGER=less
-
-export YELLOW=`echo -e '\033[1;33m'`
-export LIGHT_CYAN=`echo -e '\033[1;36m'`
-export GREEN=`echo -e '\033[0;32m'`
-export NOCOLOR=`echo -e '\033[0m'`
-# export LESS="-iMSx4 -FXR"
-export LESS='--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --clear-screen'
-
-# export PAGER="sed \"s/^\(([0-9]\+ [rows]\+)\)/$GREEN\1$NOCOLOR/;s/^\(-\[\ RECORD\ [0-9]\+\ \][-+]\+\)/$GREEN\1$NOCOLOR/;s/|/$GREEN|$NOCOLOR/g;s/^\([-+]\+\)/$GREEN\1$NOCOLOR/\" 2>/dev/null | less"
-# export PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIGHT_CYAN}\1$NOCOLOR/;s/\([[:space:]]\+[0-9.\-]\+[[:space:]]\)/${LIGHT_CYAN}\1$NOCOLOR/g;s/|/$YELLOW|$NOCOLOR/g;s/^\([-+]\+\)/$YELLOW\1$NOCOLOR/\" 2>/dev/null | less"
-# export PAGER='vim -R -u ~/.vimrc -'
-
-# export LESS='--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --clear-screen'
-
+LESS="--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS"
+LESS="$LESS --HILITE-UNREAD --tabs=4 --quit-if-one-screen"
+export LESS
 export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
 export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
 export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -149,6 +155,24 @@ export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
 export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+export PAGER=less
+
+export YELLOW=`echo -e '\033[1;33m'`
+export LIGHT_CYAN=`echo -e '\033[1;36m'`
+export GREEN=`echo -e '\033[0;32m'`
+export NOCOLOR=`echo -e '\033[0m'`
+
+# export PAGER="sed \"s/^\(([0-9]\+ [rows]\+)\)/$GREEN\1$NOCOLOR/;s/^\(-\[\ RECORD\ [0-9]\+\ \][-+]\+\)/$GREEN\1$NOCOLOR/;s/|/$GREEN|$NOCOLOR/g;s/^\([-+]\+\)/$GREEN\1$NOCOLOR/\" 2>/dev/null | less"
+# export PAGER="sed \"s/\([[:space:]]\+[0-9.\-]\+\)$/${LIGHT_CYAN}\1$NOCOLOR/;s/\([[:space:]]\+[0-9.\-]\+[[:space:]]\)/${LIGHT_CYAN}\1$NOCOLOR/g;s/|/$YELLOW|$NOCOLOR/g;s/^\([-+]\+\)/$YELLOW\1$NOCOLOR/\" 2>/dev/null | less"
+# export PAGER='vim -R -u ~/.vimrc -'
+# export LESS='--ignore-case --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --clear-screen'
+
+# Configure Man Pager
+export MANWIDTH=79
+export MANPAGER=less
+
+# Git
+export GIT_PAGER=less
 
 # Configure man pager
 # export MANPAGER='nvim -c "set ft=man" -'
@@ -210,90 +234,21 @@ export BAT_PAGER=''
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
-LOCAL_BIN="$HOME/.local/bin"
-if [ -d "$LOCAL_BIN" ]
-then
-  export LOCAL_BIN
-  path_radd "$LOCAL_BIN"
-fi
-
-pyenv_init() {
-  eval "$(pyenv init -)"
-}
-
-# activate virtual environment from any directory from current and up
-PYENV_ROOT="$HOME/.pyenv"
-PYTHON_VENV=".venv"
-if [ -d "$PYENV_ROOT" ]; then
-  export PYENV_ROOT
-  path_radd "$PYENV_ROOT/bin"
-  SLASHES=${PWD//[^\/]/}  # slashes from the root, eg. returns "////" if
-                          # we are at /home/zach/dotfiles/dotfiles
-  DIR="$PWD"
-  for (( n=${#SLASHES}; n>0; --n )); do
-    if [ -d "$DIR/$PYTHON_VENV" ]; then
-      pyenv_init
-      break
-    fi
-    DIR="$DIR/.."
-  done
-fi
-
-SDKMAN_DIR="$HOME/.sdkman"
-if [ -d "$SDKMAN_DIR" ]; then
-  export SDKMAN_DIR
-  [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && \
-    source "$SDKMAN_DIR/bin/sdkman-init.sh"
-fi
-
-nodenv_init() {
-  eval "$(nodenv init -)"
-}
-
-NODENV_ROOT="$HOME/.nodenv"
-IS_GIT_HERE="$PWD/.git"
-if [ -d "$NODENV_ROOT" ]; then
-  export NODENV_ROOT
-  path_radd "$NODENV_ROOT/bin"
-  if [ -d "$IS_GIT_HERE" ]; then
-    nodenv_init
-  fi
-fi
-
-RBENV_ROOT="$HOME/.rbenv"
-if [ -d "$RBENV_ROOT" ]; then
-  export RBENV_ROOT
-  path_ladd "$RBENV_ROOT/bin"
-  # eval "$(rbenv init -)"
-fi
-
-rbenv() {
-  eval "$(command rbenv init -)"
-  rbenv $@
-}
-
-TFENV_ROOT="$HOME/.tfenv"
-if [ -d "$TFENV_ROOT" ]; then
-  export TFENV_ROOT
-  path_radd "$TFENV_ROOT/bin"
-fi
-
 RUST_CARGO="$HOME/.cargo/bin"
 if [ -d "$RUST_CARGO" ]; then
   path_ladd "$RUST_CARGO"
 fi
 
 HOME_BIN="$HOME/bin"
-if [ -d "$HOME_BIN" ]
-then
+if [ -d "$HOME_BIN" ]; then
   path_ladd "$HOME_BIN"
 fi
 
-# POETRY_LOC="$HOME/.poetry/bin"
-# if [ -d "$POETRY_LOC" ]; then
-#   path_ladd "$POETRY_LOC"
-#   source $HOME/.poetry/env
-# fi
+POETRY_LOC="$HOME/.poetry/bin"
+if [ -d "$POETRY_LOC" ]; then
+  path_ladd "$POETRY_LOC"
+  source $HOME/.poetry/env
+fi
 
 # EXPORT THE FINAL, MODIFIED PATH
 export PATH
@@ -403,6 +358,9 @@ function chpwd() {
 
   # Magically find Python's virtual environment based on name
   va
+
+  # activate direnv if there is a .envrc
+  activate_direnv
 }
 
 # Executed every $PERIOD seconds, just before a prompt.
@@ -411,6 +369,8 @@ function chpwd() {
 # scheduled time is not reset if the list of functions is altered.
 # Hence the set of functions is always called together.
 function periodic() {
+  # Magically find Python's virtual environment based on name
+  va
 }
 
 # Executed just after a command has been read and is about to be executed
@@ -512,6 +472,12 @@ bindkey -M main '^u' clear-screen
 # delete function characters to include
 # Omitted: /=
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+
+# }}}
+# ASDF: needs to run after ZSH setup {{{
+
+source $HOME/.asdf/asdf.sh
+source $HOME/.asdf/completions/asdf.bash
 
 # }}}
 # Aliases --- {{{
@@ -776,7 +742,7 @@ function gn() {  # arg1: filename
 # pydev_install dev: install only dev dependencies
 # pydev_install all: install all deps
 function pydev_install() {  ## Install default python dependencies
-  local env=(pynvim restview 'python-language-server[rope]' bpython poetry)
+  local env=(pynvim restview jedi-language-server black bpython poetry)
   local dev=(pylint mypy pre-commit)
   if [[ "$1" == 'all' ]]; then
     pip install -U $env $dev
@@ -1011,6 +977,13 @@ function deshake-video() {
     "$outfile"
 }
 
+function activate_direnv() {
+  local is_direnv_here="$PWD/.envrc"
+  if [ -f "$is_direnv_here" ]; then
+    eval "$(direnv hook zsh)"
+  fi
+}
+
 # }}}
 # ZShell prompt (PS1) --- {{{
 
@@ -1110,7 +1083,14 @@ function +vi-git-stash() {
   fi
 }
 
-function precmd() { vcs_info }
+# Executed before each prompt. Note that precommand functions are not
+# re-executed simply because the command line is redrawn, as happens, for
+# example, when a notification about an exiting job is displayed.
+function precmd() {
+  # Gather information about the version control system
+  vcs_info
+}
+
 #######################################################################
 # END: Git formatting
 #######################################################################
