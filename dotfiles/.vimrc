@@ -468,7 +468,7 @@ augroup filetype_recognition
         \ set filetype=dosini
   autocmd BufNewFile,BufRead,BufEnter *.tsv set filetype=tsv
   autocmd BufNewFile,BufRead,BufEnter *.toml set filetype=toml
-  autocmd BufNewFile,BufRead,BufEnter Dockerfile.* set filetype=Dockerfile
+  autocmd BufNewFile,BufRead,BufEnter Dockerfile.* set filetype=dockerfile
   autocmd BufNewFile,BufRead,BufEnter Makefile.* set filetype=make
   autocmd BufNewFile,BufRead,BufEnter poetry.lock set filetype=toml
   autocmd BufNewFile,BufRead,BufEnter .gitignore,.dockerignore
@@ -2060,6 +2060,10 @@ inoremap <expr> <LeftMouse> pumvisible() ? '<CR><Backspace>' : '<Esc><LeftMouse>
 " Disable below for now; I'm using deoplete to get this automatically
 inoremap <C-@> <C-x><C-o>
 inoremap <C-space> <C-x><C-o>
+
+" Exit: Preview, Help, QuickFix, and Location List
+inoremap <silent> <C-c> <Esc>:pclose <BAR> cclose <BAR> lclose <CR>a
+nnoremap <silent> <C-c> :pclose <BAR> cclose <BAR> lclose <CR>
 
 " EnglishWordCompletion:
 " Look up words in a dictionary
