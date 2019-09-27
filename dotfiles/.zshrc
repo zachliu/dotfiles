@@ -610,11 +610,6 @@ alias pipi='pip install'
 # }}}
 # Functions --- {{{
 
-# Get pyenv python version if in pyenv
-function pyenv_python_version() {
-  echo $(pyenv version | head -n 1 | grep -o -P "\d+\.\d+\.\d+")
-}
-
 # See https://stackoverflow.com/questions/50735140/why-does-python-version-not-print-string
 # for doing string manipulation on python --version output
 function shell_python_version() {
@@ -792,7 +787,7 @@ function ve() {  # Optional arg: python interpreter name
   fi
   if [ ! -d "$venv_name" ]; then
     if [[ $python_version == "2.7.15+" ]]; then
-      echo "You're using system python. Please use pyenv!"
+      echo "You're using system python. Please use asdf!"
       return
     elif [[ $python_version =~ ^"2.7."* ]]; then
       pip install virtualenv
@@ -813,8 +808,6 @@ function ve() {  # Optional arg: python interpreter name
     echo "$venv_name already exists, activating"
   fi
   source $venv_name/bin/activate
-  # See https://github.com/pyenv/pyenv/issues/268#issuecomment-62367841
-  pyenv shell --unset
 }
 
 # Print out the Github-recommended gitignore
@@ -1107,7 +1100,6 @@ PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
 
 # See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
 # for the reason of using single quotes here
-# PS1_PYV='%B%F{$COLOR_SILVER}$(pyenv_python_version | head -n 1 | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")'
 PS1_PYV='%B%F{$COLOR_PINK}$(shell_python_version)%f%b'
 
 PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
