@@ -298,6 +298,9 @@ source /home/zach/Downloads/docker-zsh-completion/docker-zsh-completion.plugin.z
 # Autojump for zsh
 source /usr/share/autojump/autojump.zsh
 
+# Autojump for spaceship-prompt
+source /home/zach/Downloads/spaceship-prompt/spaceship.zsh
+
 # }}}
 # ZShell Options --- {{{
 
@@ -980,131 +983,189 @@ function activate_direnv() {
 # }}}
 # ZShell prompt (PS1) --- {{{
 
+# https://github.com/denysdovhan/spaceship-prompt/blob/master/docs/Options.md
+
+SPACESHIP_PROMPT_ORDER=(
+  user          # Username section
+  host          # Hostname section
+  dir           # Current directory section
+  git           # Git section (git_branch + git_status)
+  # hg            # Mercurial section (hg_branch  + hg_status)
+  # package       # Package version
+  # node          # Node.js section
+  # ruby          # Ruby section
+  # elixir        # Elixir section
+  # xcode         # Xcode section
+  # swift         # Swift section
+  # golang        # Go section
+  # php           # PHP section
+  # rust          # Rust section
+  # haskell       # Haskell Stack section
+  # julia         # Julia section
+  # docker        # Docker section
+  # aws           # Amazon Web Services section
+  venv          # virtualenv section
+  # conda         # conda virtualenv section
+  pyenv         # Pyenv section
+  # dotnet        # .NET section
+  # ember         # Ember.js section
+  # kubecontext   # Kubectl context section
+  terraform     # Terraform workspace section
+  # exec_time     # Execution time
+  line_sep      # Line break
+  # battery       # Battery level and status
+  # vi_mode       # Vi-mode indicator
+  # jobs          # Background jobs indicator
+  # exit_code     # Exit code section
+  char          # Prompt character
+)
+
+SPACESHIP_PROMPT_ADD_NEWLINE=false
+SPACESHIP_CHAR_SYMBOL='$ '
+SPACESHIP_DIR_PREFIX=
+SPACESHIP_DIR_TRUNC=0
+SPACESHIP_DIR_TRUNC_REPO=false
+SPACESHIP_HOST_COLOR=yellow
+SPACESHIP_HOST_PREFIX=@
+SPACESHIP_HOST_SHOW=always
+SPACESHIP_USER_COLOR=yellow
+SPACESHIP_USER_SHOW=always
+SPACESHIP_USER_SUFFIX=
+SPACESHIP_VENV_PREFIX='('
+SPACESHIP_VENV_SUFFIX=')'
+SPACESHIP_VENV_GENERIC_NAMES=()
+SPACESHIP_GIT_BRANCH_PREFIX='🌵 '
+SPACESHIP_GIT_STATUS_MODIFIED='外'
+SPACESHIP_TERRAFORM_SHOW=true
+SPACESHIP_PYENV_SHOW=true
+
+
+# NOTE Below is legacy:
 # NOTE this is not cross-shell; zsh-specific
 
-#######################################################################
-# BEGIN: Git formatting
-#######################################################################
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' stagedstr '%B%F{yellow}裡'
-zstyle ':vcs_info:*' unstagedstr '%B%F{red}外'
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' actionformats \
-  '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
-zstyle ':vcs_info:*' formats \
-  '%F{magenta}[%F{green}%b%m%F{magenta}] %F{green}%c%F{yellow}%u%f'
-zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked git-unpushed
-zstyle ':vcs_info:*' enable git
+########################################################################
+## BEGIN: Git formatting
+########################################################################
+#autoload -Uz vcs_info
+#zstyle ':vcs_info:*' stagedstr '%B%F{yellow}裡'
+#zstyle ':vcs_info:*' unstagedstr '%B%F{red}外'
+#zstyle ':vcs_info:*' check-for-changes true
+#zstyle ':vcs_info:*' actionformats \
+#  '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
+#zstyle ':vcs_info:*' formats \
+#  '%F{magenta}[%F{green}%b%m%F{magenta}] %F{green}%c%F{yellow}%u%f'
+#zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked git-unpushed
+#zstyle ':vcs_info:*' enable git
 
-function +vi-git-color() {
-  local git_status="$(git status 2> /dev/null)"
-  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-  local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
-  if [[ $git_status == "" ]]; then
-    hook_com[branch]="%B%F{cyan}${hook_com[branch]}"
-  elif [[ ! $git_status =~ "working tree clean" ]]; then
-    hook_com[branch]="%B%F{red}${hook_com[branch]}"
-  elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
-    [[ -n $git_commit ]]; then
-    hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
-  elif [[ $git_status =~ "nothing to commit" ]] && \
-    [[ ! -n $git_commit ]]; then
-    hook_com[branch]="%B%F{green}${hook_com[branch]}"
-  else
-    hook_com[branch]="%B%F{orange}${hook_com[branch]}"
-  fi
-}
+#function +vi-git-color() {
+#  local git_status="$(git status 2> /dev/null)"
+#  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+#  local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
+#  if [[ $git_status == "" ]]; then
+#    hook_com[branch]="%B%F{cyan}${hook_com[branch]}"
+#  elif [[ ! $git_status =~ "working tree clean" ]]; then
+#    hook_com[branch]="%B%F{red}${hook_com[branch]}"
+#  elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
+#    [[ -n $git_commit ]]; then
+#    hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
+#  elif [[ $git_status =~ "nothing to commit" ]] && \
+#    [[ ! -n $git_commit ]]; then
+#    hook_com[branch]="%B%F{green}${hook_com[branch]}"
+#  else
+#    hook_com[branch]="%B%F{orange}${hook_com[branch]}"
+#  fi
+#}
 
-# Show untracked files
-function +vi-git-untracked() {
-  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
-  [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
-  [[ $(git status 2> /dev/null) == *"Untracked files"* ]]; then
-    hook_com[unstaged]+='%B%F{red}新'
-  fi
-}
+## Show untracked files
+#function +vi-git-untracked() {
+#  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+#  [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
+#  [[ $(git status 2> /dev/null) == *"Untracked files"* ]]; then
+#    hook_com[unstaged]+='%B%F{red}新'
+#  fi
+#}
 
-# Show unpushed commits
-function +vi-git-unpushed() {
-  local git_status="$(git status 2> /dev/null)"
-  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-  local git_diff_origin="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
-  local git_unpushed_commit="$(git log --branches --not --remotes 2>/dev/null)"
-  # Making sure "推" is NOT displayed if i haven't committed yet
-  # but if I partically committed, still need to show "推"
-  if [[ -n $git_unpushed_commit ]]; then
-    hook_com[unstaged]+='%B%F{yellow}推'
-  elif [[ $git_status =~ "working tree clean" ]]; then
-    if [[ -n $git_diff_origin ]] || \
-      [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]]; then
-      hook_com[unstaged]+='%B%F{yellow}推'
-    else
-      # do nothing
-    fi
-  else
-    # do nothing
-  fi
-}
+## Show unpushed commits
+#function +vi-git-unpushed() {
+#  local git_status="$(git status 2> /dev/null)"
+#  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+#  local git_diff_origin="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
+#  local git_unpushed_commit="$(git log --branches --not --remotes 2>/dev/null)"
+#  # Making sure "推" is NOT displayed if i haven't committed yet
+#  # but if I partically committed, still need to show "推"
+#  if [[ -n $git_unpushed_commit ]]; then
+#    hook_com[unstaged]+='%B%F{yellow}推'
+#  elif [[ $git_status =~ "working tree clean" ]]; then
+#    if [[ -n $git_diff_origin ]] || \
+#      [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]]; then
+#      hook_com[unstaged]+='%B%F{yellow}推'
+#    else
+#      # do nothing
+#    fi
+#  else
+#    # do nothing
+#  fi
+#}
 
-# Show remote ref name and number of commits ahead-of or behind
-function +vi-git-st() {
-  local ahead behind remote
-  local -a gitstatus
+## Show remote ref name and number of commits ahead-of or behind
+#function +vi-git-st() {
+#  local ahead behind remote
+#  local -a gitstatus
 
-  # Are we on a remote-tracking branch?
-  remote=${$(git rev-parse --verify ${hook_com[branch]}@{upstream} \
-    --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
+#  # Are we on a remote-tracking branch?
+#  remote=${$(git rev-parse --verify ${hook_com[branch]}@{upstream} \
+#    --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
 
-  if [[ -n ${remote} ]] ; then
-    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
-    (( $ahead )) && gitstatus+=( "${c3}+${ahead}${c2}" )
+#  if [[ -n ${remote} ]] ; then
+#    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
+#    (( $ahead )) && gitstatus+=( "${c3}+${ahead}${c2}" )
 
-    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
-    (( $behind )) && gitstatus+=( "${c4}-${behind}${c2}" )
+#    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+#    (( $behind )) && gitstatus+=( "${c4}-${behind}${c2}" )
 
-    hook_com[branch]="${hook_com[branch]} [注意${(j:/:)gitstatus}]"
-  fi
-}
+#    hook_com[branch]="${hook_com[branch]} [注意${(j:/:)gitstatus}]"
+#  fi
+#}
 
-# Show count of stashed changes
-function +vi-git-stash() {
-  local -a stashes
+## Show count of stashed changes
+#function +vi-git-stash() {
+#  local -a stashes
 
-  if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
-    stashes=$(git stash list 2>/dev/null | wc -l)
-    hook_com[misc]+=" (藏${stashes})"
-  fi
-}
+#  if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
+#    stashes=$(git stash list 2>/dev/null | wc -l)
+#    hook_com[misc]+=" (藏${stashes})"
+#  fi
+#}
 
-# Executed before each prompt. Note that precommand functions are not
-# re-executed simply because the command line is redrawn, as happens, for
-# example, when a notification about an exiting job is displayed.
-function precmd() {
-  # Gather information about the version control system
-  vcs_info
-}
+## Executed before each prompt. Note that precommand functions are not
+## re-executed simply because the command line is redrawn, as happens, for
+## example, when a notification about an exiting job is displayed.
+#function precmd() {
+#  # Gather information about the version control system
+#  vcs_info
+#}
 
-#######################################################################
-# END: Git formatting
-#######################################################################
+########################################################################
+## END: Git formatting
+########################################################################
 
-COLOR_BRIGHT_BLUE="086"
-COLOR_GOLD="184"
-COLOR_SILVER="250"
-COLOR_PINK="164"
+#COLOR_BRIGHT_BLUE="086"
+#COLOR_GOLD="184"
+#COLOR_SILVER="250"
+#COLOR_PINK="164"
 
-# Set Bash PS1
-PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
-PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
-PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
+## Set Bash PS1
+#PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
+#PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
+#PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
 
-# See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
-# for the reason of using single quotes here
-PS1_PYV='%B%F{$COLOR_PINK}$(shell_python_version)%f%b'
+## See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
+## for the reason of using single quotes here
+#PS1_PYV='%B%F{$COLOR_PINK}$(shell_python_version)%f%b'
 
-PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
+#PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
 
-${PS1_END}"
+#${PS1_END}"
 
 # }}}
 # FZF --- {{{
