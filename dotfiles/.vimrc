@@ -217,8 +217,6 @@ Plug 'kh3phr3n/tabline'
 Plug 'itchyny/lightline.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'christoomey/vim-system-copy'
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 't9md/vim-choosewin'
 Plug 'mhinz/vim-startify'
 Plug 'wincent/terminus'
@@ -240,6 +238,9 @@ Plug 'chrisbra/Colorizer'
 Plug 'fidian/hexmode'
 Plug 'wellle/targets.vim'
 Plug 'tpope/vim-surround'
+Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'kristijanhusak/defx-git', { 'do': ':UpdateRemotePlugins' }
+Plug 'kristijanhusak/defx-icons', { 'do': ':UpdateRemotePlugins' }
 
 " Relative Numbering
 Plug 'myusuf3/numbers.vim'
@@ -418,9 +419,11 @@ set statusline+=%#CursorLine#
 set statusline+=\ %{&ff}\  " Unix or Dos
 set statusline+=%*  " Default color
 set statusline+=\ %{strlen(&fenc)?&fenc:'none'}\  " file encoding
+
+" Status Line
 augroup statusline_local_overrides
   autocmd!
-  autocmd FileType nerdtree setlocal statusline=\ NERDTree\ %#CursorLine#
+  autocmd FileType defx setlocal statusline=\ defx\ %#CursorLine#
 augroup END
 
 " Strip newlines from a string
@@ -628,6 +631,8 @@ augroup whitespace_color
   autocmd ColorScheme * highlight EOLWS ctermbg=red guibg=red
   autocmd InsertEnter * highlight EOLWS ctermbg=240 guibg=240 " 240 is grey
   autocmd InsertLeave * highlight EOLWS ctermbg=red guibg=red
+
+  autocmd FileType defx highlight clear EOLWS
 augroup END
 
 " }}}
@@ -1241,104 +1246,63 @@ augroup rainbow_settings
 augroup END
 
 "  }}}
-"  Plugin: NERDTree {{{
+" Plugin: defx {{{
 
-let g:NERDTreeAutoDeleteBuffer = v:true
-let g:NERDTreeCaseSensitiveSort = v:false
-let g:NERDTreeMapJumpFirstChild = '<C-k>'
-let g:NERDTreeMapJumpLastChild = '<C-j>'
-let g:NERDTreeMapJumpNextSibling = '<C-n>'
-let g:NERDTreeMapJumpPrevSibling = '<C-p>'
-let g:NERDTreeMapOpenInTab = '<C-t>'
-let g:NERDTreeMapOpenInTabSilent = ''
-let g:NERDTreeMapOpenSplit = '<C-s>'
-let g:NERDTreeMapOpenVSplit = '<C-v>'
-let g:NERDTreeShowHidden = v:false
-let g:NERDTreeShowLineNumbers = v:true
-let g:NERDTreeSortOrder = ['*', '\/$']
-let g:NERDTreeWinPos = 'left'
-let g:NERDTreeWinSize = 31
-let g:NERDTreeMouseMode = 2
-let g:NERDTreeMinimalUI = v:true
-let g:NERDTreeIgnore = [
-      \ 'venv$[[dir]]',
-      \ '.venv$[[dir]]',
-      \ '__pycache__$[[dir]]',
-      \ '.egg-info$[[dir]]',
-      \ 'node_modules$[[dir]]',
-      \ 'elm-stuff$[[dir]]',
-      \ 'build$[[dir]]',
-      \ 'target$[[dir]]',
-      \ 'pip-wheel-metadata$[[dir]]',
-      \ 'fonts$[[dir]]',
-      \ '\.aux$[[file]]',
-      \ '\.toc$[[file]]',
-      \ '\.pdf$[[file]]',
-      \ '\.out$[[file]]',
-      \ '\.o$[[file]]',
-      \ '\.pyc$[[file]]',
+let g:custom_defx_state = tempname()
+
+let g:custom_defx_mappings = [
+      \ ['!             ', "defx#do_action('execute_command')"],
+      \ ['*             ', "defx#do_action('toggle_select_all')"],
+      \ [';             ', "defx#do_action('repeat')"],
+      \ ['<2-LeftMouse> ', "defx#do_action('drop')"],
+      \ ['<C-g>         ', "defx#do_action('print')"],
+      \ ['<C-h>         ', "defx#do_action('resize', 31)"],
+      \ ['<C-l>         ', "defx#do_action('resize', 100)"],
+      \ ['<C-r>         ', "defx#do_action('redraw')"],
+      \ ['<C-s>         ', "defx#do_action('open', 'split')"],
+      \ ['<C-t>         ', "defx#do_action('open', 'tabe')"],
+      \ ['<C-v>         ', "defx#do_action('open', 'vsplit')"],
+      \ ['<CR>          ', "defx#do_action('drop')"],
+      \ ['<RightMouse>  ', "defx#do_action('cd', ['..'])"],
+      \ ['O             ', "defx#do_action('open_tree_recursive')"],
+      \ ['P             ', "defx#do_action('open', 'pedit')"],
+      \ ['cc            ', "defx#do_action('copy')"],
+      \ ['cd            ', "defx#do_action('change_vim_cwd')"],
+      \ ['d             ', "defx#do_action('remove')"],
+      \ ['i             ', "defx#do_action('toggle_ignored_files')"],
+      \ ['m             ', "defx#do_action('move')"],
+      \ ['m             ', "defx#do_action('new_multiple_files')"],
+      \ ['n             ', "defx#do_action('new_file')"],
+      \ ['o             ', "defx#do_action('open_or_close_tree')"],
+      \ ['p             ', "defx#do_action('paste')"],
+      \ ['q             ', "defx#do_action('quit')"],
+      \ ['r             ', "defx#do_action('rename')"],
+      \ ['ss            ', "defx#do_action('toggle_select')"],
+      \ ['u             ', "defx#do_action('cd', ['..'])"],
+      \ ['x             ', "defx#do_action('execute_system')"],
+      \ ['yy            ', "defx#do_action('yank_path')"],
+      \ ['~             ', "defx#do_action('cd')"],
       \ ]
-let g:NERDTreeIndicatorMapCustom = {
-      \ 'Modified'  : '!',
-      \ 'Staged'    : '=',
-      \ 'Untracked' : '?',
-      \ 'Renamed'   : '%',
-      \ 'Unmerged'  : '=',
-      \ 'Deleted'   : '!',
-      \ 'Dirty'     : '^',
-      \ 'Clean'     : '%',
-      \ 'Ignored'   : '%',
-      \ 'Unknown'   : '?',
-      \ }
 
-function! s:cd_func(...)  " Like args in Python
-  let a:directory = get(a:, 1, expand('%:p:h'))
-  execute 'cd ' . a:directory
-  if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
-    execute 'NERDTreeCWD'
-    execute "normal! \<c-w>\<c-p>"
-  else
-    execute 'NERDTreeCWD'
-    execute 'NERDTreeClose'
-    execute 'normal! \<c-w>='
-  endif
+function! s:defx_my_settings() abort
+  " Define mappings
+  for [key, value] in g:custom_defx_mappings
+    execute 'nnoremap <silent><buffer><expr> ' . key . ' ' . value
+  endfor
+  nnoremap <silent><buffer> ?
+        \ :for [key, value] in g:custom_defx_mappings <BAR>
+        \ echo '' . key . ': ' . value <BAR>
+        \ endfor<CR>
 endfunction
 
-command! -nargs=? CD call <SID>cd_func(<f-args>)
-
-function! s:close_if_only_control_win_left()
-  if winnr('$') != 1
-    return
-  endif
-  if (exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1)
-        \ || &buftype == 'quickfix'
-    quit
-  endif
-endfunction
-
-augroup CloseIfOnlyControlWinLeft
+augroup defx_settings
   autocmd!
-  autocmd BufEnter * call <SID>close_if_only_control_win_left()
+  autocmd FileType defx call s:defx_my_settings()
+  autocmd FileType defx setlocal cursorline
+  autocmd BufLeave,BufWinLeave \[defx\]* silent call defx#call_action('add_session')
 augroup END
 
-" https://stackoverflow.com/a/16378375
-function! NERDTreeYankCurrentNode()
-  let n = g:NERDTreeFileNode.GetSelected()
-  if n != {}
-    call setreg('"', './' . fnamemodify(n.path.str(), ':.'))
-  endif
-endfunction
-
-if s:plugin_exists('nerdtree')
-  autocmd VimEnter * call NERDTreeAddKeyMap({
-        \ 'key': 'yy',
-        \ 'callback': 'NERDTreeYankCurrentNode',
-        \ 'quickhelpText':
-        \   'put relative path of current node into the default register'
-        \ })
-endif
-
-"  }}}
+" }}}
 " Plugin: fzf {{{
 
 command! -bang -nargs=* Grep call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --case-sensitive --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
@@ -1351,17 +1315,17 @@ function! s:build_quickfix_list(lines)
   cc
 endfunction
 
-function! FZFFilesAvoidNerdtree()
-  if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
-    exe "normal! \<c-w>\<c-w>"
+function! FZFFilesAvoidDefx()
+  if (expand('%') =~# 'defx' && winnr('$') > 1)
+    execute "normal! \<c-w>\<c-w>"
   endif
   " getcwd(-1, -1) tells it to always use the global working directory
   call fzf#run(fzf#wrap({'source': 'fd -c always --type f --hidden --follow --exclude ".git"', 'dir': getcwd(-1, -1)}))
 endfunction
 
-function! FZFBuffersAvoidNerdtree()
-  if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
-    exe "normal! \<c-w>\<c-w>"
+function! FZFBuffersAvoidDefx()
+  if (expand('%') =~# 'defx' && winnr('$') > 1)
+    execute "normal! \<c-w>\<c-w>"
   endif
   execute 'Buffers'
 endfunction
@@ -1465,7 +1429,7 @@ function! LightlineFilename()
   let fname = substitute(expand("%:p"), l:cwd . "/" , "", "")
   return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
         \ fname =~ '__Tagbar__.*' ? '' :
-        \ fname =~ '__Gundo\|NERD_tree' ? '' :
+        \ fname =~ '__Gundo' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
         \ &ft == 'vimshell' ? vimshell#get_status_string() :
@@ -1476,7 +1440,7 @@ endfunction
 
 function! LightlineGina()
   try
-    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler'
+    if expand('%:t') !~? 'Tagbar\|Gundo' && &ft !~? 'vimfiler'
       let mark = '⎇ '
       let branch = gina#component#repo#branch()
       return branch !=# '' ? mark.branch : ''
@@ -1491,7 +1455,6 @@ function! LightlineMode()
   return fname =~ '__Tagbar__.*' ? 'Tagbar' :
         \ fname == '__Gundo__' ? 'Gundo' :
         \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-        \ fname =~ 'NERD_tree' ? 'NERDTree' :
         \ &ft == 'unite' ? 'Unite' :
         \ &ft == 'vimfiler' ? 'VimFiler' :
         \ &ft == 'vimshell' ? 'VimShell' :
@@ -2123,12 +2086,27 @@ nnoremap <silent> <leader>j :call Jinja2Toggle()<CR>
 nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
 
 " TogglePluginWindows:
-nnoremap <silent> <space>j :call NERDTreeToggleCustom()<CR>
+nnoremap <silent> <space>j :Defx
+      \ -buffer-name=defx
+      \ -columns=mark:git:indent:icons:filename:type:size:time
+      \ -direction=topleft
+      \ -search=`expand('%:p')`
+      \ -session-file=`g:custom_defx_state`
+      \ -split=vertical
+      \ -toggle
+      \ -winwidth=31
+      \ <CR>
+nnoremap <silent> <space>J :Defx `expand('%:p:h')`
+      \ -buffer-name=defx
+      \ -columns=mark:git:indent:icons:filename:type:size:time
+      \ -direction=topleft
+      \ -search=`expand('%:p')`
+      \ -split=vertical
+      \ -toggle
+      \ -winwidth=31
+      \ <CR>
 nnoremap <silent> <space>l :TagbarToggle <CR>
 nnoremap <silent> <space>u :UndotreeToggle<CR>
-
-" NERDTree: Jump to current file
-nnoremap <silent> <space>k :NERDTreeFind<cr><C-w>w
 
 " Choosewin: (just like tmux)
 nnoremap <leader>q :ChooseWin<CR>
@@ -2167,8 +2145,8 @@ xmap aq <Plug>(textobj-sandwich-query-a)
 omap aq <Plug>(textobj-sandwich-query-a)
 
 " FZF: create shortcuts for finding stuff
-nnoremap <silent> <C-P> :call FZFFilesAvoidNerdtree()<CR>
-nnoremap <silent> <C-B> :call FZFBuffersAvoidNerdtree()<CR>
+nnoremap <silent> <C-P> :call FZFFilesAvoidDefx()<CR>
+nnoremap <silent> <C-B> :call FZFBuffersAvoidDefx()<CR>
 nnoremap <C-n> yiw:Grep <C-r>"<CR>
 vnoremap <C-n> y:Grep <C-r>"<CR>
 nnoremap <leader><C-n> yiw:GrepIgnoreCase <C-r>"<CR>
