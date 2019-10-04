@@ -1075,27 +1075,6 @@ SPACESHIP_PYENV_PREFIX=' via '
 #  fi
 #}
 
-## Show remote ref name and number of commits ahead-of or behind
-#function +vi-git-st() {
-#  local ahead behind remote
-#  local -a gitstatus
-
-#  # Are we on a remote-tracking branch?
-#  remote=${$(git rev-parse --verify ${hook_com[branch]}@{upstream} \
-#    --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
-
-#  if [[ -n ${remote} ]] ; then
-#    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
-#    (( $ahead )) && gitstatus+=( "${c3}+${ahead}${c2}" )
-
-#    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
-#    (( $behind )) && gitstatus+=( "${c4}-${behind}${c2}" )
-
-#    hook_com[branch]="${hook_com[branch]} [注意${(j:/:)gitstatus}]"
-#  fi
-#}
-
-
 # }}}
 # FZF --- {{{
 
