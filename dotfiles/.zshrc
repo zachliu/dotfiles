@@ -1042,6 +1042,7 @@ SPACESHIP_GIT_STATUS_MODIFIED='%F{red}外%f'
 SPACESHIP_GIT_STATUS_ADDED='%F{yellow}裡%f'
 SPACESHIP_GIT_STATUS_AHEAD='%F{yellow}推%f'
 SPACESHIP_GIT_STATUS_UNTRACKED='%F{red}新%f'
+SPACESHIP_GIT_STATUS_DELETED='%F{208}删%f'
 SPACESHIP_GIT_STATUS_STASHED='藏'
 SPACESHIP_TERRAFORM_SHOW=true
 SPACESHIP_PYENV_SHOW=true
@@ -1065,53 +1066,12 @@ SPACESHIP_PYENV_PREFIX=' via '
 #zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked git-unpushed
 #zstyle ':vcs_info:*' enable git
 
-#function +vi-git-color() {
-#  local git_status="$(git status 2> /dev/null)"
-#  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-#  local git_commit="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
-#  if [[ $git_status == "" ]]; then
-#    hook_com[branch]="%B%F{cyan}${hook_com[branch]}"
-#  elif [[ ! $git_status =~ "working tree clean" ]]; then
-#    hook_com[branch]="%B%F{red}${hook_com[branch]}"
-#  elif [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]] || \
-#    [[ -n $git_commit ]]; then
-#    hook_com[branch]="%B%F{yellow}${hook_com[branch]}"
-#  elif [[ $git_status =~ "nothing to commit" ]] && \
-#    [[ ! -n $git_commit ]]; then
-#    hook_com[branch]="%B%F{green}${hook_com[branch]}"
-#  else
-#    hook_com[branch]="%B%F{orange}${hook_com[branch]}"
-#  fi
-#}
-
 ## Show untracked files
 #function +vi-git-untracked() {
 #  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
 #  [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
 #  [[ $(git status 2> /dev/null) == *"Untracked files"* ]]; then
 #    hook_com[unstaged]+='%B%F{red}新'
-#  fi
-#}
-
-## Show unpushed commits
-#function +vi-git-unpushed() {
-#  local git_status="$(git status 2> /dev/null)"
-#  local branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-#  local git_diff_origin="$(git --no-pager diff --stat origin/${branch} 2>/dev/null)"
-#  local git_unpushed_commit="$(git log --branches --not --remotes 2>/dev/null)"
-#  # Making sure "推" is NOT displayed if i haven't committed yet
-#  # but if I partically committed, still need to show "推"
-#  if [[ -n $git_unpushed_commit ]]; then
-#    hook_com[unstaged]+='%B%F{yellow}推'
-#  elif [[ $git_status =~ "working tree clean" ]]; then
-#    if [[ -n $git_diff_origin ]] || \
-#      [[ $git_status =~ "Your branch is ahead of 'origin/$branch'" ]]; then
-#      hook_com[unstaged]+='%B%F{yellow}推'
-#    else
-#      # do nothing
-#    fi
-#  else
-#    # do nothing
 #  fi
 #}
 
@@ -1135,45 +1095,6 @@ SPACESHIP_PYENV_PREFIX=' via '
 #  fi
 #}
 
-## Show count of stashed changes
-#function +vi-git-stash() {
-#  local -a stashes
-
-#  if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
-#    stashes=$(git stash list 2>/dev/null | wc -l)
-#    hook_com[misc]+=" (藏${stashes})"
-#  fi
-#}
-
-## Executed before each prompt. Note that precommand functions are not
-## re-executed simply because the command line is redrawn, as happens, for
-## example, when a notification about an exiting job is displayed.
-#function precmd() {
-#  # Gather information about the version control system
-#  vcs_info
-#}
-
-########################################################################
-## END: Git formatting
-########################################################################
-
-#COLOR_BRIGHT_BLUE="086"
-#COLOR_GOLD="184"
-#COLOR_SILVER="250"
-#COLOR_PINK="164"
-
-## Set Bash PS1
-#PS1_DIR="%B%F{$COLOR_BRIGHT_BLUE}%~%f%b"
-#PS1_USR="%B%F{$COLOR_GOLD}%n@%M%b%f"
-#PS1_END="%B%F{$COLOR_SILVER}$ %f%b"
-
-## See https://stackoverflow.com/questions/11877551/zsh-not-re-computing-my-shell-prompt
-## for the reason of using single quotes here
-#PS1_PYV='%B%F{$COLOR_PINK}$(shell_python_version)%f%b'
-
-#PS1="${PS1_USR} [${PS1_DIR}] (${PS1_PYV}) \$vcs_info_msg_0_ \
-
-#${PS1_END}"
 
 # }}}
 # FZF --- {{{
