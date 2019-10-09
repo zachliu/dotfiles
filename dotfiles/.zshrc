@@ -1058,15 +1058,6 @@ SPACESHIP_PYENV_PREFIX=' via '
 ## BEGIN: Git formatting
 ########################################################################
 #autoload -Uz vcs_info
-#zstyle ':vcs_info:*' stagedstr '%B%F{yellow}裡'
-#zstyle ':vcs_info:*' unstagedstr '%B%F{red}外'
-#zstyle ':vcs_info:*' check-for-changes true
-#zstyle ':vcs_info:*' actionformats \
-#  '%F{magenta}[%F{green}%b%F{yellow}|%F{red}%a%F{magenta}]%f '
-#zstyle ':vcs_info:*' formats \
-#  '%F{magenta}[%F{green}%b%m%F{magenta}] %F{green}%c%F{yellow}%u%f'
-#zstyle ':vcs_info:git*+set-message:*' hooks git-color git-st git-stash git-untracked git-unpushed
-#zstyle ':vcs_info:*' enable git
 
 ## Show untracked files
 #function +vi-git-untracked() {
