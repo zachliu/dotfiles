@@ -1,4 +1,4 @@
-" Author: Zach Liu <zach.z.liu@gmail.com>
+" Author: Zach Z Liu <zach.z.liu@gmail.com>
 "
 " Notes:
 "   * To toggle sections below, scroll over a folded section and type 'za'
