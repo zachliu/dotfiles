@@ -300,6 +300,7 @@ source /usr/share/autojump/autojump.zsh
 
 # Autojump for spaceship-prompt
 source /home/zach/Downloads/spaceship-prompt/spaceship.zsh
+# source /home/zach/Downloads/powerlevel10k/powerlevel10k.zsh-theme
 
 # }}}
 # ZShell Options --- {{{
@@ -571,6 +572,7 @@ alias gph='git push origin'
 alias ga='git add'
 alias gd='git diff'
 alias gdw='git diff --word-diff=color'
+alias gru='git remote -v update'
 
 # upgrade
 alias upgrade='sudo mintupdate'
