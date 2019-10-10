@@ -1056,24 +1056,6 @@ SPACESHIP_TERRAFORM_PREFIX=' via '
 SPACESHIP_PYENV_SHOW=true
 SPACESHIP_PYENV_PREFIX=' via '
 
-
-# NOTE Below is legacy:
-# NOTE this is not cross-shell; zsh-specific
-
-########################################################################
-## BEGIN: Git formatting
-########################################################################
-#autoload -Uz vcs_info
-
-## Show untracked files
-#function +vi-git-untracked() {
-#  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
-#  [[ $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ||
-#  [[ $(git status 2> /dev/null) == *"Untracked files"* ]]; then
-#    hook_com[unstaged]+='%B%F{red}新'
-#  fi
-#}
-
 # }}}
 # FZF --- {{{
 
