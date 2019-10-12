@@ -1012,6 +1012,7 @@ SPACESHIP_PROMPT_ORDER=(
   # vi_mode       # Vi-mode indicator
   # jobs          # Background jobs indicator
   # exit_code     # Exit code section
+  vpn           # on vpn or not
   char          # Prompt character
 )
 
