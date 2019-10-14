@@ -612,6 +612,9 @@ alias pip='noglob pip'
 alias pipr='pip install -r'
 alias pipi='pip install'
 
+# git repo cleaner
+alias bfg='java -jar /usr/local/bin/bfg.jar'
+
 # }}}
 # Functions --- {{{
 
@@ -1019,7 +1022,7 @@ SPACESHIP_PROMPT_ORDER=(
 SPACESHIP_PROMPT_ADD_NEWLINE=false
 SPACESHIP_CHAR_SYMBOL='$ '
 SPACESHIP_DIR_PREFIX='['
-SPACESHIP_DIR_SUFFIX='] '
+SPACESHIP_DIR_SUFFIX=']'
 SPACESHIP_DIR_TRUNC=0
 SPACESHIP_DIR_TRUNC_REPO=false
 SPACESHIP_HOST_COLOR=yellow
