@@ -284,23 +284,36 @@ include ~/.bash/sensitive
 # }}}
 # Plugins --- {{{
 
-# zplug slows zsh down, me no like
+source "$HOME/.zplugin/bin/zplugin.zsh"
 
-# Syntax highlighting for zsh
-source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+zplugin ice wait lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
+zplugin light zdharma/fast-syntax-highlighting
 
-# git open for zsh
-source /home/zach/Downloads/git-open/git-open.plugin.zsh
+zplugin ice wait lucid
+zplugin light paulirish/git-open
 
-# docker zsh completion
-source /home/zach/Downloads/docker-zsh-completion/docker-zsh-completion.plugin.zsh
+zplugin ice wait lucid
+zplugin light felixr/docker-zsh-completion
 
-# Autojump for zsh
-source /usr/share/autojump/autojump.zsh
+zplugin light zachliu/spaceship-prompt
 
-# Autojump for spaceship-prompt
-source /home/zach/Downloads/spaceship-prompt/spaceship.zsh
-# source /home/zach/Downloads/powerlevel10k/powerlevel10k.zsh-theme
+# # zplug slows zsh down, me no like
+
+# # Syntax highlighting for zsh
+# source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# # git open for zsh
+# source /home/zach/Downloads/git-open/git-open.plugin.zsh
+
+# # docker zsh completion
+# source /home/zach/Downloads/docker-zsh-completion/docker-zsh-completion.plugin.zsh
+
+# # Autojump for zsh
+# source /usr/share/autojump/autojump.zsh
+
+# # Autojump for spaceship-prompt
+# source /home/zach/Downloads/spaceship-prompt/spaceship.zsh
+# # source /home/zach/Downloads/powerlevel10k/powerlevel10k.zsh-theme
 
 # }}}
 # ZShell Options --- {{{
@@ -1105,3 +1118,9 @@ fi
  # exec 2>&3 3>&-
 
 # }}}
+
+### Added by Zplugin's installer
+# source "$HOME/.zplugin/bin/zplugin.zsh"
+# autoload -Uz _zplugin
+# (( ${+_comps} )) && _comps[zplugin]=_zplugin
+### End of Zplugin installer's chunk
