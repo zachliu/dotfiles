@@ -246,7 +246,7 @@ Plug 'kristijanhusak/defx-icons', { 'do': ':UpdateRemotePlugins' }
 Plug 'myusuf3/numbers.vim'
 
 " Fuzzy finder
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " Git
@@ -377,6 +377,9 @@ Plug 'ericcurtin/CurtineIncSw.vim'
 
 " Repl Integration
 Plug 'jpalardy/vim-slime'
+
+" Fonts
+Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
 
@@ -1303,24 +1306,46 @@ augroup defx_settings
 augroup END
 
 " }}}
-" Plugin: fzf {{{
-
-command! -bang -nargs=* Grep call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --case-sensitive --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
-command! -bang -nargs=* GrepIgnoreCase call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
-
-" An action can be a reference to a function that processes selected lines
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
-endfunction
+" Plugin: Fzf {{{
 
 function! FZFFilesAvoidDefx()
   if (expand('%') =~# 'defx' && winnr('$') > 1)
     execute "normal! \<c-w>\<c-w>"
   endif
+  let l:fzf_files_options = '--bind up:preview-up,down:preview-down --preview "bat --color always --style plain {2..} "'
+  function! s:edit_devicon_prepended_file(item)
+    let l:file_path = a:item[4:-1]
+    execute 'silent e' l:file_path
+  endfunction
   " getcwd(-1, -1) tells it to always use the global working directory
-  call fzf#run(fzf#wrap({'source': 'fd -c always --type f --hidden --follow --exclude ".git"', 'dir': getcwd(-1, -1)}))
+  " need to cargo install devicon-lookup for the following to work
+  " https://coreyja.com/vim-fzf-with-devicons/
+  call fzf#run(fzf#wrap({
+        \ 'source': 'rg --files --hidden --follow --glob "!.git/*" | devicon-lookup',
+        \ 'sink':   function('s:edit_devicon_prepended_file'),
+        \ 'options': '-m ' . l:fzf_files_options,
+        \ 'dir': getcwd(-1, -1),
+        \ }))
+endfunction
+
+function! FZFGitDiffFilesAvoidDefx()
+  if (expand('%') =~# 'defx' && winnr('$') > 1)
+    execute "normal! \<c-w>\<c-w>"
+  endif
+  let l:fzf_files_options = '--bind up:preview-up,down:preview-down --preview "bat --color always --style changes {2..} "'
+  function! s:edit_devicon_prepended_file(item)
+    let l:file_path = a:item[4:-1]
+    execute 'silent e' l:file_path
+  endfunction
+  " getcwd(-1, -1) tells it to always use the global working directory
+  " need to cargo install devicon-lookup for the following to work
+  " https://coreyja.com/vim-fzf-with-devicons/
+  call fzf#run(fzf#wrap({
+        \ 'source': 'git ls-files --modified --others --exclude-standard | uniq | devicon-lookup',
+        \ 'sink':   function('s:edit_devicon_prepended_file'),
+        \ 'options': '-m ' . l:fzf_files_options,
+        \ 'dir': getcwd(-1, -1),
+        \ }))
 endfunction
 
 function! FZFBuffersAvoidDefx()
@@ -1330,14 +1355,27 @@ function! FZFBuffersAvoidDefx()
   execute 'Buffers'
 endfunction
 
-let g:fzf_height = 12
+" An action can be a reference to a function that processes selected lines
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+endfunction
+
+" Note: <C-a><C-l> places the remaining files in a vertical split
+let $FZF_DEFAULT_OPTS = '-m --bind ctrl-a:select-all,ctrl-d:deselect-all '
+      \ . '--preview "'
+      \ . '[[ $(file --mime {}) =~ binary ]] &&'
+      \ . 'echo {} is a binary file ||'
+      \ . '(bat --style=numbers --color=always {} || cat {})'
+      \ . '2> /dev/null | head -500"'
+let g:fzf_layout = { 'window': 'botright 20new' }
 let g:fzf_action = {
       \ 'ctrl-o': 'edit',
       \ 'ctrl-t': 'tab split',
       \ 'ctrl-s': 'split',
       \ 'ctrl-v': 'vsplit',
       \ 'ctrl-l': function('s:build_quickfix_list'),
-      \}
+      \ }
 
 " }}}
 " Plugin: Lightline {{{
@@ -2147,6 +2185,7 @@ omap aq <Plug>(textobj-sandwich-query-a)
 " FZF: create shortcuts for finding stuff
 nnoremap <silent> <C-P> :call FZFFilesAvoidDefx()<CR>
 nnoremap <silent> <C-B> :call FZFBuffersAvoidDefx()<CR>
+nnoremap <silent> <C-D> :call FZFGitDiffFilesAvoidDefx()<CR>
 nnoremap <C-n> yiw:Grep <C-r>"<CR>
 vnoremap <C-n> y:Grep <C-r>"<CR>
 nnoremap <leader><C-n> yiw:GrepIgnoreCase <C-r>"<CR>
