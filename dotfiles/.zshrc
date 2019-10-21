@@ -1,5 +1,11 @@
 #!/bin/zsh
 
+# source ~/Downloads/instant-zsh.zsh
+# instant-zsh-pre "%B%F{yello}%n@%M%f%b%B%247F[%f%b%B%F{cyan}${${(V)${(%):-%~}//\%/%%}//\//%b%6F/%B%6F}%f%B%247F]%f%b"$'\n'"%B%F{green}$%f%b "
+# # instant-zsh-pre "%B%39F${${(V)${(%):-%~}//\%/%%}//\//%b%31F/%B%39F}%f"$'\n'"%76F❯%f "
+
+# sleep 1
+
 # If we are using gnome-terminal, hide the headerbar
 if [ "$TERM" = "xterm-256color" ]; then
   old_wid=$(xdotool getactivewindow)
