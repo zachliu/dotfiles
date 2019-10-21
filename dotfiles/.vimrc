@@ -1308,53 +1308,6 @@ augroup END
 " }}}
 " Plugin: Fzf {{{
 
-function! FZFFilesAvoidDefx()
-  if (expand('%') =~# 'defx' && winnr('$') > 1)
-    execute "normal! \<c-w>\<c-w>"
-  endif
-  let l:fzf_files_options = '--bind up:preview-up,down:preview-down --preview "bat --color always --style plain {2..} "'
-  function! s:edit_devicon_prepended_file(item)
-    let l:file_path = a:item[4:-1]
-    execute 'silent e' l:file_path
-  endfunction
-  " getcwd(-1, -1) tells it to always use the global working directory
-  " need to cargo install devicon-lookup for the following to work
-  " https://coreyja.com/vim-fzf-with-devicons/
-  call fzf#run(fzf#wrap({
-        \ 'source': 'rg --files --hidden --follow --glob "!.git/*" | devicon-lookup',
-        \ 'sink':   function('s:edit_devicon_prepended_file'),
-        \ 'options': '-m ' . l:fzf_files_options,
-        \ 'dir': getcwd(-1, -1),
-        \ }))
-endfunction
-
-function! FZFGitDiffFilesAvoidDefx()
-  if (expand('%') =~# 'defx' && winnr('$') > 1)
-    execute "normal! \<c-w>\<c-w>"
-  endif
-  let l:fzf_files_options = '--bind up:preview-up,down:preview-down --preview "bat --color always --style changes {2..} "'
-  function! s:edit_devicon_prepended_file(item)
-    let l:file_path = a:item[4:-1]
-    execute 'silent e' l:file_path
-  endfunction
-  " getcwd(-1, -1) tells it to always use the global working directory
-  " need to cargo install devicon-lookup for the following to work
-  " https://coreyja.com/vim-fzf-with-devicons/
-  call fzf#run(fzf#wrap({
-        \ 'source': 'git ls-files --modified --others --exclude-standard | uniq | devicon-lookup',
-        \ 'sink':   function('s:edit_devicon_prepended_file'),
-        \ 'options': '-m ' . l:fzf_files_options,
-        \ 'dir': getcwd(-1, -1),
-        \ }))
-endfunction
-
-function! FZFBuffersAvoidDefx()
-  if (expand('%') =~# 'defx' && winnr('$') > 1)
-    execute "normal! \<c-w>\<c-w>"
-  endif
-  execute 'Buffers'
-endfunction
-
 " An action can be a reference to a function that processes selected lines
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -1374,8 +1327,66 @@ let g:fzf_action = {
       \ 'ctrl-t': 'tab split',
       \ 'ctrl-s': 'split',
       \ 'ctrl-v': 'vsplit',
-      \ 'ctrl-l': function('s:build_quickfix_list'),
       \ }
+
+function! s:fzf_edit_file(items)
+  let items = a:items
+  let i = 1
+  let ln = len(items)
+  while i < ln
+    let item = items[i]
+    let parts = split(item, ' ')
+    let file_path = get(parts, 1, '')
+    let items[i] = file_path
+    let i += 1
+  endwhile
+  call s:Sink(items)
+endfunction
+
+function! FZFFilesAvoidDefx()
+  if (expand('%') =~# 'defx' && winnr('$') > 1)
+    execute "normal! \<c-w>\<c-w>"
+  endif
+  let l:fzf_files_options = ' -m '
+        \ . '--bind ctrl-p:preview-page-up,ctrl-n:preview-page-down '
+        \ . '--preview "bat --color always --style plain {2..} | head -500"'
+  let opts = fzf#wrap({})
+  " need to cargo install devicon-lookup for the following to work
+  " https://coreyja.com/vim-fzf-with-devicons/
+  let opts.source = 'rg --files --hidden --follow --glob "!.git/*" | devicon-lookup'
+  let s:Sink = opts['sink*']
+  let opts['sink*'] = function('s:fzf_edit_file')
+  let opts.options .= l:fzf_files_options
+  " getcwd(-1, -1) tells it to always use the global working directory
+  let opts.dir = getcwd(-1, -1)
+  call fzf#run(opts)
+endfunction
+
+function! FZFGitDiffFilesAvoidDefx()
+  if (expand('%') =~# 'defx' && winnr('$') > 1)
+    execute "normal! \<c-w>\<c-w>"
+  endif
+  let l:fzf_files_options = ' -m '
+        \ . '--bind ctrl-p:preview-page-up,ctrl-n:preview-page-down '
+        \ . '--preview "bat --color always --style changes {2..} | head -500"'
+  let opts = fzf#wrap({})
+  " need to cargo install devicon-lookup for the following to work
+  " https://coreyja.com/vim-fzf-with-devicons/
+  let opts.source = 'git ls-files --modified --others --exclude-standard | uniq | devicon-lookup'
+  let s:Sink = opts['sink*']
+  let opts['sink*'] = function('s:fzf_edit_file')
+  let opts.options .= l:fzf_files_options
+  " getcwd(-1, -1) tells it to always use the global working directory
+  let opts.dir = getcwd(-1, -1)
+  call fzf#run(opts)
+endfunction
+
+function! FZFBuffersAvoidDefx()
+  if (expand('%') =~# 'defx' && winnr('$') > 1)
+    execute "normal! \<c-w>\<c-w>"
+  endif
+  execute 'Buffers'
+endfunction
 
 " }}}
 " Plugin: Lightline {{{
