@@ -295,7 +295,7 @@ source "$HOME/.zplugin/bin/zplugin.zsh"
 zplugin ice wait lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
 zplugin light zdharma/fast-syntax-highlighting
 
-zplugin ice wait lucid
+# zplugin ice wait lucid  # this generates a weird behavior
 zplugin light paulirish/git-open
 
 zplugin ice wait lucid
@@ -1064,6 +1064,7 @@ SPACESHIP_GIT_STATUS_UNMERGED='爭'
 SPACESHIP_GIT_STATUS_DELETED='删'
 SPACESHIP_GIT_STATUS_STASHED='藏'
 SPACESHIP_GIT_STATUS_ADDED='裡'
+SPACESHIP_GIT_STATUS_DIVERGED='歧'
 SPACESHIP_GIT_STATUS_AHEAD='前'
 SPACESHIP_GIT_STATUS_BEHIND='後'
 SPACESHIP_GIT_STATUS_PUSH='推'
