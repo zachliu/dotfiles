@@ -211,13 +211,13 @@ export GDK_SCALE=0
 # export TERM="screen-256color"
 
 # History: How many lines of history to keep in memory
-export HISTSIZE=15000
+export HISTSIZE=30000
 
 # History: ignore leading space, where to save history to disk
 export HISTCONTROL=ignorespace
-export HISTFILE=~/.zsh_history
+export HISTFILE=~/histories/.zsh_history
 
-#History: Number of history entries to save to disk
+# History: Number of history entries to save to disk
 export SAVEHIST=30000
 
 # FZF
