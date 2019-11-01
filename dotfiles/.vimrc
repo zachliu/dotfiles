@@ -1952,8 +1952,10 @@ let g:vim_filetype_formatter_commands = {
 " Plugin: Miscellaneous global var config {{{
 
 " Python: configure python paths
-let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
-let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
+" let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
+" let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
+" Disable python 2 support
+let g:loaded_python_provider = v:true
 
 " Netrw: disable netrw's gx mapping, prefer tyru/open-browser.vim
 let g:netrw_nogx = v:true
