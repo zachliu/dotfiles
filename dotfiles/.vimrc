@@ -239,6 +239,7 @@ Plug 'fidian/hexmode'
 Plug 'wellle/targets.vim'
 Plug 'tpope/vim-surround'
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/echodoc.vim'
 Plug 'kristijanhusak/defx-git', { 'do': ':UpdateRemotePlugins' }
 Plug 'kristijanhusak/defx-icons', { 'do': ':UpdateRemotePlugins' }
 
@@ -1852,6 +1853,10 @@ call deoplete#custom#option('ignore_sources', {
       \ '_': ['buffer', 'around'],
       \ })
 
+" LSP LanguageClient:
+" NOTES:
+" yaml-language-server: need .vim/settings.json. Example in dotfiles
+"   * Need older version: npm install -g yaml-language-server@0.4.1
 let g:LanguageClient_serverCommands = {
       \ 'haskell': ['stack', 'exec', 'hie-wrapper'],
       \ 'java': [$HOME . '/java/java-language-server/dist/mac/bin/launcher', '--quiet'],
@@ -1887,6 +1892,13 @@ augroup langserverLanguages
         \ . join(keys(g:LanguageClient_serverCommands), ',')
         \ . ' call ConfigureLanguageClient()'
 augroup END
+
+" EchoDoc:
+let g:echodoc#enable_at_startup = v:true
+let g:echodoc#type = 'floating'
+let g:echodoc#highlight_identifier = 'Identifier'
+let g:echodoc#highlight_arguments = 'QuickScopePrimary'
+let g:echodoc#highlight_trailing = 'Type'
 
 " VimScript:
 " Autocompletion is built into Vim. Get defintions with 'K'
