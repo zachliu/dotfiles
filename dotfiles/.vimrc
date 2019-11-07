@@ -1832,7 +1832,7 @@ let g:terraform_remap_spacebar=1
 " 3) Print the documentation of something under the cursor: <leader>gd
 
 " LanguageClientServer: configure it for relevant languages
-set runtimepath+=$HOME/.vim/plugged/LanguageClient-neovim
+" set runtimepath+=$HOME/.vim/plugged/LanguageClient-neovim
 let g:deoplete#enable_at_startup = v:true
 call deoplete#custom#option({
       \ 'auto_complete': 1,
@@ -1964,8 +1964,8 @@ let g:vim_filetype_formatter_commands = {
 " Plugin: Miscellaneous global var config {{{
 
 " Python: configure python paths
-" let g:python3_host_prog = $HOME . '/.pyenv/shims/python3'
-" let g:python_host_prog = $HOME . '/.pyenv/shims/python2'
+" let g:python3_host_prog = system('which python3')
+" let g:python_host_prog = system('which python2')
 " Disable python 2 support
 let g:loaded_python_provider = v:true
 
