@@ -634,6 +634,9 @@ alias pipi='pip install'
 # git repo cleaner
 alias bfg='java -jar /usr/local/bin/bfg.jar'
 
+# AWS
+alias emr='aws emr list-clusters --active | jq ".Clusters[]"'
+
 # }}}
 # Functions --- {{{
 
