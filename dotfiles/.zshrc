@@ -1047,10 +1047,10 @@ function activate_direnv() {
   fi
 }
 
-function switchenv() {
+function senv() {
   # Switch only the environment in the CWD
   # Requires environment as an argument
-  # Example: switchenv master
+  # Example: senv master
   DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
   ENV=$(echo ${DIR} | sed "s/^.*\/kepler-terraform\///" | cut -d / -f 1)
   DIR_PREFIX=$(echo $DIR | awk -F "${ENV}" '{print $1}')
