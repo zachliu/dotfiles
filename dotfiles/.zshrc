@@ -1022,6 +1022,18 @@ function drmi() {
   fi
 }
 
+function drmi_old() {
+  while true; do
+   read yn\?"Do you wish to remove docker images older than $(date +'%Y-%m-%dT%H:%M:%S' --date='-'$1' days')?"
+   case $yn in
+     [Yy]* ) break;;
+     [Nn]* ) return;;
+     * ) echo "Please answer yes or no.";;
+   esac
+  done
+  docker image prune -a --filter "until=$(date +'%Y-%m-%dT%H:%M:%S' --date='-'$1' days')"
+}
+
 function deshake-video() {
   # see below link for documentation
   # https://github.com/georgmartius/vid.stab
