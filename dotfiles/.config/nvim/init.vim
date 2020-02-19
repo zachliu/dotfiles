@@ -2411,6 +2411,38 @@ function! DefaultKeyMappings()
   " Jumping to header file
   nnoremap gh :call CurtineIncSw()<CR>
 
+  " Coc: settings for coc.nvim
+  " see https://github.com/neoclide/coc.nvim
+  nmap <silent> <C-]> <Plug>(coc-definition)
+  nmap <silent> <2-LeftMouse> <Plug>(coc-definition)
+  nnoremap <silent> <C-K> :call <SID>show_documentation()<CR>
+  nmap <silent> <leader>st <Plug>(coc-type-definition)
+  nmap <silent> <leader>si <Plug>(coc-implementation)
+  nmap <silent> <leader>su <Plug>(coc-references)
+  nmap <silent> <leader>sr <Plug>(coc-rename)
+  " next and previous items in a list
+  nnoremap <silent> <leader>sn :<C-u>CocNext<CR>
+  nnoremap <silent> <leader>sp :<C-u>CocPrev<CR>
+  nnoremap <silent> <leader>sl :<C-u>CocListResume<CR>
+  " Show commands
+  nnoremap <silent> <leader>sc :<C-u>CocList commands<cr>
+  " Find symbol of current document
+  nnoremap <silent> <leader>ss :<C-u>CocList outline<cr>
+  " Search workspace symbols
+  nnoremap <silent> <leader>sw :<C-u>CocList -I symbols<cr>
+  " Use <c-space> to trigger completion
+  inoremap <silent><expr> <c-space> coc#refresh()
+  " Scroll in floating window
+  nnoremap <expr><C-e> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-e>"
+  nnoremap <expr><C-y> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-y>"
+  " snippets: most mappings done as global option in Coc section
+  imap <C-l> <Plug>(coc-snippets-expand)
+  " For pairs, correctly position cursor on Enter
+  inoremap <silent><expr> <CR>
+        \ pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  " Toggle diagnostics
+  nnoremap <silent> <leader>a :CocDiagnosticToggle<CR>
+
   " Mouse Copy: system copy mouse characteristics
   vnoremap <RightMouse> "+y
 
