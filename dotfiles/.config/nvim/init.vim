@@ -92,7 +92,7 @@ function! SetGlobalConfig()
   set hidden
 
   " Sign Column: always show it
-  set signcolumn=yes
+  set signcolumn=auto
 
   " Mouse: enable GUI mouse support in all modes
   set mouse=a
@@ -103,7 +103,7 @@ function! SetGlobalConfig()
   set noswapfile
 
   " Command Line Height: higher for display for messages
-  set cmdheight=2
+  set cmdheight=1
 
   " Line Wrapping: do not wrap lines by default
   set nowrap
@@ -335,13 +335,20 @@ function PackInit() abort
         \ 'git@github.com:neoclide/coc-html.git',
         \ 'git@github.com:neoclide/coc-json.git',
         \ 'git@github.com:neoclide/coc-pairs.git',
-        \ 'git@github.com:neoclide/coc-python.git',
         \ 'git@github.com:neoclide/coc-rls.git',
         \ 'git@github.com:neoclide/coc-snippets.git',
         \ 'git@github.com:neoclide/coc-tsserver.git',
         \ 'git@github.com:neoclide/coc-yaml.git',
         \ ]
     call packager#add(coc_plugin, {
+          \ 'do': 'yarn install --frozen-lockfile && yarn build',
+          \ })
+  endfor
+  for coc_plugin in [
+        \ 'git@github.com:neoclide/coc-python.git',
+        \ ]
+    call packager#add(coc_plugin, {
+          \ 'commit': '3e03f98a1979b3ef1901c28cdd8d27a8d03bf399',
           \ 'do': 'yarn install --frozen-lockfile && yarn build',
           \ })
   endfor
@@ -1649,7 +1656,7 @@ let g:tagbar_type_rst = {
 " This is a giant section
 " that configures the status line for my vim editing.
 " It's super important, so I devote a lot of code to it.
-" Most of the functions are ported from the Lightlint documentation
+" Most of the functions are ported from the Lightline documentation
 
 let g:lightline = {'active': {}, 'inactive': {}}
 
@@ -2413,6 +2420,7 @@ function! DefaultKeyMappings()
 
   " Coc: settings for coc.nvim
   " see https://github.com/neoclide/coc.nvim
+  nmap <silent> <leader>l <Plug>(coc-diagnostic-next)
   nmap <silent> <C-]> <Plug>(coc-definition)
   nmap <silent> <2-LeftMouse> <Plug>(coc-definition)
   nnoremap <silent> <C-K> :call <SID>show_documentation()<CR>
@@ -2464,9 +2472,6 @@ function! DefaultKeyMappings()
   " FiletypeFormat: remap leader f to do filetype formatting
   nnoremap <leader>f :FiletypeFormat<cr>
   vnoremap <leader>f :FiletypeFormat<cr>
-
-  " Ale: shortcuts
-  nnoremap <leader>a :ALEToggleBuffer<cr>
 
   " Open Browser: override netrw
   nmap gx <Plug>(openbrowser-smart-search)
