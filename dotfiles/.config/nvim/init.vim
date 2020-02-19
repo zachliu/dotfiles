@@ -202,7 +202,7 @@ function PackInit() abort
 
   " Basics:
   call packager#add('git@github.com:kh3phr3n/tabline')
-  call packager#add('git@github.com:itchyny/lightline')
+  call packager#add('git@github.com:itchyny/lightline.vim')
   call packager#add('git@github.com:qpkorr/vim-bufkill')
   call packager#add('git@github.com:christoomey/vim-system-copy')
   call packager#add('git@github.com:t9md/vim-choosewin')
@@ -416,6 +416,7 @@ function PackInit() abort
 
   " Fonts:
   call packager#add('git@github.com:ryanoasis/vim-devicons')
+endfunction
 
 function! PackList(...)
   call PackInit()
@@ -459,7 +460,7 @@ function! SetStatusAndTabLine()
   set statusline+=\ %{&ff}\  " Unix or Dos
   set statusline+=%*  " Default color
   set statusline+=\ %{strlen(&fenc)?&fenc:'none'}\  " file encoding
-  endfunction
+endfunction
 call SetStatusAndTabLine()
 
 " Status Line
@@ -1773,18 +1774,18 @@ endfunction
 " This plugin is awesome
 " Just Gina followed by whatever I'd normally type in Git
 
-for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
-  call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
-endfor
+" for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
+"   call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
+" endfor
 
-for gina_cmd in ['diff']
-  call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
-endfor
+" for gina_cmd in ['diff']
+"   call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
+" endfor
 
-call gina#custom#command#option('commit', '--verbose')
-call gina#custom#command#option('branch', '--verbose|--all')
+" call gina#custom#command#option('commit', '--verbose')
+" call gina#custom#command#option('branch', '--verbose|--all')
 
-call gina#custom#command#option('blame', '--width', '79')
+" call gina#custom#command#option('blame', '--width', '79')
 let gina#command#blame#formatter#format = '%ti|%au|%su'
 let g:gina#command#blame#formatter#timestamp_months = v:false
 let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%dT%H:%M:%S"
@@ -1814,27 +1815,37 @@ command! Gblame call _Gblame()
 let g:startify_list_order = []
 let g:startify_fortune_use_unicode = v:true
 let g:startify_enable_special = v:true
-let g:startify_custom_header = [
-      \ '      ___________       __                            .__',
-      \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____',
-      \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \',
-      \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/',
-      \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
-      \ '              \/     \/          \/      |__|                 \/     \/',
-      \ '',
-      \ ' \++================================|                    _=_',
-      \ '  \_________________________________/              ___/==+++==\___',
-      \ '               """\__      \"""       |======================================/',
-      \ '                     \__    \_          / ..  . _/--===+_____+===--""',
-      \ '                        \__   \       _/.  .. _/         `+`',
-      \ '                           \__ \   __/_______/                      \ /',
-      \ '                          ___-\_\-`---==+____|                  ---==O=-',
-      \ '                    __--+" .    . .        "==_                     / \',
-      \ '                    /  |. .  ..     -------- | \',
-      \ '                    "==+_    .   .  -------- | /',
-      \ '                         ""\___  . ..     __=="',
-      \ '                               """"--=--""',
-      \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
+let g:startify_custom_header = []
+
+function! s:set_startify()
+  if !exists('g:loaded_startify')
+    echom 'Startify is not loaded, skipping...'
+    return
+  endif
+  let g:startify_custom_header = [
+        \ '      ___________       __                            .__',
+        \ '      \_   _____/ _____/  |_  ________________________|__| ______ ____',
+        \ '       |    __)_ /    \   __\/ __ \_  __ \____ \_  __ \  |/  ___// __ \',
+        \ '       |        \   |  \  | \  ___/|  | \/  |_> >  | \/  |\___ \\  ___/',
+        \ '      /_______  /___|  /__|  \___  >__|  |   __/|__|  |__/____  >\___  >',
+        \ '              \/     \/          \/      |__|                 \/     \/',
+        \ '',
+        \ ' \++================================|                    _=_',
+        \ '  \_________________________________/              ___/==+++==\___',
+        \ '               """\__      \"""       |======================================/',
+        \ '                     \__    \_          / ..  . _/--===+_____+===--""',
+        \ '                        \__   \       _/.  .. _/         `+`',
+        \ '                           \__ \   __/_______/                      \ /',
+        \ '                          ___-\_\-`---==+____|                  ---==O=-',
+        \ '                    __--+" .    . .        "==_                     / \',
+        \ '                    /  |. .  ..     -------- | \',
+        \ '                    "==+_    .   .  -------- | /',
+        \ '                         ""\___  . ..     __=="',
+        \ '                               """"--=--""',
+        \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
+endfunction
+
+autocmd VimEnter * call s:set_startify()
 
 " }}}
 "  Plugin: VimTex {{{
@@ -2203,13 +2214,6 @@ let g:jsdoc_enable_es6 = v:true
 " IndentLines:
 let g:indentLine_enabled = v:false  " indentlines disabled by default
 
-" VimMarkdown:
-let g:vim_markdown_folding_disabled = v:true
-let g:vim_markdown_no_default_key_mappings = v:true
-let vim_markdown_preview_hotkey='<C-m>'
-let vim_markdown_preview_github=1
-let g:vim_markdown_conceal = v:false
-
 " BulletsVim:
 let g:bullets_enabled_file_types = [
     \ 'markdown',
@@ -2222,8 +2226,8 @@ let g:bullets_enabled_file_types = [
 " RequirementsVim: filetype detection (begin with requirements)
 let g:requirements#detect_filename_pattern = 'requirements.*\.txt'
 
-" QuickScope: great plugin helping with f and t
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+" QuickScope: great plugin helping with f and F
+let g:qs_highlight_on_keys = ['f', 'F']
 let g:qs_max_chars = 10000
 
 " Go: random stuff
@@ -2244,189 +2248,198 @@ let g:omni_syntax_use_iskeyword_numeric = v:false
 "  }}}
 " General: Global Key remappings {{{
 
-" Escape:
-" Make escape also clear highlighting
-" Note: the following line makes my arrow keys insert a new line with A,B,C,D
-" and also makes PgUp PgDn toggle upper/lower case
-" nnoremap <silent> <esc> :noh<return><esc>
+" This is defined as a function to allow me to reset all my key remappings
+" without needing to repeate myself. Useful with Goyo for now
+function! DefaultKeyMappings()
+  " Escape:
+  " Make escape also clear highlighting
+  " Note: the following line makes my arrow keys insert a new line with A,B,C,D
+  " and also makes PgUp PgDn toggle upper/lower case
+  " nnoremap <silent> <esc> :noh<return><esc>
 
-" ScrollDropdown:
-" Enable scrolling dropdown menu with the mouse
-" Additionally, make clicking select the highlighted item
-inoremap <expr> <ScrollWheelUp> pumvisible() ? '<C-p>' : '<Esc><ScrollWheelUp>'
-inoremap <expr> <ScrollWheelDown> pumvisible() ? '<C-n>' : '<Esc><ScrollWheelDown>'
-inoremap <expr> <LeftMouse> pumvisible() ? '<CR><Backspace>' : '<Esc><LeftMouse>'
+  " ScrollDropdown:
+  " Enable scrolling dropdown menu with the mouse
+  " Additionally, make clicking select the highlighted item
+  inoremap <expr> <ScrollWheelUp> pumvisible() ? '<C-p>' : '<Esc><ScrollWheelUp>'
+  inoremap <expr> <ScrollWheelDown> pumvisible() ? '<C-n>' : '<Esc><ScrollWheelDown>'
+  inoremap <expr> <LeftMouse> pumvisible() ? '<CR><Backspace>' : '<Esc><LeftMouse>'
 
-" Omnicompletion: <C-@> is signal sent by some terms when pressing <C-Space>
-" Disable below for now; I'm using deoplete to get this automatically
-inoremap <C-@> <C-x><C-o>
-inoremap <C-space> <C-x><C-o>
+  " Omnicompletion: <C-@> is signal sent by some terms when pressing <C-Space>
+  " Disable below for now; I'm using deoplete to get this automatically
+  inoremap <C-@> <C-x><C-o>
+  inoremap <C-space> <C-x><C-o>
 
-" Exit: Preview, Help, QuickFix, and Location List
-inoremap <silent> <C-c> <Esc>:pclose <BAR> cclose <BAR> lclose <CR>a
-nnoremap <silent> <C-c> :pclose <BAR> cclose <BAR> lclose <CR>
+  " Exit: Preview, Help, QuickFix, and Location List
+  inoremap <silent> <C-c> <Esc>:pclose <BAR> cclose <BAR> lclose <CR>a
+  nnoremap <silent> <C-c> :pclose <BAR> cclose <BAR> lclose <CR>
 
-" EnglishWordCompletion:
-" Look up words in a dictionary
-" <C-x><C-k> = dictionary completion
-inoremap <C-k> <C-x><C-k>
+  " EnglishWordCompletion:
+  " Look up words in a dictionary
+  " <C-x><C-k> = dictionary completion
+  inoremap <C-k> <C-x><C-k>
 
-" Exit: Preview and Help
-inoremap <silent> <C-c> <Esc>:pclose <BAR> helpclose<CR>a
-nnoremap <silent> <C-c> :pclose <BAR> helpclose<CR>
-inoremap <silent> <C-q> <Esc>:cclose <BAR> lclose<CR>a
-nnoremap <silent> <C-q> :cclose <BAR> lclose<CR>
+  " Exit: Preview and Help
+  inoremap <silent> <C-c> <Esc>:pclose <BAR> helpclose<CR>a
+  nnoremap <silent> <C-c> :pclose <BAR> helpclose<CR>
+  inoremap <silent> <C-q> <Esc>:cclose <BAR> lclose<CR>a
+  nnoremap <silent> <C-q> :cclose <BAR> lclose<CR>
 
-" MoveVisual: up and down visually only if count is specified before
-" Otherwise, you want to move up lines numerically
-" e.g. ignoring wrapped lines
-nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+  " MoveVisual: up and down visually only if count is specified before
+  " Otherwise, you want to move up lines numerically
+  " e.g. ignoring wrapped lines
+  nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+  nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 
-" MoveTabs: moving forward, backward, and to number with vim tabs
-nnoremap T gt
-nnoremap t gT
+  " MoveTabs: moving forward, backward, and to number with vim tabs
+  nnoremap T gt
+  nnoremap t gT
 
-inoremap <C-e> <Esc>A
-inoremap <C-a> <Esc>I
+  inoremap <C-e> <Esc>A
+  inoremap <C-a> <Esc>I
 
-" IndentComma: placing commas one line down
-" usable with repeat operator '.'
-nnoremap <silent> <Plug>NewLineComma f,wi<CR><Esc>
-      \:call repeat#set("\<Plug>NewLineComma")<CR>
-nmap <leader><CR> <Plug>NewLineComma
+  " IndentComma: placing commas one line down
+  " usable with repeat operator '.'
+  nnoremap <silent> <Plug>NewLineComma f,wi<CR><Esc>
+        \:call repeat#set("\<Plug>NewLineComma")<CR>
+  nmap <leader><CR> <Plug>NewLineComma
 
-" BuffersAndWindows:
-" Move from one window to another
-nnoremap <silent> <C-k> :wincmd k<CR>
-nnoremap <silent> <C-j> :wincmd j<CR>
-nnoremap <silent> <C-l> :wincmd l<CR>
-nnoremap <silent> <C-h> :wincmd h<CR>
-" Scroll screen up and down
-nnoremap <silent> K <c-e>
-nnoremap <silent> J <c-y>
-nnoremap <silent> H zh
-nnoremap <silent> L zl
-" Move cursor to top, bottom, and middle of screen
-nnoremap <silent> gJ L
-nnoremap <silent> gK H
-nnoremap <silent> gM M
+  " BuffersAndWindows:
+  " Move from one window to another
+  nnoremap <silent> <C-k> :wincmd k<CR>
+  nnoremap <silent> <C-j> :wincmd j<CR>
+  nnoremap <silent> <C-l> :wincmd l<CR>
+  nnoremap <silent> <C-h> :wincmd h<CR>
+  " Scroll screen up and down
+  nnoremap <silent> K <c-e>
+  nnoremap <silent> J <c-y>
+  nnoremap <silent> H zh
+  nnoremap <silent> L zl
+  " Move cursor to top, bottom, and middle of screen
+  nnoremap <silent> gJ L
+  nnoremap <silent> gK H
+  nnoremap <silent> gM M
 
-" QuickChangeFiletype:
-" Sometimes we want to set some filetypes due to annoying behavior of plugins
-" The following mappings make it easier to chage javascript plugin behavior
-nnoremap <leader>jx :set filetype=javascript.jsx<CR>
-nnoremap <leader>jj :set filetype=javascript<CR>
+  " QuickChangeFiletype:
+  " Sometimes we want to set some filetypes due to annoying behavior of plugins
+  " The following mappings make it easier to chage javascript plugin behavior
+  nnoremap <leader>jx :set filetype=javascript.jsx<CR>
+  nnoremap <leader>jj :set filetype=javascript<CR>
 
-" Jinja2Toggle: the following mapping toggles jinja2 for any filetype
-nnoremap <silent> <leader>j :call Jinja2Toggle()<CR>
+  " Jinja2Toggle: the following mapping toggles jinja2 for any filetype
+  nnoremap <silent> <leader>j :call Jinja2Toggle()<CR>
 
-" ToggleRelativeNumber: uses custom functions
-nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
+  " ToggleRelativeNumber: uses custom functions
+  nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
 
-" TogglePluginWindows:
-nnoremap <silent> <space>j :Defx
-      \ -buffer-name=defx
-      \ -columns=mark:git:indent:icons:filename:type:size:time
-      \ -direction=topleft
-      \ -search=`expand('%:p')`
-      \ -session-file=`g:custom_defx_state`
-      \ -split=vertical
-      \ -toggle
-      \ -winwidth=31
-      \ <CR>
-nnoremap <silent> <space>J :Defx `expand('%:p:h')`
-      \ -buffer-name=defx
-      \ -columns=mark:git:indent:icons:filename:type:size:time
-      \ -direction=topleft
-      \ -search=`expand('%:p')`
-      \ -split=vertical
-      \ -toggle
-      \ -winwidth=31
-      \ <CR>
-nnoremap <silent> <space>l :TagbarToggle <CR>
-nnoremap <silent> <space>u :UndotreeToggle<CR>
+  " TogglePluginWindows:
+  nnoremap <silent> <space>j :Defx
+        \ -buffer-name=defx
+        \ -columns=mark:git:indent:icons:filename:type:size:time
+        \ -direction=topleft
+        \ -search=`expand('%:p')`
+        \ -session-file=`g:custom_defx_state`
+        \ -split=vertical
+        \ -toggle
+        \ -winwidth=31
+        \ <CR>
+  nnoremap <silent> <space>J :Defx `expand('%:p:h')`
+        \ -buffer-name=defx
+        \ -columns=mark:git:indent:icons:filename:type:size:time
+        \ -direction=topleft
+        \ -search=`expand('%:p')`
+        \ -split=vertical
+        \ -toggle
+        \ -winwidth=31
+        \ <CR>
+  nnoremap <silent> <space>l :TagbarToggle <CR>
+  nnoremap <silent> <space>u :UndotreeToggle<CR>
 
-" Choosewin: (just like tmux)
-nnoremap <leader>q :ChooseWin<CR>
+  " Choosewin: (just like tmux)
+  nnoremap <leader>q :ChooseWin<CR>
 
-" Gina: git bindings
-nnoremap <leader>ga :Gina add %:p<CR><CR>
-nnoremap <leader>g. :Gina add .<CR><CR>
-nnoremap <leader>gs :Gina status<CR>
-nnoremap <leader>gc :Gina commit<CR>
-nnoremap <leader>gb :Gblame<CR>
-nnoremap <leader>gd :Gina diff<CR>
+  " Goyo And Writing:
+  nnoremap <leader><leader>g :Goyo<CR>
+  nnoremap <leader><leader>l :Limelight!!<CR>
+  nmap <leader><leader>v <Plug>Veil
 
-" IndentLines: toggle if indent lines is visible
-nnoremap <silent> <leader>i :IndentLinesToggle<CR>
+  " Gina: git bindings
+  nnoremap <leader>ga :Gina add %:p<CR><CR>
+  nnoremap <leader>g. :Gina add .<CR><CR>
+  nnoremap <leader>gs :Gina status<CR>
+  nnoremap <leader>gc :Gina commit<CR>
+  nnoremap <leader>gb :Gblame<CR>
+  nnoremap <leader>gd :Gina diff<CR>
 
-" ResizeWindow: up and down; relies on custom functions
-nnoremap <silent> <leader><leader>h mz:call ResizeWindowHeight()<CR>`z
-nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
+  " IndentLines: toggle if indent lines is visible
+  nnoremap <silent> <leader>i :IndentLinesToggle<CR>
 
-" AutoPairs:
-" AutoPairs:
-if s:plugin_exists('auto-pairs')
+  " ResizeWindow: up and down; relies on custom functions
+  nnoremap <silent> <leader><leader>h mz:call ResizeWindowHeight()<CR>`z
+  nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
+
+  " AutoPairs:
   imap <silent><CR> <CR><Plug>AutoPairsReturn
-endif
 
-" Sandwich: below mappings address the issue raised here:
-" https://github.com/machakann/vim-sandwich/issues/62
-xmap ib <Plug>(textobj-sandwich-auto-i)
-omap ib <Plug>(textobj-sandwich-auto-i)
-xmap ab <Plug>(textobj-sandwich-auto-a)
-omap ab <Plug>(textobj-sandwich-auto-a)
+  " Sandwich: below mappings address the issue raised here:
+  " https://github.com/machakann/vim-sandwich/issues/62
+  xmap ib <Plug>(textobj-sandwich-auto-i)
+  omap ib <Plug>(textobj-sandwich-auto-i)
+  xmap ab <Plug>(textobj-sandwich-auto-a)
+  omap ab <Plug>(textobj-sandwich-auto-a)
 
-xmap iq <Plug>(textobj-sandwich-query-i)
-omap iq <Plug>(textobj-sandwich-query-i)
-xmap aq <Plug>(textobj-sandwich-query-a)
-omap aq <Plug>(textobj-sandwich-query-a)
+  xmap iq <Plug>(textobj-sandwich-query-i)
+  omap iq <Plug>(textobj-sandwich-query-i)
+  xmap aq <Plug>(textobj-sandwich-query-a)
+  omap aq <Plug>(textobj-sandwich-query-a)
 
-" FZF: create shortcuts for finding stuff
-nnoremap <silent> <C-P> :call FZFFilesAvoidDefx()<CR>
-nnoremap <silent> <C-B> :call FZFBuffersAvoidDefx()<CR>
-nnoremap <silent> <C-D> :call FZFGitDiffFilesAvoidDefx()<CR>
-nnoremap <C-n> yiw:Grep <C-r>"<CR>
-vnoremap <C-n> y:Grep <C-r>"<CR>
-nnoremap <leader><C-n> yiw:GrepIgnoreCase <C-r>"<CR>
-vnoremap <leader><C-n> y:GrepIgnoreCase <C-r>"<CR>
+  " FZF: create shortcuts for finding stuff
+  nnoremap <silent> <C-P> :call FZFFilesAvoidDefx()<CR>
+  nnoremap <silent> <C-B> :call FZFBuffersAvoidDefx()<CR>
+  nnoremap <silent> <C-D> :call FZFGitDiffFilesAvoidDefx()<CR>
+  nnoremap <C-n> yiw:Grep <C-r>"<CR>
+  vnoremap <C-n> y:Grep <C-r>"<CR>
+  nnoremap <leader><C-n> yiw:GrepIgnoreCase <C-r>"<CR>
+  vnoremap <leader><C-n> y:GrepIgnoreCase <C-r>"<CR>
 
-" DeleteHiddenBuffers: shortcut to make this easier
-" Note: weird stuff happens if you mess this up
-nnoremap <leader>d :DeleteHiddenBuffers<CR>
+  " DeleteHiddenBuffers: shortcut to make this easier
+  " Note: weird stuff happens if you mess this up
+  nnoremap <leader>d :DeleteHiddenBuffers<CR>
 
-" Jumping to header file
-nnoremap gh :call CurtineIncSw()<CR>
+  " Jumping to header file
+  nnoremap gh :call CurtineIncSw()<CR>
 
-" Mouse Copy: system copy mouse characteristics
-vnoremap <RightMouse> "+y
+  " Mouse Copy: system copy mouse characteristics
+  vnoremap <RightMouse> "+y
 
-" Mouse Paste: make it come from the system register
-nnoremap <MiddleMouse> "+<MiddleMouse>
+  " Mouse Paste: make it come from the system register
+  nnoremap <MiddleMouse> "+<MiddleMouse>
 
-" Mouse Open Close Folds: open folds with the mouse, and close the folds
-" open operation taken from: https://stackoverflow.com/a/13924974
-nnoremap <expr> <2-LeftMouse> foldclosed(line('.')) == -1 ? '\<2-LeftMouse>' : 'zo'
-nnoremap <RightMouse> <LeftMouse><LeftRelease>zc
+  " Mouse Open Close Folds: open folds with the mouse, and close the folds
+  " open operation taken from: https://stackoverflow.com/a/13924974
+  nnoremap <expr> <2-LeftMouse> foldclosed(line('.')) == -1 ? '\<2-LeftMouse>' : 'zo'
+  nnoremap <RightMouse> <LeftMouse><LeftRelease>zc
 
-" Insert Mode moves
-imap <C-h> <left>
-" AutoPairsMapCh has to be 0 for <C-h> to work here
-imap <C-j> <down>
-imap <C-k> <up>
-imap <C-l> <right>
+  " Insert Mode moves
+  imap <C-h> <left>
+  " AutoPairsMapCh has to be 0 for <C-h> to work here
+  imap <C-j> <down>
+  imap <C-k> <up>
+  imap <C-l> <right>
 
-" FiletypeFormat: remap leader f to do filetype formatting
-nnoremap <leader>f :FiletypeFormat<cr>
-vnoremap <leader>f :FiletypeFormat<cr>
+  " FiletypeFormat: remap leader f to do filetype formatting
+  nnoremap <leader>f :FiletypeFormat<cr>
+  vnoremap <leader>f :FiletypeFormat<cr>
 
-" Ale: shortcuts
-nnoremap <leader>a :ALEToggleBuffer<cr>
+  " Ale: shortcuts
+  nnoremap <leader>a :ALEToggleBuffer<cr>
 
-" Open Browser: override netrw
-nmap gx <Plug>(openbrowser-smart-search)
-vmap gx <Plug>(openbrowser-smart-search)
+  " Open Browser: override netrw
+  nmap gx <Plug>(openbrowser-smart-search)
+  vmap gx <Plug>(openbrowser-smart-search)
+
+endfunction
+
+call DefaultKeyMappings()
 
 " }}}
 " General: Abbreviations --- {{{
