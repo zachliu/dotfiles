@@ -633,7 +633,7 @@ augroup writing
   autocmd!
   autocmd VimEnter * call s:abolish_correct()
   autocmd FileType markdown,rst,text,gitcommit
-        \ setlocal wrap linebreak nolist
+        \ setlocal wrap linebreak nolist spell
         \ | call textobj#sentence#init()
   autocmd FileType requirements setlocal nospell
   autocmd BufNewFile,BufRead *.html,*.tex setlocal wrap linebreak nolist
