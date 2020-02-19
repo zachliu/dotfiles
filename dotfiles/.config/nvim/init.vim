@@ -91,7 +91,7 @@ function! SetGlobalConfig()
   " Hidden Buffer: enable instead of having to write each buffer
   set hidden
 
-  " Sign Column: always show it
+  " Sign Column: show it automatically
   set signcolumn=auto
 
   " Mouse: enable GUI mouse support in all modes
