@@ -248,6 +248,9 @@ function PackInit() abort
   call packager#add('git@github.com:tpope/vim-speeddating.git')
   call packager#add('git@github.com:tpope/vim-fugitive')
 
+  " Relative Numbering:
+  call packager#add('git@github.com:myusuf3/numbers.vim')
+
   " Fuzzy finder:
   call packager#add('git@github.com:junegunn/fzf')
   call packager#add('git@github.com:junegunn/fzf.vim')
