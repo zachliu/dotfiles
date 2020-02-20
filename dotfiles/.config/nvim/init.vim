@@ -1784,18 +1784,22 @@ endfunction
 " This plugin is awesome
 " Just Gina followed by whatever I'd normally type in Git
 
-" for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
-"   call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
-" endfor
+" Had to do this manually, I don't know why
+" https://github.com/lambdalisue/gina.vim/issues/254
+" https://github.com/kristijanhusak/vim-packager/issues/17
+set runtimepath+=~/.config/nvim/pack/packager/start/gina.vim
+for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
+  call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
+endfor
 
-" for gina_cmd in ['diff']
-"   call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
-" endfor
+for gina_cmd in ['diff']
+  call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
+endfor
 
-" call gina#custom#command#option('commit', '--verbose')
-" call gina#custom#command#option('branch', '--verbose|--all')
+call gina#custom#command#option('commit', '--verbose')
+call gina#custom#command#option('branch', '--verbose|--all')
 
-" call gina#custom#command#option('blame', '--width', '79')
+call gina#custom#command#option('blame', '--width', '79')
 let gina#command#blame#formatter#format = '%ti|%au|%su'
 let g:gina#command#blame#formatter#timestamp_months = v:false
 let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%dT%H:%M:%S"
@@ -2445,9 +2449,11 @@ function! DefaultKeyMappings()
   nnoremap <expr><C-y> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-y>"
   " snippets: most mappings done as global option in Coc section
   imap <C-l> <Plug>(coc-snippets-expand)
-  " For pairs, correctly position cursor on Enter
-  inoremap <silent><expr> <CR>
-        \ pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  " https://github.com/neoclide/coc.nvim/wiki/Using-snippets
+  " For pairs, correctly position cursor on Enter (the following inoremap will
+  " make selection from snippet always the next to the cursor)
+  " inoremap <silent><expr> <CR>
+  "       \ pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
   " Toggle diagnostics
   nnoremap <silent> <leader>a :CocDiagnosticToggle<CR>
 
