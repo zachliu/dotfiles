@@ -528,6 +528,7 @@ alias open='xdg-open . &>/dev/null'
 # Vim and Vi
 alias f='vim'
 alias vi='vim'
+alias vim='nvim'
 
 # Tree that ignores annoying directories
 alias itree="tree -I '__pycache__|venv|node_modules'"
