@@ -1,5 +1,12 @@
 {
   "suggest.autoTrigger": "always",
   "suggest.noselect": true,
-  "pairs.enableCharacters": ["(", "[", "{", "<"]
+  "pairs.enableCharacters": ["(", "[", "{", "<"],
+  "languageserver": {
+    "terraform": {
+      "command": "terraform-lsp",
+      "filetypes": ["terraform"],
+      "initializationOptions": {}
+    }
+  }
 }
