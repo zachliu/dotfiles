@@ -2103,10 +2103,10 @@ let g:coc_filetype_map = {
       \ }
 
 " Use <C-j> for jump to next placeholder, it's default of coc.nvim
-let g:coc_snippet_next = '<C-h>'
+" let g:coc_snippet_next = '<C-h>'
 
 " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-let g:coc_snippet_prev = '<C-l>'
+" let g:coc_snippet_prev = '<C-l>'
 
 " Customization:
 function! s:coc_diagnostic_disable()
@@ -2454,6 +2454,20 @@ function! DefaultKeyMappings()
   " make selection from snippet always the next to the cursor)
   " inoremap <silent><expr> <CR>
   "       \ pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  "
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? coc#_select_confirm() :
+        \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ coc#refresh()
+
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+
+  let g:coc_snippet_next = '<tab>'
+
   " Toggle diagnostics
   nnoremap <silent> <leader>a :CocDiagnosticToggle<CR>
 
