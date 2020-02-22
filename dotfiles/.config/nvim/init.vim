@@ -522,7 +522,7 @@ augroup filetype_recognition
         \ set filetype=dosini
   autocmd BufNewFile,BufRead,BufEnter *.tsv set filetype=tsv
   autocmd BufNewFile,BufRead,BufEnter *.toml set filetype=toml
-  autocmd BufNewFile,BufRead,BufEnter Dockerfile.* set filetype=dockerfile
+  autocmd BufNewFile,BufRead,BufEnter Dockerfile.* set filetype=Dockerfile
   autocmd BufNewFile,BufRead,BufEnter Makefile.* set filetype=make
   autocmd BufNewFile,BufRead,BufEnter poetry.lock,Pipfile set filetype=toml
   autocmd BufNewFile,BufRead,BufEnter .gitignore,.dockerignore
@@ -719,21 +719,33 @@ augroup END
 " }}}
 " General: Syntax highlighting {{{
 
-" Python: Highlight args and kwargs, since they are conventionally special
-augroup python_syntax
-  autocmd!
-  autocmd ColorScheme * highlight OhMyPython ctermfg=167
-  autocmd FileType python syn keyword pythonBuiltinObj self
-  autocmd FileType python syn keyword pythonBuiltinObj cls
-  autocmd FileType python syn keyword OhMyPython args
-  autocmd FileType python syn keyword OhMyPython kwargs
-augroup end
+autocmd VimEnter * call s:setup_custom_syntax()
 
-" Javascript: Highlight this keyword in object / function definitions
-augroup javascript_syntax
-  autocmd!
-  autocmd FileType javascript syntax keyword jsBooleanTrue this
-augroup end
+" Create a ColorScheme that can be used by some languages
+autocmd ColorScheme * highlight OhMyArgsKwargs guifg='IndianRed'
+
+function! s:setup_custom_syntax() abort
+  " Python: Highlight args and kwargs, since they are conventionally special
+  augroup python_syntax
+    autocmd!
+    autocmd FileType python syntax keyword pythonBuiltinObj self
+    autocmd FileType python syntax keyword pythonBuiltinObj cls
+    autocmd FileType python syntax keyword OhMyArgsKwargs args
+    autocmd FileType python syntax keyword OhMyArgsKwargs kwargs
+  augroup end
+
+  " Javascript: Highlight this keyword in object / function definitions
+  augroup javascript_syntax
+    autocmd!
+    autocmd FileType javascript syntax keyword jsBooleanTrue this
+  augroup end
+
+  " Dockerfile: Highlight this keyword
+  augroup dockerfile_syntax
+    autocmd!
+    autocmd FileType Dockerfile syntax keyword OhMyArgsKwargs apt-get
+  augroup end
+endfunction
 
 " Typescript: fixes
 augroup typescript_syntax
@@ -1784,26 +1796,33 @@ endfunction
 " This plugin is awesome
 " Just Gina followed by whatever I'd normally type in Git
 
-" Had to do this manually, I don't know why
-" https://github.com/lambdalisue/gina.vim/issues/254
-" https://github.com/kristijanhusak/vim-packager/issues/17
-set runtimepath+=~/.config/nvim/pack/packager/start/gina.vim
-for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
-  call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
-endfor
+autocmd VimEnter * call s:setup_gina()
 
-for gina_cmd in ['diff']
-  call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
-endfor
+" Problem is that at that moment when you call the function gina is not loaded
+" because native vim packages load them asynchronously
+" (vimrc first, and then plugins).
+function! s:setup_gina() abort
+  " Had to set the path manually, I don't know why
+  " https://github.com/lambdalisue/gina.vim/issues/254
+  " https://github.com/kristijanhusak/vim-packager/issues/17
+  " set runtimepath+=~/.config/nvim/pack/packager/start/gina.vim
+  for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
+    call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
+  endfor
 
-call gina#custom#command#option('commit', '--verbose')
-call gina#custom#command#option('branch', '--verbose|--all')
+  for gina_cmd in ['diff']
+    call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
+  endfor
 
-call gina#custom#command#option('blame', '--width', '79')
-let gina#command#blame#formatter#format = '%ti|%au|%su'
-let g:gina#command#blame#formatter#timestamp_months = v:false
-let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%dT%H:%M:%S"
-let g:gina#command#blame#formatter#timestamp_format2 = "%Y-%m-%dT%H:%M:%S"
+  call gina#custom#command#option('commit', '--verbose')
+  call gina#custom#command#option('branch', '--verbose|--all')
+
+  call gina#custom#command#option('blame', '--width', '79')
+  let gina#command#blame#formatter#format = '%ti|%au|%su'
+  let g:gina#command#blame#formatter#timestamp_months = v:false
+  let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%dT%H:%M:%S"
+  let g:gina#command#blame#formatter#timestamp_format2 = "%Y-%m-%dT%H:%M:%S"
+endfunction
 
 function! _Gpush()
   let current_branch = gina#component#repo#branch()
