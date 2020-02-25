@@ -192,6 +192,245 @@ endfunction
 call SetGlobalConfig()
 
 " }}}
+" " General: Vim-Plug {{{
+
+" " Notes:
+" " To use tags: , { 'tag': '*' }
+
+" let g:plug_url_format = 'git@github.com:%s.git'
+" let g:plug_shallow = v:false
+
+" call plug#begin('~/.vim/plugged')
+
+" " Help for vim-plug
+" Plug 'junegunn/vim-plug'
+
+" " Basics
+" Plug 'kh3phr3n/tabline'
+" Plug 'itchyny/lightline.vim'
+" Plug 'qpkorr/vim-bufkill'
+" Plug 'christoomey/vim-system-copy'
+" Plug 't9md/vim-choosewin'
+" Plug 'mhinz/vim-startify'
+" Plug 'wincent/terminus'
+" Plug 'gcmt/taboo.vim'
+" Plug 'yssl/QFEnter'
+" Plug 'djoshea/vim-autoread'
+" Plug 'simeji/winresizer'
+" Plug 'mbbill/undotree'
+" Plug 'henrik/vim-indexed-search'
+" Plug 'machakann/vim-sandwich'
+" Plug 'unblevable/quick-scope'
+" Plug 'fcpg/vim-altscreen'
+" Plug 'sjl/strftimedammit.vim'
+" Plug 'wincent/ferret'
+" Plug 'bronson/vim-visual-star-search'
+" Plug 'romainl/vim-devdocs'
+" Plug 'chrisbra/Colorizer'
+" Plug 'fidian/hexmode'
+" Plug 'wellle/targets.vim'
+" Plug 'Shougo/defx.nvim', {
+"       \ 'do': ':UpdateRemotePlugins'
+"       \ }
+" Plug 'Shougo/echodoc.vim'
+" Plug 'kristijanhusak/defx-git', {
+"       \ 'do': ':UpdateRemotePlugins'
+"       \ }
+" Plug 'kristijanhusak/defx-icons', {
+"       \ 'do': ':UpdateRemotePlugins'
+"       \ }
+
+" Plug 'tpope/vim-abolish'
+" Plug 'tpope/vim-characterize'
+" Plug 'tpope/vim-commentary'
+" Plug 'tpope/vim-eunuch'
+" Plug 'tpope/vim-ragtag'
+" Plug 'tpope/vim-repeat'
+" Plug 'tpope/vim-scriptease'
+" Plug 'tpope/vim-speeddating'
+" Plug 'tpope/vim-fugitive'
+
+" " Relative Numbering
+" Plug 'myusuf3/numbers.vim'
+
+" " Fuzzy finder
+" Plug 'junegunn/fzf', {
+"       \ 'do': { -> fzf#install() }
+"       \ }
+" Plug 'maxjacobson/vim-fzf-coauthorship'
+"   " Below needed by fzf-preview
+" Plug 'bogado/file-line'
+" Plug 'yuki-ycino/fzf-preview.vim'
+
+" " Git
+" Plug 'lambdalisue/gina.vim'
+" Plug 'junegunn/gv.vim'
+" Plug 'rhysd/git-messenger.vim'
+
+" " Basic coloring
+" Plug 'NLKNguyen/papercolor-theme'
+
+" " Utils:
+" Plug 'jiangmiao/auto-pairs'
+
+" " Syntax highlighting
+" Plug 'derekwyatt/vim-scala',
+" Plug 'rust-lang/rust.vim'
+" Plug 'ron-rs/ron.vim'
+" Plug 'vim-python/python-syntax',
+" Plug 'autowitch/hive.vim'
+" Plug 'elzr/vim-json',
+" Plug 'vimoutliner/vimoutliner'
+" Plug 'cespare/vim-toml'
+" Plug 'Glench/Vim-Jinja2-Syntax'
+" Plug 'godlygeek/tabular'
+" Plug 'plasticboy/vim-markdown'
+" Plug 'mopp/rik_octave.vim'
+" Plug 'ekalinin/Dockerfile.vim'
+" Plug 'StanAngeloff/php.vim'
+" Plug 'vim-scripts/SAS-Syntax'
+" Plug 'neovimhaskell/haskell-vim'
+" Plug 'aklt/plantuml-syntax'
+" Plug 'NLKNguyen/c-syntax.vim'
+" Plug 'hashivim/vim-terraform'
+" Plug 'hashivim/vim-vagrant'
+" Plug 'lervag/vimtex'
+" Plug 'tomlion/vim-solidity'
+" Plug 'jparise/vim-graphql'
+" Plug 'pangloss/vim-javascript'
+" Plug 'evanleck/vim-svelte'
+" Plug 'groenewege/vim-less'
+" Plug 'farfanoide/vim-kivy'
+" Plug 'raimon49/requirements.txt.vim'
+" Plug 'chr4/nginx.vim'
+" Plug 'othree/html5.vim'
+" Plug 'pearofducks/ansible-vim'
+" Plug 'khalliday7/Jenkinsfile-vim-syntax'
+" Plug 'mattn/vim-xxdcursor'
+" Plug 'calviken/vim-gdscript3'
+" Plug 'marshallward/vim-restructuredtext'
+" Plug 'leafgarland/typescript-vim'
+" Plug 'peitalin/vim-jsx-typescript'
+" Plug 'MaxMEllon/vim-jsx-pretty'
+" Plug 'killphi/vim-ebnf'
+" Plug 'neoclide/jsonc.vim'
+" Plug 'hail2u/vim-css3-syntax'
+
+" Plug 'ElmCast/elm-vim'
+" Plug 'magicalbanana/sql-syntax-vim'
+
+" " Indentation Only:
+" Plug 'vim-scripts/groovyindent-unix'
+" Plug 'Vimjas/vim-python-pep8-indent'
+" Plug 'Yggdroot/indentLine'
+
+
+" " Autocompletion And IDE Features:
+" Plug 'honza/vim-snippets'
+" Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+
+" Plug 'coc-extensions/coc-svelte', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'fannheyward/coc-markdownlint', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'iamcco/coc-vimlsp', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'josa42/coc-docker', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-css', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-html', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-json', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-pairs', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-rls', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-snippets', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-tsserver', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-yaml', { 'do': 'yarn install --frozen-lockfile && yarn build' }
+" Plug 'neoclide/coc-python', { 'do': 'yarn install --frozen-lockfile && yarn build', 'commit': '3e03f98a1979b3ef1901c28cdd8d27a8d03bf399' }
+
+" " Tagbar
+" Plug 'majutsushi/tagbar'
+" Plug 'lvht/tagbar-markdown'
+" " Additional requirements
+" "   sudo npm install -g jsctags
+" "   sudo apt install -y php
+
+" " Web Development - General
+" Plug 'heavenshell/vim-jsdoc'
+
+" " Rainbow
+" Plug 'junegunn/rainbow_parentheses.vim'
+
+" " Text Objects
+" Plug 'machakann/vim-sandwich'
+" Plug 'kana/vim-textobj-user'
+" " al/il for the current line
+" Plug 'kana/vim-textobj-line'
+" " as/is for a sentence of prose (overrides hard-coded native object & motion)
+" Plug 'reedes/vim-textobj-sentence'
+" " az/iz for a block of folded lines; iz does not include fold marker lines
+" Plug 'somini/vim-textobj-fold'
+" " ao/io for a block of indentation (i.e. spaces)
+" Plug 'glts/vim-textobj-indblock'
+" " ay/iy for a syntax group
+" Plug 'kana/vim-textobj-syntax'
+" " ae/ie for entire buffers
+" Plug 'kana/vim-textobj-entire'
+" " ai/ii for similarly indented, aI/iI for same indentation
+" Plug 'kana/vim-textobj-indent'
+" " au/iu for a URI, also includes URI handlers and is easy to extend
+" Plug 'jceb/vim-textobj-uri'
+" " ac/ic/af/if for Python classes and functions
+" Plug 'bps/vim-textobj-python'
+
+" " Number Exploration:
+" Plug 'glts/vim-magnum'
+" Plug 'glts/vim-radical'
+
+" " Writing helpers
+" Plug 'dkarter/bullets.vim'
+" Plug 'matthew-brett/vim-rst-sections'
+" Plug 'nvie/vim-rst-tables', {
+"       \ 'do': ':UpdateRemotePlugins'
+"       \ }
+" Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/limelight.vim'
+" Plug 'reedes/vim-wordy'
+" Plug 'tommcdo/vim-exchange'
+" Plug 'swordguin/vim-veil'
+
+" " Previewers
+" Plug 'iamcco/markdown-preview.nvim', {
+"       \ 'do': 'cd app & yarn install --frozen-lockfile'
+"       \ }
+" Plug 'tyru/open-browser.vim'
+" Plug 'weirongxu/plantuml-previewer.vim'
+
+" " Code prettifiers
+" Plug 'pappasam/vim-filetype-formatter'
+
+" " C Programming
+" Plug 'ericcurtin/CurtineIncSw.vim'
+
+" " Presentation:
+" Plug 'dhruvasagar/vim-marp'
+
+" " Repl Integration
+" Plug 'jpalardy/vim-slime'
+
+" " Fonts
+" Plug 'ryanoasis/vim-devicons'
+
+" call plug#end()
+
+" " Plug update and upgrade
+" function! s:plug_update_upgrade()
+"   execute 'PlugUpdate'
+"   execute 'PlugUpgrade'
+" endfunction
+" command! PU call <SID>plug_update_upgrade()
+
+" " Check if plugin exists
+" function! s:plugin_exists(name)
+"   return &rtp =~ a:name
+" endfunction
+
+" " }}}
 " General: Vim packages: vim-packager {{{
 
 function PackInit() abort
@@ -252,8 +491,9 @@ function PackInit() abort
   call packager#add('git@github.com:myusuf3/numbers.vim')
 
   " Fuzzy finder:
-  call packager#add('git@github.com:junegunn/fzf')
-  call packager#add('git@github.com:junegunn/fzf.vim')
+  call packager#add('git@github.com:junegunn/fzf', {
+        \ 'do': { -> fzf#install() },
+        \ })
   call packager#add('git@github.com:maxjacobson/vim-fzf-coauthorship')
   " Below needed by fzf-preview
   call packager#add('git@github.com:bogado/file-line.git')
