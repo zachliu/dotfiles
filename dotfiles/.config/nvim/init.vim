@@ -2215,7 +2215,7 @@ augroup END
 "     replace inner text of `text' with cisl'
 "     if auto detection of nearest surrounding is fine cib
 "   add to text:
-"     saiwl' single apostrophes to get `text'
+"     saiw' single apostrophes to get `text'
 "     The pattern of the command is sa{motion/textobject}{surrounding}
 "     means invoke operator add  surrounding on inner word and surround type
 "     is latex single quote.
