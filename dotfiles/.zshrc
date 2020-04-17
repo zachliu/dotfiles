@@ -503,6 +503,21 @@ source $HOME/.asdf/asdf.sh
 source $HOME/.asdf/completions/asdf.bash
 
 # }}}
+# # General: post-asdf env setup {{{
+
+# # MANPATH: add asdf man pages to my man path
+# MANPATH="$HOME/man"
+# if [ -x "$(command -v fd)" ]; then
+#   for value in $(fd man1 ~/.asdf/installs --type directory | sort -hr); do
+#     MANPATH="$MANPATH:$(dirname $value)"
+#   done
+#   # colon at end. See "man manpath"
+#   export MANPATH="$MANPATH:"
+# fi
+
+# include ~/.asdf/plugins/java/set-java-home.sh
+
+# # }}}
 # Aliases --- {{{
 
 # Easier directory navigation for going up a directory tree
@@ -768,7 +783,14 @@ function gn() {  # arg1: filename
 # pydev_install dev: install only dev dependencies
 # pydev_install all: install all deps
 function pydev_install() {  ## Install default python dependencies
-  local env=(pynvim restview jedi black bpython)
+  local env=(\
+    pynvim \
+    restview \
+    jedi \
+    jedi-language-server \
+    black \
+    bpython \
+  )
   local dev=(pylint mypy pre-commit)
   if [[ "$1" == 'all' ]]; then
     pip install -U $env $dev
@@ -1117,6 +1139,26 @@ function s3size() {
     --dimensions Name=BucketName,Value=$S3_BUCKET Name=StorageType,Value=StandardStorage \
     | jq '.Datapoints[].Average' -r \
     | awk '{print $1/1024/1024/1024 " GB "}'
+}
+
+function shrug() {
+  echo "¯\_(ツ)_/¯"
+}
+
+function ftt() {
+  echo "(╯°□°)╯︵ ┻━┻"
+}
+
+function update_program() {
+  case $1 in
+    kitty)
+      curl -Lsf https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+      ;;
+    zoom)
+      curl -Lsf https://zoom.us/client/latest/zoom_amd64.deb -o /tmp/zoom_amd64.deb
+      sudo dpkg -i /tmp/zoom_amd64.deb
+      ;;
+  esac
 }
 
 # }}}
