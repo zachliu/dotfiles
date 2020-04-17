@@ -857,6 +857,7 @@ function ve() {  # Optional arg: python interpreter name
     source "$venv_name/bin/activate"
     pip install -U pip
     pydev_install  # install dependencies for editing
+    asdf reshim python $python_version
     deactivate
   else
     echo "$venv_name already exists, activating"
