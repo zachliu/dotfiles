@@ -645,7 +645,7 @@ augroup END
 " Python: Highlight args and kwargs, since they are conventionally special
 augroup python_syntax
   autocmd!
-  autocmd ColorScheme * highlight OhMyPython ctermfg=167
+  autocmd ColorScheme * highlight OhMyPython guifg='IndianRed'
   autocmd FileType python syn keyword pythonBuiltinObj self
   autocmd FileType python syn keyword pythonBuiltinObj cls
   autocmd FileType python syn keyword OhMyPython args

@@ -240,15 +240,22 @@ export BAT_PAGER=''
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
+HOME_LOCAL_BIN="$HOME/.local/bin"
+if [ ! -d "$HOME_LOCAL_BIN" ]; then
+  mkdir -p "$HOME_LOCAL_BIN"
+fi
+path_ladd "$HOME_LOCAL_BIN"
+
 RUST_CARGO="$HOME/.cargo/bin"
 if [ -d "$RUST_CARGO" ]; then
   path_ladd "$RUST_CARGO"
 fi
 
-HOME_BIN="$HOME/bin"
-if [ -d "$HOME_BIN" ]; then
-  path_ladd "$HOME_BIN"
+HOME_BIN_HIDDEN="$HOME/.bin"
+if [ ! -d "$HOME_BIN_HIDDEN" ]; then
+  mkdir "$HOME_BIN_HIDDEN"
 fi
+path_ladd "$HOME_BIN_HIDDEN"
 
 POETRY_LOC="$HOME/.poetry/bin"
 if [ -d "$POETRY_LOC" ]; then
@@ -503,6 +510,21 @@ source $HOME/.asdf/asdf.sh
 source $HOME/.asdf/completions/asdf.bash
 
 # }}}
+# # General: post-asdf env setup {{{
+
+# # MANPATH: add asdf man pages to my man path
+# MANPATH="$HOME/man"
+# if [ -x "$(command -v fd)" ]; then
+#   for value in $(fd man1 ~/.asdf/installs --type directory | sort -hr); do
+#     MANPATH="$MANPATH:$(dirname $value)"
+#   done
+#   # colon at end. See "man manpath"
+#   export MANPATH="$MANPATH:"
+# fi
+
+# include ~/.asdf/plugins/java/set-java-home.sh
+
+# # }}}
 # Aliases --- {{{
 
 # Easier directory navigation for going up a directory tree
@@ -528,6 +550,7 @@ alias open='xdg-open . &>/dev/null'
 # Vim and Vi
 alias f='vim'
 alias vi='vim'
+alias vim='nvim'
 
 # Tree that ignores annoying directories
 alias itree="tree -I '__pycache__|venv|node_modules'"
@@ -767,15 +790,36 @@ function gn() {  # arg1: filename
 # pydev_install dev: install only dev dependencies
 # pydev_install all: install all deps
 function pydev_install() {  ## Install default python dependencies
-  local env=(pynvim restview jedi-language-server black bpython)
-  local dev=(pylint mypy pre-commit)
-  if [[ "$1" == 'all' ]]; then
-    pip install -U $env $dev
-  elif [[ "$1" == 'dev' ]]; then
-    pip install -U $dev
+  local for_pip=(
+    bpython
+    neovim-remote
+    pip
+    pynvim
+  )
+  pip install -U $for_pip
+}
+
+function pyglobal_install() {  ## Install global Python applications
+  local for_pipx=(
+    black
+    cookiecutter
+    docker-compose
+    isort
+    jedi-language-server
+    mypy
+    pre-commit
+    pylint
+    restview
+    toml-sort
+    awscli
+  )
+  if command -v pipx > /dev/null; then
+    for arg in $for_pipx; do
+      pipx install "$arg"
+      pipx upgrade "$arg"
+    done
   else
-    pip install -U $env
-    pip install poetry==1.0.0
+    echo 'pipx not installed. Install with "pip install pipx"'
   fi
 }
 
@@ -834,6 +878,7 @@ function ve() {  # Optional arg: python interpreter name
     source "$venv_name/bin/activate"
     pip install -U pip
     pydev_install  # install dependencies for editing
+    asdf reshim python $python_version
     deactivate
   else
     echo "$venv_name already exists, activating"
@@ -954,6 +999,16 @@ function gc() {
     done
     echo $branches | xargs git branch -d
     echo "Deleted!"
+  fi
+}
+
+# GIT: cd to the current git root
+function groot() {
+  if [ $(git rev-parse --is-inside-work-tree 2>/dev/null ) ]; then
+    cd $(git rev-parse --show-toplevel)
+  else
+    echo "'$PWD' is not inside a git repository"
+    return 1
   fi
 }
 
@@ -1106,6 +1161,28 @@ function s3size() {
     --dimensions Name=BucketName,Value=$S3_BUCKET Name=StorageType,Value=StandardStorage \
     | jq '.Datapoints[].Average' -r \
     | awk '{print $1/1024/1024/1024 " GB "}'
+}
+
+function shrug() {
+  echo "¯\_(ツ)_/¯"
+  echo "¯\_(ツ)_/¯" | xsel --clipboard --input
+}
+
+function ftt() {
+  echo "(╯°□°)╯︵ ┻━┻"
+  echo "(╯°□°)╯︵ ┻━┻" | xsel --clipboard --input
+}
+
+function update_program() {
+  case $1 in
+    kitty)
+      curl -Lsf https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+      ;;
+    zoom)
+      curl -Lsf https://zoom.us/client/latest/zoom_amd64.deb -o /tmp/zoom_amd64.deb
+      sudo dpkg -i /tmp/zoom_amd64.deb
+      ;;
+  esac
 }
 
 # }}}

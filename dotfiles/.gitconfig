@@ -2,7 +2,7 @@
   email = zach.z.liu@gmail.com
   name = zachliu
 [core]
-  editor = vim
+	editor = nvim
   autocrlf = input
   safecrlf = true
 [alias]
