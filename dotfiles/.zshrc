@@ -240,15 +240,22 @@ export BAT_PAGER=''
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
+HOME_LOCAL_BIN="$HOME/.local/bin"
+if [ ! -d "$HOME_LOCAL_BIN" ]; then
+  mkdir -p "$HOME_LOCAL_BIN"
+fi
+path_ladd "$HOME_LOCAL_BIN"
+
 RUST_CARGO="$HOME/.cargo/bin"
 if [ -d "$RUST_CARGO" ]; then
   path_ladd "$RUST_CARGO"
 fi
 
-HOME_BIN="$HOME/bin"
-if [ -d "$HOME_BIN" ]; then
-  path_ladd "$HOME_BIN"
+HOME_BIN_HIDDEN="$HOME/.bin"
+if [ ! -d "$HOME_BIN_HIDDEN" ]; then
+  mkdir "$HOME_BIN_HIDDEN"
 fi
+path_ladd "$HOME_BIN_HIDDEN"
 
 POETRY_LOC="$HOME/.poetry/bin"
 if [ -d "$POETRY_LOC" ]; then
@@ -783,22 +790,36 @@ function gn() {  # arg1: filename
 # pydev_install dev: install only dev dependencies
 # pydev_install all: install all deps
 function pydev_install() {  ## Install default python dependencies
-  local env=(\
-    pynvim \
-    restview \
-    jedi \
-    jedi-language-server \
-    black \
-    bpython \
+  local for_pip=(
+    bpython
+    neovim-remote
+    pip
+    pynvim
   )
-  local dev=(pylint mypy pre-commit)
-  if [[ "$1" == 'all' ]]; then
-    pip install -U $env $dev
-  elif [[ "$1" == 'dev' ]]; then
-    pip install -U $dev
+  pip install -U $for_pip
+}
+
+function pyglobal_install() {  ## Install global Python applications
+  local for_pipx=(
+    black
+    cookiecutter
+    docker-compose
+    isort
+    jedi-language-server
+    mypy
+    pre-commit
+    pylint
+    restview
+    toml-sort
+    awscli
+  )
+  if command -v pipx > /dev/null; then
+    for arg in $for_pipx; do
+      pipx install "$arg"
+      pipx upgrade "$arg"
+    done
   else
-    pip install -U $env
-    pip install poetry==1.0.0
+    echo 'pipx not installed. Install with "pip install pipx"'
   fi
 }
 
