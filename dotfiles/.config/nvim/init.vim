@@ -260,7 +260,6 @@ function s:pack_init() abort
   call packager#add('git@github.com:yuki-ycino/fzf-preview.vim.git')
 
   " Git:
-  call packager#add('git@github.com:lambdalisue/gina.vim')
   call packager#add('git@github.com:junegunn/gv.vim')
   call packager#add('git@github.com:rhysd/git-messenger.vim.git')
 
@@ -1696,13 +1695,11 @@ let g:lightline.component = {
 
 let g:lightline.active.left = [
       \ [ 'mode', 'paste', 'spell' ],
-      \ [ 'gina', 'readonly', 'filename' ],
       \ [ 'ctrlpmark' ]
       \ ]
 
 let g:lightline.inactive.left = [
       \ [ 'mode', 'paste', 'spell' ],
-      \ [ 'gina', 'readonly', 'filename' ],
       \ [ 'ctrlpmark' ]
       \ ]
 
@@ -1719,7 +1716,6 @@ let g:lightline.inactive.right = [
       \ ]
 
 let g:lightline.component_function = {
-      \ 'gina': 'LightlineGina',
       \ 'filename': 'LightlineFilename',
       \ 'mode': 'LightlineMode'
       \ }
@@ -1746,18 +1742,6 @@ function! LightlineFilename()
         \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
-function! LightlineGina()
-  try
-    if expand('%:t') !~? 'Tagbar\|Gundo' && &ft !~? 'vimfiler'
-      let mark = '⎇ '
-      let branch = gina#component#repo#branch()
-      return branch !=# '' ? mark.branch : ''
-    endif
-  catch
-  endtry
-  return ''
-endfunction
-
 function! LightlineMode()
   let fname = expand('%:t')
   return fname =~ '__Tagbar__.*' ? 'Tagbar' :
@@ -1775,57 +1759,6 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
   let g:lightline.fname = a:fname
   return lightline#statusline(0)
 endfunction
-
-" }}}
-" Plugin: Gina {{{
-" This plugin is awesome
-" Just Gina followed by whatever I'd normally type in Git
-
-autocmd VimEnter * call s:setup_gina()
-
-" Problem is that at that moment when you call the function gina is not loaded
-" because native vim packages load them asynchronously
-" (vimrc first, and then plugins).
-function! s:setup_gina() abort
-  " Had to set the path manually, I don't know why
-  " https://github.com/lambdalisue/gina.vim/issues/254
-  " https://github.com/kristijanhusak/vim-packager/issues/17
-  " set runtimepath+=~/.config/nvim/pack/packager/start/gina.vim
-  for gina_cmd in ['branch', 'changes', 'log', 'commit', 'status']
-    call gina#custom#command#option(gina_cmd, '--opener', 'tabedit')
-  endfor
-
-  for gina_cmd in ['diff']
-    call gina#custom#command#option(gina_cmd, '--opener', 'vsplit')
-  endfor
-
-  call gina#custom#command#option('commit', '--verbose')
-  call gina#custom#command#option('branch', '--verbose|--all')
-
-  call gina#custom#command#option('blame', '--width', '79')
-  let gina#command#blame#formatter#format = '%ti|%au|%su'
-  let g:gina#command#blame#formatter#timestamp_months = v:false
-  let g:gina#command#blame#formatter#timestamp_format1 = "%Y-%m-%dT%H:%M:%S"
-  let g:gina#command#blame#formatter#timestamp_format2 = "%Y-%m-%dT%H:%M:%S"
-endfunction
-
-function! _Gpush()
-  let current_branch = gina#component#repo#branch()
-  execute 'Gina push -u origin' current_branch
-endfunction
-
-function! _Gpull()
-  let current_branch = gina#component#repo#branch()
-  execute 'Gina pull origin' current_branch
-endfunction
-
-function! _Gblame()
-  execute 'Gina blame'
-endfunction
-
-command! Gpush call _Gpush()
-command! Gpull call _Gpull()
-command! Gblame call _Gblame()
 
 " }}}
 " Plugin: Startify {{{
