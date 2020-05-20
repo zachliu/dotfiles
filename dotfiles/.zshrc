@@ -1185,6 +1185,22 @@ function update_program() {
   esac
 }
 
+# Get private IPs of out ECS instances
+function get_ips() {
+  if [ -z "$1" ]; then
+    echo "Must Define an Instance Name! eg mgmt-ecs"
+  else
+    aws ec2 describe-instances \
+      --filters \
+      "Name=tag:Name,Values=${1}-asg" \
+      "Name=instance-state-name,Values=running" \
+      --query \
+      "Reservations[*].Instances[*].{Instance:InstanceId,PrivateIP:PrivateIpAddress}" \
+      --output \
+      table
+  fi
+}
+
 # }}}
 # ZShell prompt (PS1) --- {{{
 
