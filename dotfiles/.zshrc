@@ -299,7 +299,7 @@ include ~/.bash/sensitive
 
 source "$HOME/.zplugin/bin/zplugin.zsh"
 
-zplugin ice wait lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
+zplugin ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
 zplugin light zdharma/fast-syntax-highlighting
 
 # zplugin ice wait lucid  # this generates a weird behavior
@@ -1329,3 +1329,4 @@ fi
 # autoload -Uz _zplugin
 # (( ${+_comps} )) && _comps[zplugin]=_zplugin
 ### End of Zplugin installer's chunk
+### End of Zinit's installer chunk
