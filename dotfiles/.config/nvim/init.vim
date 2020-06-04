@@ -251,10 +251,8 @@ function s:pack_init() abort
   call packager#add('git@github.com:myusuf3/numbers.vim')
 
   " Fuzzy finder:
-  call packager#add('git@github.com:junegunn/fzf', {
-        \ 'do': { -> fzf#install() },
-        \ })
-  call packager#add('git@github.com:maxjacobson/vim-fzf-coauthorship')
+  call packager#add('git@github.com:junegunn/fzf')
+  call packager#add('git@github.com:junegunn/fzf.vim')
   " Below needed by fzf-preview
   call packager#add('git@github.com:bogado/file-line.git')
   call packager#add('git@github.com:yuki-ycino/fzf-preview.vim.git')
@@ -322,7 +320,7 @@ function s:pack_init() abort
 
   " Autocompletion And IDE Features:
   call packager#add('git@github.com:neoclide/coc.nvim.git', {
-        \ 'branch': 'release',
+        \ 'do': 'yarn install && yarn build',
         \ })
   for coc_plugin in [
         \ 'git@github.com:coc-extensions/coc-svelte.git',
@@ -386,9 +384,7 @@ function s:pack_init() abort
   " Writing:
   call packager#add('git@github.com:dkarter/bullets.vim')
   call packager#add('git@github.com:moiatgit/vim-rst-sections')
-  call packager#add('git@github.com:jlesquembre/rst-tables.nvim', {
-        \ 'do': ':UpdateRemotePlugins',
-        \ })
+  call packager#add('git@github.com:jlesquembre/rst-tables.nvim')
   call packager#add('git@github.com:junegunn/goyo.vim')
   call packager#add('git@github.com:junegunn/limelight.vim')
   call packager#add('git@github.com:reedes/vim-wordy')
