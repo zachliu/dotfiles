@@ -33,6 +33,16 @@ window:
   # Window decorations
   # Setting this to none will result in window without borders and title bar.
   decorations: none
+  # Startup Mode (changes require restart)
+  #
+  # Values for `startup_mode`:
+  #   - Windowed
+  #   - Maximized
+  #   - Fullscreen
+  #
+  # Values for `startup_mode` (macOS only):
+  #   - SimpleFullscreen
+  startup_mode: Maximized
 
 # The FreeType rasterizer needs to know the device DPI for best results
 # (changes require restart)
@@ -41,17 +51,20 @@ dpi:
   y: 96.0
 
 # When true, bold text is drawn using the bright variant of colors.
-draw_bold_text_with_bright_colors: true
+draw_bold_text_with_bright_colors: false
 
 # Font configuration (changes require restart)
 font:
   normal:
+    family: monospace
     style: Regular
   bold:
+    family: monospace
     style: Bold
   italic:
+    family: monospace
     style: Italic
-  size: 11
+  size: 11.0
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
@@ -99,25 +112,25 @@ colors:
 
   # Normal colors
   normal:
-    black:   '0x000000'
+    black:   '0x2E3436'
     red:     '0xcc0000'
-    green:   '0x4a9e06'
-    yellow:  '0xe6c547'
-    blue:    '0x7aa6da'
-    magenta: '0xc397d8'
-    cyan:    '0x70c0ba'
-    white:   '0x424242'
+    green:   '0x00CD00'
+    yellow:  '0xC4A000'
+    blue:    '0x3465A4'
+    magenta: '0x75507B'
+    cyan:    '0x06989A'
+    white:   '0xD3D7CF'
 
   # Bright colors
   bright:
-    black:   '0x666666'
-    red:     '0xff3334'
-    green:   '0x00c406'
-    yellow:  '0xe7c547'
-    blue:    '0x7aa6da'
-    magenta: '0xb77ee0'
-    cyan:    '0x54ced6'
-    white:   '0x2a2a2a'
+    black:   '0x555753'
+    red:     '0xEF2929'
+    green:   '0x8AE234'
+    yellow:  '0xFCE94F'
+    blue:    '0x729FCF'
+    magenta: '0xAD7FA8'
+    cyan:    '0x34E2E2'
+    white:   '0xEEEEEC'
 
 # color_end
 
@@ -162,12 +175,12 @@ live_config_reload: true
 shell:
   program: /usr/bin/zsh
 
-# key_bindings:
-#   - { key: LBracket, mods: Control, mode: Vi, action: ClearSelection }
-#   - { key: Q, mode: Vi, action: ScrollToBottom }
-#   - { key: Q, mode: Vi, action: ToggleViMode }
-#   # Key: $
-#   - { key: 05, mods: Shift, mode: Vi, action: Last }
-#   - { key: 06, mods: Shift, mode: Vi, action: Bracket }
-#   # Key: 0
-#   - { key: 07, mods: Shift, mode: Vi, action: FirstOccupied }
+key_bindings:
+  - { key: LBracket, mods: Control, mode: Vi, action: ClearSelection }
+  - { key: Q, mode: Vi, action: ScrollToBottom }
+  - { key: Q, mode: Vi, action: ToggleViMode }
+  # Key: $
+  - { key: 05, mods: Shift, mode: Vi, action: Last }
+  - { key: 06, mods: Shift, mode: Vi, action: Bracket }
+  # Key: 0
+  - { key: 07, mods: Shift, mode: Vi, action: FirstOccupied }
