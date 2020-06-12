@@ -194,6 +194,8 @@ call SetGlobalConfig()
 " }}}
 " General: Vim packages: vim-packager {{{
 
+" Note: vim-packager automatically executes UpdateRemotePlugins
+
 function s:pack_init() abort
   packadd vim-packager
   call packager#init()
@@ -223,16 +225,10 @@ function s:pack_init() abort
   call packager#add('git@github.com:chrisbra/Colorizer')
   call packager#add('git@github.com:fidian/hexmode')
   call packager#add('git@github.com:wellle/targets.vim')
-  call packager#add('git@github.com:Shougo/defx.nvim', {
-        \ 'do': ':UpdateRemotePlugins',
-        \ })
+  call packager#add('git@github.com:Shougo/defx.nvim')
   call packager#add('git@github.com:Shougo/echodoc.vim')
-  call packager#add('git@github.com:kristijanhusak/defx-git', {
-        \ 'do': ':UpdateRemotePlugins',
-        \ })
-  call packager#add('git@github.com:kristijanhusak/defx-icons', {
-        \ 'do': ':UpdateRemotePlugins',
-        \ })
+  call packager#add('git@github.com:kristijanhusak/defx-git')
+  call packager#add('git@github.com:kristijanhusak/defx-icons')
 
   " Tim Pope: general, uncategorizable tim pope plugins
   " Notes:
