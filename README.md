@@ -10,4 +10,4 @@ OS:
 make dotfiles
 ```
 
-Written by: Not me
+Written by: Not me but her
