@@ -1170,12 +1170,12 @@ augroup keywordprogram-overrides
 augroup END
 
 " }}}
-" Plugin: vim-radical {{{
+" Package: vim-radical {{{
 
 let g:radical_no_mappings = 1
 
 " }}}
-" Plugin: Git Plugins: GV.vim, Fugitive, git-messenger {{{
+" Package: Git Plugins: GV.vim, Fugitive, git-messenger {{{
 
 " NOTES:
 " :GV to open commit browser
@@ -1197,7 +1197,7 @@ let g:radical_no_mappings = 1
 let g:git_messenger_always_into_popup = v:true
 
 " }}}
-" Plugin: Jinja2 {{{
+" Package: Jinja2 {{{
 
 function! s:jinja2_toggle()
   let jinja2 = '.jinja2'
@@ -1213,7 +1213,7 @@ endfunction
 command! Jinja2Toggle call <SID>jinja2_toggle()
 
 " }}}
-" Plugin: Man pager / help (builtins) {{{
+" Package: Man pager / help (builtins) {{{
 
 let g:man_hardwrap = v:true
 
@@ -1227,7 +1227,7 @@ augroup man_page_custom
 augroup END
 
 " }}}
-" Plugin: Restructured Text {{{
+" Package: Restructured Text {{{
 
 " Vim Rst Sections: documentation
 " -----------------------------------------------------------------------
@@ -1323,7 +1323,7 @@ augroup rst_sections_mappings
 augroup END
 
 " }}}
-" Plugin: Markdown-preview.vim {{{
+" Package: Markdown-preview.vim {{{
 
 let g:mkdp_auto_start = v:false
 let g:mkdp_auto_close = v:false
@@ -1364,7 +1364,7 @@ let g:mkdp_preview_options = {
       \ }
 
 " }}}
-" Plugin: Preview Compiled Stuff in Viewer {{{
+" Package: Preview Compiled Stuff in Viewer {{{
 
 function! _Preview()
   if &filetype ==? 'rst'
@@ -1386,7 +1386,7 @@ endfunction
 command! Preview call _Preview()
 
 " }}}
-"  Plugin: Rainbow Parentheses {{{
+" Package: Rainbow Parentheses {{{
 
 let g:rainbow#max_level = 16
 let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
@@ -1398,7 +1398,7 @@ augroup rainbow_settings
 augroup END
 
 "  }}}
-" Plugin: defx {{{
+" Package: defx {{{
 
 let g:custom_defx_state = tempname()
 
@@ -1498,7 +1498,7 @@ augroup defx_settings
 augroup END
 
 " }}}
-" Plugin: Fzf and Fzf Preview {{{
+" Package: Fzf and Fzf Preview {{{
 
 " An action can be a reference to a function that processes selected lines
 function! s:build_quickfix_list(lines)
@@ -1581,7 +1581,7 @@ function! FZFBuffersAvoidDefx()
 endfunction
 
 " }}}
-"  Plugin: Tagbar {{{
+" Package: Tagbar {{{
 
 let g:tagbar_map_showproto = '`'
 let g:tagbar_show_linenumbers = -1
@@ -1639,7 +1639,7 @@ let g:tagbar_type_rst = {
       \ }
 
 "  }}}
-" Plugin: Lightline {{{
+" Package: Lightline {{{
 
 " This is a giant section
 " that configures the status line for my vim editing.
@@ -1753,7 +1753,7 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
 endfunction
 
 " }}}
-" Plugin: Startify {{{
+" Package: Startify {{{
 
 let g:startify_list_order = []
 let g:startify_fortune_use_unicode = v:true
@@ -1791,7 +1791,7 @@ endfunction
 autocmd VimEnter * call s:set_startify()
 
 " }}}
-"  Plugin: VimTex {{{
+" Package: VimTex {{{
 
 let g:vimtex_compiler_latexmk = {'callback' : v:false}
 let g:tex_flavor = 'latex'
@@ -1808,7 +1808,7 @@ function! MyVimTexDocHandler(context)
 endfunction
 
 "  }}}
-"  Plugin: AutoPairs {{{
+" Package: AutoPairs {{{
 
 " AutoPairs:
 " unmap CR due to incompatibility with clang-complete
@@ -1878,7 +1878,7 @@ augroup autopairs_filetype_overrides
 augroup END
 
 "  }}}
-" Plugin: Sandwich {{{
+" Package: Sandwich {{{
 
 " LatexNotes:
 "   textobject:
@@ -1898,7 +1898,7 @@ augroup END
 let g:textobj_sandwich_no_default_key_mappings = v:true
 
 " }}}
-" Plugin: Goyo {{{
+" Package: Goyo {{{
 
 " Set width a bit wider to account for line numbers
 let g:goyo_width = 84
@@ -1929,7 +1929,7 @@ autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 " }}}
-"  Plugin: RagTag {{{
+" Package: RagTag {{{
 
 " Load mappings on every filetype
 let g:ragtag_global_maps = v:true
@@ -1940,7 +1940,7 @@ augroup ragtag_config
 augroup end
 
 "  }}}
-" Plugin: nvim-repl {{{
+" Package: nvim-repl {{{
 
 let g:repl_filetype_commands = {
       \ 'python': 'python',
@@ -1949,7 +1949,7 @@ let g:repl_filetype_commands = {
 let g:repl_default = &shell
 
 " }}}
-" Plugin: Slime {{{
+" Package: Slime {{{
 
 let g:slime_target = "neovim"
 let g:slime_dont_ask_default = v:true
@@ -1998,7 +1998,7 @@ let g:repl_filetype_commands = {
       \ }
 
 " }}}
-" Plugin: Vim-markdown {{{
+" Package: Vim-markdown {{{
 
 let g:vim_markdown_frontmatter = v:true
 let g:vim_markdown_toml_frontmatter = v:true
@@ -2010,14 +2010,23 @@ let g:vim_markdown_auto_insert_bullets = v:false
 let g:vim_markdown_new_list_item_indent = v:false
 
 " }}}
-"  Plugin: Terraform Syntax {{{
+" Package: vim-filetype-formatter {{{
+
+let g:vim_filetype_formatter_verbose = v:false
+let g:vim_filetype_formatter_ft_no_defaults = []
+let g:vim_filetype_formatter_commands = {
+      \ 'python': 'black -q - | isort -',
+      \ }
+
+" }}}
+" Package: Terraform Syntax {{{
 
 let g:terraform_align=1
 " Use spacebar to fold/unfold resources
 let g:terraform_remap_spacebar=1
 
 " }}}
-" Plugin: AutoCompletion / GoTo Definition / LSP / Snippets {{{
+" Package: AutoCompletion / GoTo Definition / LSP / Snippets {{{
 
 " Coc:
 function! s:show_documentation()
@@ -2079,7 +2088,7 @@ command! CocDiagnosticEnable call s:coc_diagnostic_enable()
 command! CocDiagnosticDisable call s:coc_diagnostic_disable()
 
 " }}}
-" Plugin: Vim-filetype-formatter {{{
+" Package: Vim-filetype-formatter {{{
 
 let g:vim_filetype_formatter_verbose = v:false
 let g:vim_filetype_formatter_ft_no_defaults = [
@@ -2090,7 +2099,7 @@ let g:vim_filetype_formatter_commands = {
       \ }
 
 " }}}
-" Plugin: Miscellaneous global var config {{{
+" Package: Miscellaneous global var config {{{
 
 " Python: configure python paths
 " let g:python3_host_prog = system('which python3')
@@ -2429,8 +2438,8 @@ function! DefaultKeyMappings()
   imap <C-l> <right>
 
   " FiletypeFormat: remap leader f to do filetype formatting
-  nnoremap <leader>f :FiletypeFormat<cr>
-  vnoremap <leader>f :FiletypeFormat<cr>
+  nnoremap <silent> <leader>f <cmd>FiletypeFormat<cr>
+  vnoremap <silent> <leader>f :FiletypeFormat<cr>
 
   " Open Browser: override netrw
   nmap gx <Plug>(openbrowser-smart-search)
