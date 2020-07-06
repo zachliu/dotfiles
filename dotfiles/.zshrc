@@ -1168,12 +1168,12 @@ function s3size() {
 
 function shrug() {
   echo "¯\_(ツ)_/¯"
-  echo "¯\_(ツ)_/¯" | xsel --clipboard --input
+  echo -n "¯\_(ツ)_/¯" | xsel --clipboard --input
 }
 
 function ftt() {
   echo "(╯°□°)╯︵ ┻━┻"
-  echo "(╯°□°)╯︵ ┻━┻" | xsel --clipboard --input
+  echo -n "(╯°□°)╯︵ ┻━┻" | xsel --clipboard --input
 }
 
 function update_program() {
