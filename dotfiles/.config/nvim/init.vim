@@ -2445,6 +2445,9 @@ function! DefaultKeyMappings()
   nmap gx <Plug>(openbrowser-smart-search)
   vmap gx <Plug>(openbrowser-smart-search)
 
+  " Simple remap to update terraform lines to first class expressions
+  vnoremap <C-t> :'<,'>!tr -d '"{$}'<CR>
+
 endfunction
 
 call DefaultKeyMappings()
