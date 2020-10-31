@@ -178,7 +178,7 @@ export MANWIDTH=79
 export MANPAGER=less
 
 # Git
-export GIT_PAGER=less
+# export GIT_PAGER=less
 
 # Configure man pager
 # export MANPAGER='nvim -c "set ft=man" -'
