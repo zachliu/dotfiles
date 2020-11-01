@@ -353,9 +353,6 @@ function! s:default_key_mappings()
   nnoremap <silent> <leader><leader>h mz:call ResizeWindowHeight()<CR>`z
   nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
 
-  " AutoPairs:
-  imap <silent><CR> <CR><Plug>AutoPairsReturn
-
   " Repl: Sam's repl plugin
   nnoremap <leader><leader>e :ReplToggle<CR>
   nmap <leader>e <Plug>ReplSendLine
@@ -450,7 +447,6 @@ function! s:default_key_mappings()
 
   " Insert Mode moves
   imap <C-h> <left>
-  " AutoPairsMapCh has to be 0 for <C-h> to work here
   imap <C-j> <down>
   imap <C-k> <up>
   imap <C-l> <right>
@@ -774,7 +770,7 @@ augroup custom_filetype_recognition
   autocmd BufEnter .envrc set filetype=sh
   autocmd BufEnter .gitignore,.dockerignore set filetype=conf
   autocmd BufEnter .jrnl_config,*.bowerrc,*.babelrc,*.eslintrc,*.slack-term set filetype=json
-  autocmd BufEnter Dockerfile.* set filetype=dockerfile
+  autocmd BufEnter Dockerfile.* set filetype=Dockerfile
   autocmd BufEnter Makefile.* set filetype=make
   autocmd BufEnter poetry.lock,Pipfile set filetype=toml
   autocmd BufEnter tsconfig.json,*.jsonc,.markdownlintrc set filetype=jsonc
