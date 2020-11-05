@@ -65,6 +65,7 @@ function s:pack_init() abort
 
   " Syntax Theme:
   call packager#add('git@github.com:NLKNguyen/papercolor-theme')
+  call packager#add('git@github.com:zachliu/molokai.git')
   call packager#add('git@github.com:zachliu/papercolor-theme-slim.git')
 
   " Syntax Highlighting:
@@ -199,9 +200,6 @@ function s:pack_init() abort
   " Code Formatters:
   call packager#add('git@github.com:pappasam/vim-filetype-formatter')
 
-  " C:
-  call packager#add('git@github.com:ericcurtin/CurtineIncSw.vim')
-
   " Repl Integration:
   " call packager#add('git@github.com:jpalardy/vim-slime.git')
   call packager#add('git@github.com:pappasam/nvim-repl.git')
@@ -295,17 +293,12 @@ function! s:default_key_mappings()
   nnoremap <silent> gK H
   nnoremap <silent> gM M
 
-  " QuickChangeFiletype:
-  " Sometimes we want to set some filetypes due to annoying behavior of plugins
-  " The following mappings make it easier to chage javascript plugin behavior
-  nnoremap <leader>jx :set filetype=javascript.jsx<CR>
-  nnoremap <leader>jj :set filetype=javascript<CR>
-
   " Jinja2Toggle: the following mapping toggles jinja2 for any filetype
-  nnoremap <silent> <leader>j :call Jinja2Toggle()<CR>
+  nnoremap <silent> <leader>j <cmd>Jinja2Toggle<CR>
 
   " ToggleRelativeNumber: uses custom functions
-  nnoremap <silent><leader>r :call ToggleRelativeNumber()<CR>
+  nnoremap <silent> <leader>R <cmd>ToggleNumber<CR>
+  nnoremap <silent> <leader>r <cmd>ToggleRelativeNumber<CR>
 
   " TogglePluginWindows:
   nnoremap <silent> <space>j :Defx
@@ -350,8 +343,8 @@ function! s:default_key_mappings()
   nnoremap <silent> <leader>i :IndentLinesToggle<CR>
 
   " ResizeWindow: up and down; relies on custom functions
-  nnoremap <silent> <leader><leader>h mz:call ResizeWindowHeight()<CR>`z
-  nnoremap <silent> <leader><leader>w mz:call ResizeWindowWidth()<CR>`z
+  nnoremap <silent> <leader><leader>h <cmd>ResizeWindowHeight<CR>
+  nnoremap <silent> <leader><leader>w <cmd>ResizeWindowWidth<CR>
 
   " Repl: Sam's repl plugin
   nnoremap <leader><leader>e :ReplToggle<CR>
@@ -382,9 +375,6 @@ function! s:default_key_mappings()
   " DeleteHiddenBuffers: shortcut to make this easier
   " Note: weird stuff happens if you mess this up
   nnoremap <leader>d :DeleteHiddenBuffers<CR>
-
-  " Jumping to header file
-  nnoremap gh :call CurtineIncSw()<CR>
 
   " Coc: settings for coc.nvim
   " see https://github.com/neoclide/coc.nvim
@@ -554,6 +544,10 @@ augroup end
 " Package: treesitter {{{
 
 function s:init_treesitter()
+  if !exists('g:loaded_nvim_treesitter')
+    echom 'nvim-treesitter does not exist, skipping...'
+    return
+  endif
 lua << EOF
 require('nvim-treesitter.configs').setup({
   highlight = { enable = true },
@@ -659,7 +653,7 @@ else
   set guicursor=
 endif
 
-" Set Background: for PaperColor, also sets handler
+" Set Background: for PaperColor/Molokai, also sets handler
 set background=dark
 
 " Colorcolumn:
@@ -745,10 +739,21 @@ augroup cursorline_setting
   autocmd WinLeave * setlocal nocursorline
 augroup END
 
+" Toggle between my favorite two color schemes
+function ToggleColorSchemes()
+    if (g:colors_name == "PaperColorSlim")
+        colorscheme Molokai
+    else
+        colorscheme PaperColorSlim
+    endif
+endfunction
+nnoremap <silent> <leader>c :call ToggleColorSchemes()<CR>
+
 try
+  " colorscheme Molokai
   colorscheme PaperColorSlim
 catch
-  echo 'An error occured while configuring PaperColor'
+  echo 'An error occured while configuring colorscheme'
 endtry
 
 " }}}
@@ -977,7 +982,7 @@ function! s:abolish_correct()
   Abolish {les,compar,compari}sion{,s} {les,compari,compari}son{}
 endfunction
 
-augroup writing
+augroup custom_writing
   autocmd!
   autocmd VimEnter * call s:abolish_correct()
   autocmd FileType markdown,rst,text,gitcommit
