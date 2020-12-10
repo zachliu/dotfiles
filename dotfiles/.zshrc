@@ -7,19 +7,19 @@
 # sleep 1
 
 # If we are using gnome-terminal, hide the headerbar
-if [ "$TERM" = "xterm-256color" ]; then
-  old_wid=$(xdotool getactivewindow)
-  wname=$(xdotool getwindowname $old_wid)
-  if [ "$wname" != "Terminal" ]; then
-    xdotool windowminimize $old_wid
-  fi
-  wid=$(xdotool getactivewindow)
-  wmctrl -ir $wid -b add,maximized_vert,maximized_horz
-  xprop \
-    -id $wid \
-    -f _MOTIF_WM_HINTS 32c \
-    -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"
-fi
+# if [ "$TERM" = "xterm-256color" ]; then
+#   old_wid=$(xdotool getactivewindow)
+#   wname=$(xdotool getwindowname $old_wid)
+#   if [ "$wname" != "Terminal" ]; then
+#     xdotool windowminimize $old_wid
+#   fi
+#   wid=$(xdotool getactivewindow)
+#   wmctrl -ir $wid -b add,maximized_vert,maximized_horz
+#   xprop \
+#     -id $wid \
+#     -f _MOTIF_WM_HINTS 32c \
+#     -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"
+# fi
 
 #######################################################################
 # Profiler Header
