@@ -1204,6 +1204,45 @@ function get_ips() {
   fi
 }
 
+# Get the nth row from a given file on s3
+function nth_row() {
+  # 1st arg: s3 path
+  # 2nd arg: row # in question
+  local filename=$(basename -- "$1")
+  local extension="${filename##*.}"
+  local local_filename="fiq.${extension}"
+  aws s3 cp $1 $local_filename
+  local comp_type=$(file $local_filename)
+  if [[ "$comp_type" == *"bzip2"* ]]; then
+    bzip2 -d $local_filename
+  elif [[ "$comp_type" == *"gzip"* ]]; then
+    gunzip $local_filename
+  else
+    if [[ $extension != "csv" || $extension != "tsv" ]]; then
+      echo "Can't deal with '$comp_type' yet"
+    else
+      mv $local_filename "fiq"
+    fi
+  fi
+
+  local txt_type=$(file "fiq")
+  local total_lines=$(wc -l < "fiq")
+  if (( $2 > $total_lines )); then
+    tput setaf 1;
+    echo -e "The line you want to see exceed total lines $total_lines"
+  else
+    if [[ "$txt_type" == *"JSON"* ]]; then
+      sed "${2}q;d" "fiq" | jq
+    else
+      sed "${2}q;d" "fiq"
+    fi
+  fi
+
+  if [ -f "fiq" ]; then
+    rm "fiq"
+  fi
+}
+
 # }}}
 # ZShell prompt (PS1) --- {{{
 
