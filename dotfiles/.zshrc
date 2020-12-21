@@ -1218,7 +1218,8 @@ function nth_row() {
   elif [[ "$comp_type" == *"gzip"* ]]; then
     gunzip $local_filename
   else
-    if [[ $extension != "csv" || $extension != "tsv" ]]; then
+    echo $extension
+    if [[ $extension != "csv" && $extension != "tsv" && $extension != "json" ]]; then
       echo "Can't deal with '$comp_type' yet"
     else
       mv $local_filename "fiq"
