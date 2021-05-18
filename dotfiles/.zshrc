@@ -1179,11 +1179,20 @@ function ftt() {
 function update_program() {
   case $1 in
     kitty)
-      curl -Lsf https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+      curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
       ;;
     zoom)
       curl -Lsf https://zoom.us/client/latest/zoom_amd64.deb -o /tmp/zoom_amd64.deb
       sudo dpkg -i /tmp/zoom_amd64.deb
+      ;;
+    vault)
+      if [ -z $2 ]; then
+        echo "Missing Vault Version!"
+      else
+        curl -Lsf https://releases.hashicorp.com/vault/${2}/vault_${2}_linux_amd64.zip -o /tmp/vault.zip
+        unzip -o -d $HOME/.local/bin/ /tmp/vault.zip
+        echo "Updated Vault to $2"
+      fi
       ;;
   esac
 }
