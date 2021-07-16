@@ -115,7 +115,8 @@ function s:pack_init() abort
   call packager#add('git@github.com:magicalbanana/sql-syntax-vim')
 
   " TreeSitter:
-  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter.git')
+  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter.git', {'do': ':TSUpdate'})
+  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter-textobjects.git')
   call packager#add('git@github.com:nvim-treesitter/playground.git')
 
   " Indentation Only:
@@ -124,9 +125,7 @@ function s:pack_init() abort
   call packager#add('git@github.com:Yggdroot/indentLine')
 
   " Autocompletion And IDE Features:
-  call packager#add('git@github.com:neoclide/coc.nvim.git', {
-        \ 'do': 'yarn install && yarn build',
-        \ })
+  call packager#add('git@github.com:neoclide/coc.nvim.git', {'branch': 'release'})
   for coc_plugin in [
         \ 'git@github.com:coc-extensions/coc-svelte.git',
         \ 'git@github.com:fannheyward/coc-markdownlint.git',
