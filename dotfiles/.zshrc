@@ -263,6 +263,11 @@ if [ -d "$POETRY_LOC" ]; then
   source $HOME/.poetry/env
 fi
 
+SERVERLESS_BIN="$HOME/.serverless/bin"
+if [ -d "$SERVERLESS_BIN" ]; then
+  path_ladd "$SERVERLESS_BIN"
+fi
+
 # EXPORT THE FINAL, MODIFIED PATH
 export PATH
 
