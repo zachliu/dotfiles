@@ -35,6 +35,7 @@ function s:pack_init() abort
   call packager#add('git@github.com:Shougo/echodoc.vim')
   call packager#add('git@github.com:kristijanhusak/defx-git')
   call packager#add('git@github.com:kristijanhusak/defx-icons')
+  call packager#add('git@github.com:dstein64/nvim-scrollview.git')
 
   " Colors: See CSS colors
   call packager#add('git@github.com:norcalli/nvim-colorizer.lua.git')
@@ -126,25 +127,6 @@ function s:pack_init() abort
 
   " Autocompletion And IDE Features:
   call packager#add('git@github.com:neoclide/coc.nvim.git', {'branch': 'release'})
-  for coc_plugin in [
-        \ 'git@github.com:coc-extensions/coc-svelte.git',
-        \ 'git@github.com:fannheyward/coc-markdownlint.git',
-        \ 'git@github.com:iamcco/coc-diagnostic.git',
-        \ 'git@github.com:iamcco/coc-vimlsp.git',
-        \ 'git@github.com:josa42/coc-docker.git',
-        \ 'git@github.com:neoclide/coc-css.git',
-        \ 'git@github.com:neoclide/coc-html.git',
-        \ 'git@github.com:neoclide/coc-json.git',
-        \ 'git@github.com:neoclide/coc-pairs.git',
-        \ 'git@github.com:neoclide/coc-rls.git',
-        \ 'git@github.com:neoclide/coc-snippets.git',
-        \ 'git@github.com:neoclide/coc-tsserver.git',
-        \ 'git@github.com:neoclide/coc-yaml.git',
-        \ ]
-    call packager#add(coc_plugin, {
-          \ 'do': 'yarn install --frozen-lockfile && yarn build',
-          \ })
-  endfor
 
   " Tagbar:
   call packager#add('git@github.com:majutsushi/tagbar')
@@ -302,22 +284,33 @@ function! s:default_key_mappings()
   " TogglePluginWindows:
   nnoremap <silent> <space>j :Defx
         \ -buffer-name=defx
-        \ -columns=mark:git:indent:icons:filename:type:size:time
+        \ -columns=mark:git:indent:icons:space:filename:type
         \ -direction=topleft
         \ -search=`expand('%:p')`
         \ -session-file=`g:custom_defx_state`
+        \ -ignored-files=`g:defx_ignored_files`
         \ -split=vertical
         \ -toggle
+        \ -floating-preview
+        \ -vertical-preview
+        \ -preview-height=50
+        \ -preview-width=85
         \ -winwidth=31
+        \ -root-marker=''
         \ <CR>
   nnoremap <silent> <space>J :Defx `expand('%:p:h')`
         \ -buffer-name=defx
-        \ -columns=mark:git:indent:icons:filename:type:size:time
+        \ -columns=mark:git:indent:icons:space:filename:type
         \ -direction=topleft
         \ -search=`expand('%:p')`
+        \ -ignored-files=`g:defx_ignored_files`
         \ -split=vertical
-        \ -toggle
+        \ -floating-preview
+        \ -vertical-preview
+        \ -preview-height=50
+        \ -preview-width=85
         \ -winwidth=31
+        \ -root-marker=''
         \ <CR>
   nnoremap <silent> <space>l :TagbarToggle <CR>
   nnoremap <silent> <space>u :UndotreeToggle<CR>
@@ -384,6 +377,8 @@ function! s:default_key_mappings()
   nmap <silent> <leader>si <Plug>(coc-implementation)
   nmap <silent> <leader>su <Plug>(coc-references)
   nmap <silent> <leader>sr <Plug>(coc-rename)
+  nmap <silent> <leader>sa v<Plug>(coc-codeaction-selected)
+  vmap <silent> <leader>sa <Plug>(coc-codeaction-selected)
   " next and previous items in a list
   nnoremap <silent> <leader>sn :<C-u>CocNext<CR>
   nnoremap <silent> <leader>sp :<C-u>CocPrev<CR>
@@ -489,12 +484,35 @@ let g:coc_filetype_map = {
       \ 'yaml.docker-compose': 'yaml',
       \ }
 
-" Coc Sources: from https://github.com/neoclide/coc-sources
+" Coc Global Extensions: automatically installed on Vim open
 let g:coc_global_extensions = [
+      \ 'coc-angular',
+      \ 'coc-jedi',
+      \ 'coc-css',
+      \ 'coc-diagnostic',
       \ 'coc-dictionary',
+      \ 'coc-docker',
       \ 'coc-emoji',
+      \ 'coc-go',
+      \ 'coc-html',
+      \ 'coc-java',
+      \ 'coc-json',
+      \ 'coc-lists',
+      \ 'coc-markdownlint',
+      \ 'coc-pairs',
+      \ 'coc-rls',
+      \ 'coc-sh',
+      \ 'coc-snippets',
+      \ 'coc-spell-checker',
+      \ 'coc-svelte',
+      \ 'coc-svg',
       \ 'coc-syntax',
+      \ 'coc-texlab',
+      \ 'coc-tsserver',
+      \ 'coc-vimlsp',
       \ 'coc-word',
+      \ 'coc-yaml',
+      \ 'coc-yank',
       \ ]
 
 " Customization:
@@ -778,7 +796,7 @@ augroup custom_filetype_recognition
   autocmd BufEnter .envrc set filetype=sh
   autocmd BufEnter .gitignore,.dockerignore set filetype=conf
   autocmd BufEnter .jrnl_config,*.bowerrc,*.babelrc,*.eslintrc,*.slack-term set filetype=json
-  autocmd BufEnter Dockerfile.* set filetype=Dockerfile
+  autocmd BufEnter Dockerfile,Dockerfile.* set filetype=dockerfile
   autocmd BufEnter Makefile.* set filetype=make
   autocmd BufEnter poetry.lock,Pipfile set filetype=toml
   autocmd BufEnter tsconfig.json,*.jsonc,.markdownlintrc set filetype=jsonc
@@ -1603,6 +1621,33 @@ augroup END
 " }}}
 " Package: fzf and fzf preview {{{
 
+" When in preview window, the following key mappings are relevant:
+" <C-s>
+"   - Toggle window size of fzf, normal size and full-screen
+" <C-d>
+"   - Preview page down
+" <C-u>
+"   - Preview page up
+" <C-t> or ?
+"   - Toggle Preview
+" <C-x>, <C-v>, <C-t>: open in split, vert, and tab
+
+let g:fzf_colors = {
+      \ 'fg': ['fg', 'Normal'],
+      \ 'bg': ['bg', 'Normal'],
+      \ 'hl': ['fg', 'Comment'],
+      \ 'fg+': ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+': ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+': ['fg', 'Statement'],
+      \ 'info': ['fg', 'PreProc'],
+      \ 'border': ['fg', 'Ignore'],
+      \ 'prompt': ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker': ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header': ['fg', 'Comment'],
+      \ }
+
 " An action can be a reference to a function that processes selected lines
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -1616,13 +1661,6 @@ let $FZF_DEFAULT_OPTS = '-m --bind ctrl-a:select-all,ctrl-d:deselect-all '
       \ . 'echo {} is a binary file ||'
       \ . '(bat --style=numbers --color=always {} || cat {})'
       \ . '2> /dev/null | head -500"'
-let g:fzf_layout = { 'window': 'botright 20new' }
-let g:fzf_action = {
-      \ 'ctrl-o': 'edit',
-      \ 'ctrl-t': 'tab split',
-      \ 'ctrl-s': 'split',
-      \ 'ctrl-v': 'vsplit',
-      \ }
 
 function! s:fzf_edit_file(items)
   let items = a:items
@@ -1682,6 +1720,24 @@ function! FZFBuffersAvoidDefx()
   endif
   execute 'Buffers'
 endfunction
+
+" Fixed window
+" let g:fzf_layout = { 'window': 'botright 20new' }
+
+" Floating window
+let g:fzf_layout = { 'window': {
+      \ 'width': 0.9,
+      \ 'height': 0.6,
+      \ 'yoffset': 0.9,
+      \ 'highlight': 'Ignore',
+      \ } }
+
+let g:fzf_action = {
+      \ 'ctrl-o': 'edit',
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-x': 'split',
+      \ 'ctrl-v': 'vsplit',
+      \ }
 
 " }}}
 " Package: tagbar {{{
