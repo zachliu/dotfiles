@@ -1,14 +1,86 @@
 {
+  "coc.source.emoji.filetypes": ["markdown", "rst"],
+  "coc.source.dictionary.filetypes": [
+    "gitcommit",
+    "html",
+    "markdown",
+    "rst",
+    "text"
+  ],
+  "coc.source.word.filetypes": ["gitcommit", "html", "markdown", "rst", "text"],
   "suggest.autoTrigger": "always",
-  "suggest.noselect": false,
-  "pairs.enableCharacters": ["(", "[", "{", "<"],
+  "suggest.noselect": true,
+  "diagnostic.enable": true,
+  "signature.hideOnTextChange": true,
+  "signature.enable": false,
+  "jedi.jediSettings.autoImportModules": [
+    "alembic",
+    "fastai",
+    "fastcore",
+    "matplotlib",
+    "sqlalchemy"
+  ],
+  "jedi.diagnostics.enable": false,
+  "jedi.startupMessage": false,
+  "vimlsp.suggest.fromRuntimepath": true,
+  "vimlsp.indexes.count": 50,
+  "java.enabled": false,
+  "rust-client.rlsPath": "rls",
+  "rust-client.channel": "stable",
+  "list.normalMappings": {
+    "<C-v>": "action:vsplit",
+    "<C-x>": "action:split",
+    "<C-t>": "action:tabe"
+  },
+  "list.insertMappings": {
+    "<C-v>": "action:vsplit",
+    "<C-x>": "action:split",
+    "<C-t>": "action:tabe"
+  },
+  "pairs.enableCharacters": ["(", "[", "{", "\"", "'"],
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.17.0-standalone-strict/all.json": [
+      "/kubernetes/*.yml",
+      "/kubernetes/*.yaml"
+    ],
+    "https://raw.githubusercontent.com/docker/compose/master/compose/config/compose_spec.json": "/*docker-compose.yml",
+    "https://raw.githubusercontent.com/threadheap/serverless-ide-vscode/master/packages/serverless-framework-schema/schema.json": "/*serverless.yml",
+    "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.0.3/schemas/v3.0/schema.json": [
+      "/*open-api*.yml",
+      "/*open-api*.yaml"
+    ]
+  },
   "diagnostic-languageserver.filetypes": {
-    "python": "pylint"
+    "python": "pylint",
+    "nginx": "nginx-linter"
+  },
+  "diagnostic-languageserver.formatFiletypes": {
+    "python": ["black", "isort", "docformatter"]
   },
   "diagnostic-languageserver.linters": {
+    "nginx-linter": {
+      "sourceName": "nginx-linter",
+      "command": "nginx-linter",
+      "debounce": 100,
+      "args": ["--include", "%file"],
+      "formatPattern": [
+        "^\\s+(\\d+?):(\\d+?)\\s+([a-z]+?)\\s+(.*)$",
+        {
+          "line": 1,
+          "column": 2,
+          "security": 3,
+          "message": 4
+        }
+      ],
+      "rootPatterns": ["nginx.conf", ".git"],
+      "securities": {
+        "error": "info"
+      }
+    },
     "pylint": {
       "sourceName": "pylint",
       "command": "pylint",
+      "debounce": 100,
       "args": [
         "--output-format",
         "text",
@@ -27,6 +99,7 @@
           "message": 4
         }
       ],
+      "rootPatterns": ["pyproject.toml", "setup.py", ".git"],
       "securities": {
         "informational": "hint",
         "refactor": "info",
@@ -37,23 +110,180 @@
       },
       "offsetColumn": 1,
       "formatLines": 1
+    },
+    "write-good": {
+      "sourceName": "write-good",
+      "command": "write-good",
+      "debounce": 100,
+      "args": ["--text=%text"],
+      "offsetLine": 0,
+      "offsetColumn": 1,
+      "formatLines": 1,
+      "formatPattern": [
+        "(.*)\\s+on\\s+line\\s+(\\d+)\\s+at\\s+column\\s+(\\d+)\\s*$",
+        {
+          "line": 2,
+          "column": 3,
+          "message": 1
+        }
+      ]
+    }
+  },
+  "diagnostic-languageserver.formatters": {
+    "black": {
+      "command": "black",
+      "args": ["black", "-q", "-"]
+    },
+    "isort": {
+      "command": "isort",
+      "args": ["-q", "-"]
+    },
+    "docformatter": {
+      "command": "docformatter",
+      "args": ["-"]
     }
   },
   "languageserver": {
-    "dockerfile": {
-      "command": "docker-langserver",
-      "filetypes": ["Dockerfile"],
-      "args": ["--stdio"]
+    "terraform-ls": {
+      "command": "terraform-ls",
+      "args": ["serve"],
+      "filetypes": ["terraform", "tf"],
+      "rootPatterns": ["Makefile", ".git"]
     },
-    "jls": {
-      "command": "jedi-language-server",
-      "args": [],
-      "filetypes": ["python"]
+    "nginx-language-server": {
+      "command": "nginx-language-server",
+      "filetypes": ["nginx"],
+      "rootPatterns": ["nginx.conf", ".git"]
     },
-    "terraform": {
-      "command": "terraform-lsp",
-      "filetypes": ["terraform"],
+    "tflint": {
+      "command": "tflint",
+      "filetypes": ["terraform", "tf"],
+      "rootPatterns": ["Makefile", ".git"],
+      "args": ["--langserver"]
+    },
+    "cobol": {
+      "command": "cobol-language-server",
+      "filetypes": ["cobol"],
       "initializationOptions": {}
     }
-  }
+  },
+  "suggest.completionItemKindLabels": {
+    "keyword": "\uf1de",
+    "variable": "\ue79b",
+    "value": "\uf89f",
+    "operator": "\u03a8",
+    "function": "\u0192",
+    "reference": "\ufa46",
+    "constant": "\uf8fe",
+    "method": "\uf09a",
+    "struct": "\ufb44",
+    "class": "\uf0e8",
+    "interface": "\uf417",
+    "text": "\ue612",
+    "enum": "\uf435",
+    "enumMember": "\uf02b",
+    "module": "\uf40d",
+    "color": "\ue22b",
+    "property": "\ue624",
+    "field": "\uf9be",
+    "unit": "\uf475",
+    "event": "\ufacd",
+    "file": "\uf723",
+    "folder": "\uf114",
+    "snippet": "\ue60b",
+    "typeParameter": "\uf728",
+    "default": "\uf29c"
+  },
+  "cSpell.numSuggestions": 0,
+  "cSpell.languageSettings": [
+      { "languageId": "python", "allowCompoundWords": true,  "dictionaries": ["python"]}
+  ],
+  "cSpell.enabledLanguageIds": [
+      "csharp",
+      "go",
+      "javascript",
+      "javascriptreact",
+      "markdown",
+      "plaintext",
+      "typescriptreact",
+      "yml",
+      "python"
+  ],
+  "cSpell.allowCompoundWords": true,
+  "cSpell.ignorePaths": [
+      "**/node_modules",
+      "**/node_modules/**",
+      "node_modules/**",
+      "venv",
+      ".venv",
+      ".git",
+      "*.dll",
+      "**/*.dll"
+  ],
+  "cSpell.userWords": [
+    "Anshu",
+    "DCM's",
+    "Deduped",
+    "Flashtalking",
+    "Incrementer",
+    "Mentee",
+    "Monokai",
+    "OWASP",
+    "POSIX",
+    "PYPI",
+    "Roeca",
+    "Serde",
+    "alacritty",
+    "argparse",
+    "backfilling",
+    "boto",
+    "botocore",
+    "chbb",
+    "chbbuk",
+    "chubbuk",
+    "codebase's",
+    "dateutil",
+    "deduping",
+    "dejson",
+    "docstrings",
+    "dotfiles",
+    "getenv",
+    "groupby",
+    "hvault",
+    "importlib",
+    "ingestions",
+    "isort",
+    "itertools",
+    "keplergrp",
+    "kipauth",
+    "mentee's",
+    "mentees",
+    "microservices",
+    "mypy",
+    "neovim",
+    "nginxconf",
+    "nvim",
+    "outliners",
+    "pathlib",
+    "plantuml",
+    "pycache",
+    "pydantic",
+    "pyexcel",
+    "pygls",
+    "pylint",
+    "remarketing",
+    "rgetattr",
+    "robustification",
+    "rrule",
+    "strs",
+    "teamwide",
+    "tomlkit",
+    "touchpoints",
+    "venv",
+    "vlookup",
+    "wonkiness",
+    "workspace's",
+    "xcom"
+  ],
+  "cSpell.ignoreRegExpList": ["0x[a-f0-9]+", "<?[\\w.\\-+]+@\\w+(\\.\\w+)+>?"]
 }
