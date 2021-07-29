@@ -1591,7 +1591,7 @@ function! s:open_defx_if_directory()
   if isdirectory(expand(expand('%:p')))
     Defx `expand('%:p')`
         \ -buffer-name=defx
-        \ -columns=mark:git:indent:icons:filename:type:size:time
+        \ -columns=mark:git:indent:icons:space:filename:type:size:time
   endif
 endfunction
 
