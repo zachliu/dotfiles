@@ -533,7 +533,6 @@ source $HOME/.asdf/completions/asdf.bash
 # Aliases --- {{{
 
 # Easier directory navigation for going up a directory tree
-alias 'a'='cd - &> /dev/null'
 alias 'cd..'='cd_up'  # can not name function 'cd..'; references cd_up below
 alias ,='cd ..'
 alias ,,='cd ../..'
