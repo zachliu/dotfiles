@@ -620,9 +620,6 @@ alias gd='git diff'
 alias gdw='git diff --word-diff=color'
 alias gru='git remote -v update'
 
-# upgrade
-alias upgrade='sudo mintupdate'
-
 # battery
 alias batt='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "state|time\ to\ full|percentage"'
 alias battc='upower -i /org/freedesktop/UPower/devices/battery_BAT0| grep -E "capacity"'
@@ -670,12 +667,6 @@ alias cpf='xclip -sel clip'
 # }}}
 # Functions --- {{{
 
-# See https://stackoverflow.com/questions/50735140/why-does-python-version-not-print-string
-# for doing string manipulation on python --version output
-function shell_python_version() {
-  echo $(python --version 2>&1) | awk '{print $2}'
-}
-
 # Tmux Launch
 # NOTE: I use the option "-2" to force Tmux to accept 256 colors. This is
 # necessary for proper Vim support in the Linux Console. My Vim colorscheme,
@@ -706,11 +697,50 @@ function t() {
   fi
 }
 
+# upgrade relevant local systems
+function upgrade() {
+  sudo apt update
+  sudo apt upgrade -y
+  sudo apt autoremove -y
+  asdf update
+  asdf plugin-update --all
+  cd ~/Downloads/alacritty
+  git pull
+  asdf local rust nightly
+  alacritty-install
+  popd
+  asdf uninstall neovim nightly
+  asdf install neovim nightly
+  asdf global neovim nightly
+  nvim -c 'PU'
+  nvim -c 'CocUpdate'
+}
+
+function alacritty-install() {
+  cargo build --release
+
+  # Install
+  sudo cp target/release/alacritty /usr/local/bin # or anywhere else in $PATH
+  sudo cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg
+  sudo desktop-file-install extra/linux/Alacritty.desktop
+  sudo update-desktop-database
+
+  # terminfo
+  tic -xe alacritty,alacritty-direct extra/alacritty.info
+
+  # man page
+  sudo mkdir -p /usr/local/share/man/man1
+  gzip -c extra/alacritty.man | \
+    sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null
+}
+
 # Fix window dimensions: tty mode
 # Set consolefonts to appropriate size based on monitor resolution
 # For each new monitor, you'll need to do this manually
 # Console fonts found here: /usr/share/consolefonts
-function fixwindow() {
+# Finally, suppress all messages from the kernel (and its drivers) except panic
+# messages from appearing on the console.
+function fix-console-window() {
   echo "Getting window dimensions, waiting 5 seconds..."
   MONITOR_RESOLUTIONS=$(sleep 5 && xrandr -d :0 | grep '*')
   if $(echo $MONITOR_RESOLUTIONS | grep -q "3840x2160"); then
@@ -718,6 +748,8 @@ function fixwindow() {
   elif $(echo $MONITOR_RESOLUTIONS | grep -q "2560x1440"); then
     setfont Uni3-Terminus24x12.psf.gz
   fi
+  echo "Enter sudo password to disable kernel from sending console messages..."
+  sudo dmesg -n 1
 }
 
 function gitzip() {  # arg1: the git repository
@@ -734,10 +766,16 @@ function gitzip() {  # arg1: the git repository
   popd > /dev/null
 }
 
-# Colored cat
-function cats() {
-  pygmentize -g $1 | less -rc
+# Pipe man stuff to neovim
+function m() {
+  man --location "$@" &> /dev/null
+  if [ $? -eq 0 ]; then
+    man --pager=cat "$@" 2>/dev/null | nvim -c '+Man!' -
+  else
+    man "$@"
+  fi
 }
+compdef _man m
 
 # dictionary lookups
 function def() {  # arg1: word
@@ -770,65 +808,111 @@ function weather() {  # arg1: Optional<location>
   fi
 }
 
-# Open pdf files with Zathura
-function pdf() {  # arg1: filename
-  # GDK_SCALE is set to 2 for hd monitors
-  # this environment variable makes text fuzzy on my 4k monitor
-  # setting env var to 0 fixes the problem
-  # The () communicate that the entire process should execute in a subshell,
-  # avoiding unnecessary printing to console
-  (GDK_SCALE=0 zathura "$1" &> /dev/null &)
-}
-
 # Open files with gnome-open
 function gn() {  # arg1: filename
-  local gn_filename=$(basename "$1")
-  local gn_extension="${gn_filename##*.}"
-  if [[ "$gn_extension" != "pdf" ]]; then
-    gnome-open "$1" &> /dev/null
-  elif ! type "zathura" &> /dev/null; then
-    gnome-open "$1" &> /dev/null
-  else
-    pdf "$1"
-  fi
+  gio open $1
 }
 
-# pydev_install: install only env dependencies
-# pydev_install dev: install only dev dependencies
-# pydev_install all: install all deps
-function pydev_install() {  ## Install default python dependencies
+function global-install() {
+  rustglobal-install
+  nodeglobal-install
+  pyglobal-install
+  awscliglobal-install
+  goglobal-install
+}
+
+function rustglobal-install() {
+  rustup component add rls
+  rustup component add rust-src
+  cargo install bat
+  cargo install cargo-deb
+  cargo install cargo-edit
+  cargo install cargo-update
+  cargo install fd-find
+  cargo install git-delta
+  cargo install ripgrep
+  asdf reshim rust
+  cargo install-update -a
+}
+
+function nodeglobal-install() {
+  local env=(
+    @angular/cli
+    bash-language-server
+    devspace
+    dockerfile-language-server-nodejs
+    git+https://github.com/Perlence/tstags.git
+    jsctags
+    neovim
+    nginx-linter
+    nginxbeautifier
+    npm
+    prettier
+    tree-sitter-cli
+    write-good
+  )
+  npm install --no-save -g $env
+  asdf reshim nodejs
+}
+
+function pydev-install() {  ## Install default python dependencies
   local for_pip=(
     bpython
+    mypy
     neovim-remote
     pip
+    pylint
     pynvim
+    wheel
   )
   pip install -U $for_pip
+  asdf reshim python
 }
 
-function pyglobal_install() {  ## Install global Python applications
+function pipx-upgrade() {
+  pipx uninstall $1
+  pipx install $1
+}
+
+function pyglobal-install() {  ## Install global Python applications
+  pip install -U pipx
+  pydev-install
+  asdf reshim python
   local for_pipx=(
+    alacritty-colorscheme
+    aws-sam-cli
     black
     cookiecutter
+    docformatter
     docker-compose
     isort
-    jedi-language-server
+    jupyterlab
+    jupytext
+    nginx-language-server
     mypy
     pre-commit
-    pylint
     restview
     toml-sort
-    awscli
+    ueberzug
   )
   if command -v pipx > /dev/null; then
     for arg in $for_pipx; do
-      pipx install "$arg"
-      pipx upgrade "$arg"
+      pipx uninstall "$arg" && pipx install "$arg"
     done
   else
     echo 'pipx not installed. Install with "pip install pipx"'
   fi
 }
+
+function goglobal-install() {  ## Install default golang dependencies
+  go get github.com/mattn/efm-langserver
+  asdf reshim golang
+}
+
+function asdfl() {  ## Install and set the latest version of asdf
+  asdf install $1 latest && asdf global $1 latest
+}
+compdef _asdf_complete_plugins asdfl
 
 # activate virtual environment from any directory from current and up
 # Name of virtualenv
@@ -855,6 +939,12 @@ function va() {  # No arguments
     deactivate
     echo "Disabled existing virtualenv $old_venv"
   fi
+}
+
+# See https://stackoverflow.com/questions/50735140/why-does-python-version-not-print-string
+# for doing string manipulation on python --version output
+function shell_python_version() {
+  echo $(python --version 2>&1) | awk '{print $2}'
 }
 
 # Create and activate a virtual environment with all Python dependencies
@@ -884,14 +974,14 @@ function ve() {  # Optional arg: python interpreter name
     fi
     source "$venv_name/bin/activate"
     pip install -U pip
-    pydev_install  # install dependencies for editing
-    asdf reshim python $python_version
+    pydev-install  # install dependencies for editing
     deactivate
   else
     echo "$venv_name already exists, activating"
   fi
   source $venv_name/bin/activate
 }
+compdef _command ve
 
 # Print out the Github-recommended gitignore
 export GITIGNORE_DIR=$HOME/src/lib/gitignore
@@ -920,6 +1010,18 @@ function gitignore() {
 }
 compdef "_files -W $GITIGNORE_DIR/" gitignore
 
+# Initialize Python Repo
+function poetry-init() {
+  if [ -f pyproject.toml ]; then
+    echo "pyproject.toml exists, aborting"
+    return 1
+  fi
+  poetry init --no-interaction &> /dev/null
+  cat-pyproject >> pyproject.toml
+  toml-sort --in-place pyproject.toml
+  touch README.md
+}
+
 # Create New Python Repo
 function pynew() {
   if [ $# -ne 1 ]; then
@@ -931,17 +1033,24 @@ function pynew() {
     echo "$dir_name already exists"
     return 1
   fi
-  git init "$dir_name" && cd "$dir_name"
-  pyinit
+  mkdir "$dir_name"
+  cd "$dir_name"
+  poetry-init
+  gitignore Python.gitignore | grep -v instance/ > .gitignore
+  mkinstance
+  ve
+  cat > main.py <<EOL
+"""The main module"""
+
+EOL
 }
 
-# Templates for nvim
-function _md_template() {  # arg1: template
-  local current_date=$(date +'%Y-%m-%d_%H:%M:%S')
-  local calling_func=$funcstack[2]
-  local filepath="/tmp/${calling_func}_$current_date.md"
-  echo -e $1 > $filepath
-  nvim -c 'set nofoldenable' $filepath
+# Profiling neovim
+function nvim-profiler() {
+  nvim --startuptime nvim_startup.txt \
+    --cmd 'profile start nvim_init_profile.txt' \
+    --cmd 'profile! file ~/.config/nvim/init.vim' \
+    "$@"
 }
 
 function clubhouse() {
