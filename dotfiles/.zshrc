@@ -434,10 +434,10 @@ function zshexit() {
 # ZShell Auto Completion --- {{{
 
 autoload -Uz compinit
-# if [ $(date '+%s' --date="1 day ago") -le $(stat -c "%Z" ${HOME}/.zcompdump) ]; then
-# if [[ -n $(ls $HOME/.zcompdump(Nmh+24)) ]]; then
 setopt EXTENDEDGLOB
-if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
+if (( $(date '+%s' --date="1 day ago") > $(stat -c "%Z" ${HOME}/.zcompdump) )); then
+# if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
+# the string "#qN.mh+24" (to be specific, the "#") messes up the zsh syntax highlighting
   echo "re-load .zcompdump"
   compinit
   compdump  # update the timestamp on compdump file
