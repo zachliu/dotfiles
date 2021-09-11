@@ -1115,6 +1115,31 @@ function groot() {
   fi
 }
 
+# open browser at current location:
+# open current dir: $ gop .
+# open relative dir: $ gop ../../
+function gop() {
+  # unset GITHUB_TOKEN
+  # gh auth login
+  if [ ! $(git rev-parse --is-inside-work-tree 2>/dev/null ) ]; then
+    echo "'$PWD' is not inside a git repository"
+    return 1
+  fi
+  local branch_current=$(git branch --show-current)
+  if [[ $# = 0 ]]; then
+    gh browse --branch "$branch_current"
+    return 0
+  fi
+  local git_root=$(git root)
+  local arg_expanded=$(readlink -f "$1")
+  local arg_relative=$(realpath --relative-base="$git_root" "$arg_expanded")
+  if [[ "$arg_relative" = '.' ]]; then
+    gh browse --branch "$branch_current"
+  else
+    gh browse "$arg_relative" --branch "$branch_current"
+  fi
+}
+
 # Timer
 function countdown-seconds(){
   local date1=$((`date +%s` + $1));
