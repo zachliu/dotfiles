@@ -690,6 +690,7 @@ function upgrade() {
   sudo apt autoremove -y
   asdf update
   asdf plugin-update --all
+  pushd .
   cd ~/Downloads/alacritty
   git pull
   asdf local rust nightly
