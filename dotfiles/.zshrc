@@ -1107,7 +1107,7 @@ function gc() {
 # GIT: cd to the current git root
 function groot() {
   if [ $(git rev-parse --is-inside-work-tree 2>/dev/null ) ]; then
-    cd $(git rev-parse --show-toplevel)
+    cd $(git root)
   else
     echo "'$PWD' is not inside a git repository"
     return 1
