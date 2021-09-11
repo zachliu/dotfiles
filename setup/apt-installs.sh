@@ -14,6 +14,16 @@ set -e
 sudo add-apt-repository -y ppa:peek-developers/stable
 sudo add-apt-repository -y ppa:git-core/ppa
 
+# For Installing gh on Debian, Ubuntu Linux, Raspberry Pi OS (apt)
+# https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+gh_pkgs_url="https://cli.github.com/packages"
+gh_kring="githubcli-archive-keyring.gpg"
+loc="/usr/share/keyrings"
+arch=$(dpkg --print-architecture)
+curl -fsSL "$gh_pkgs_url/$gh_kring" | sudo gpg --dearmor -o "$loc/$gh_kring"
+echo "deb [arch=$arch signed-by=$loc/$gh_kring] $gh_pkgs_url stable main" \
+  | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
 sudo apt update
 sudo apt upgrade -y
 
@@ -119,7 +129,8 @@ sudo apt install -y \
   xzdec \
   zathura \
   zlib1g-dev \
-  zsh
+  zsh \
+  gh
 
 sudo apt autoclean
 sudo apt autoremove
