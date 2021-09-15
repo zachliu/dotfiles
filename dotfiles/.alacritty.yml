@@ -63,14 +63,9 @@ draw_bold_text_with_bright_colors: false
 # Font configuration (changes require restart)
 font:
   normal:
-    family: monospace
-    style: Regular
-  bold:
-    family: monospace
-    style: Bold
-  italic:
-    family: monospace
-    style: Italic
+    # this section handles bold AND italics
+    family: FiraCode Nerd Font
+    style: Retina
   size: 11.0
 
   # Offset is the extra space around each character. offset.y can be thought of
