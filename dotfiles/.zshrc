@@ -180,21 +180,8 @@ export MANPAGER=less
 # Git
 # export GIT_PAGER=less
 
-# Configure man pager
-# export MANPAGER='nvim -c "set ft=man" -'
-function vman() {
-  # sudo apt install moreutils for ifne command
-  man --pager=cat $@ | ifne nvim -c "set ft=man" -
-}
-# function vman() {
-#   man --location $@ &> /dev/null
-#   if [ $? -eq 0 ]; then
-#     man --pager=cat $@ | nvim -c 'set ft=man' -
-#   else
-#     man $@
-#   fi
-# }
-alias man='vman'
+# Configure man pager (legacy)
+#
 
 # tmuxinator
 export EDITOR=/usr/bin/nvim
@@ -757,7 +744,7 @@ function gitzip() {  # arg1: the git repository
 function m() {
   man --location "$@" &> /dev/null
   if [ $? -eq 0 ]; then
-    man --pager=cat "$@" 2>/dev/null | nvim -c '+Man!' -
+    nvim -c "Man $@" -c "only"
   else
     man "$@"
   fi
