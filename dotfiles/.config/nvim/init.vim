@@ -70,7 +70,7 @@ function s:pack_init() abort
   call packager#add('git@github.com:kyazdani42/nvim-web-devicons.git')
 
   " Syntax Theme:
-  call packager#add('git@github.com:NLKNguyen/papercolor-theme')
+  " call packager#add('git@github.com:NLKNguyen/papercolor-theme')
   call packager#add('git@github.com:zachliu/molokai.git')
   call packager#add('git@github.com:zachliu/papercolor-theme-slim.git')
 
@@ -745,27 +745,30 @@ augroup END
 " }}}
 " General: alacritty callback for dynamic terminal color change {{{
 
-" set environment variables based on light or dark
-function s:set_env_from_background()
-  let $BAT_THEME = &background == 'light' ?
-        \ 'Monokai Extended Light' : 'Monokai Extended'
-endfunction
+" Commented out this whole section because it wipes my bold characters
+" Symptom(s): $ m man only shows bold chars for a split of a second
+"
+" " set environment variables based on light or dark
+" function s:set_env_from_background()
+"   let $BAT_THEME = &background == 'light' ?
+"         \ 'Monokai Extended Light' : 'Monokai Extended'
+" endfunction
 
-function! s:alacritty_set_background()
-  let g:alacritty_background = system('alacritty-which-colorscheme')
-  if !v:shell_error
-    let &background = g:alacritty_background
-  else
-    echom 'Error calling "alacritty-which-colorscheme"'
-  endif
-  call s:set_env_from_background()
-endfunction
+" function! s:alacritty_set_background()
+"   let g:alacritty_background = system('alacritty-which-colorscheme')
+"   if !v:shell_error
+"     let &background = g:alacritty_background
+"   else
+"     echom 'Error calling "alacritty-which-colorscheme"'
+"   endif
+"   call s:set_env_from_background()
+" endfunction
 
-call s:alacritty_set_background()
-call jobstart(
-      \ 'ls ' . $HOME . '/.alacritty.yml | entr -ps "echo alacritty_change"',
-      \ {'on_stdout': { j, d, e -> s:alacritty_set_background() }}
-      \ )
+" call s:alacritty_set_background()
+" call jobstart(
+"       \ 'ls ' . $HOME . '/.alacritty.yml | entr -ps "echo alacritty_change"',
+"       \ {'on_stdout': { j, d, e -> s:alacritty_set_background() }}
+"       \ )
 
 " }}}
 " General: syntax and colorscheme {{{
@@ -1322,20 +1325,20 @@ function! s:vim_colors()
   setlocal filetype=vimcolors buftype=nofile bufhidden=delete noswapfile
   0read $VIMRUNTIME/rgb.txt
   let find_color = '^\s*\(\d\+\s*\)\{3}\zs\w*$'
-  silent execute 'v/'.find_color.'/d'
+  silent execute 'v/' . find_color . '/d'
   silent g/grey/d
-  let namedcolors=[]
+  let namedcolors = []
   1
   while search(find_color, 'W') > 0
-    let w = expand('<cword>')
-    call add(namedcolors, w)
+    let word = expand('<cword>')
+    call add(namedcolors, word)
   endwhile
   for w in namedcolors
-    execute 'hi col_'.w.' guifg=black guibg='.w
-    execute 'hi col_'.w.'_fg guifg='.w.' guibg=NONE'
-    execute '%s/\<'.w.'\>/'.printf("%-36s%s", w, w.'_fg').'/g'
-    execute 'syn keyword col_'.w w
-    execute 'syn keyword col_'.w.'_fg' w.'_fg'
+    execute 'highlight col_' . w . ' guifg=black guibg=' . w
+    execute 'highlight col_' . w . '_fg guifg=' . w . ' guibg=NONE'
+    execute '%s/\<' . w . '\>/' . printf("%-36s%s", w, w . '_fg') . '/g'
+    execute 'syntax keyword col_' . w . ' ' . w
+    execute 'syntax keyword col_' . w . '_fg ' . w . '_fg'
   endfor
   " Add hex value column (and format columns nicely)
   %s/^\s*\(\d\+\)\s\+\(\d\+\)\s\+\(\d\+\)\s\+/\=printf(" %3d %3d %3d   #%02x%02x%02x   ", submatch(1), submatch(2), submatch(3), submatch(1), submatch(2), submatch(3))/
@@ -1346,7 +1349,7 @@ function! s:vim_colors()
   set nomodifiable
 endfunction
 
-command! VimColors silent call <SID>vim_colors()
+command! VimColors silent call s:vim_colors()
 
 " }}}
 " General: toggle numbers {{{
