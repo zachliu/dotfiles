@@ -7,38 +7,24 @@ function s:pack_init() abort
   call packager#init()
   call packager#add('git@github.com:kristijanhusak/vim-packager', { 'type': 'opt' })
 
-  " Basics:
-  call packager#add('git@github.com:kh3phr3n/tabline')
-  call packager#add('git@github.com:itchyny/lightline.vim')
-  call packager#add('git@github.com:qpkorr/vim-bufkill')
-  call packager#add('git@github.com:christoomey/vim-system-copy')
-  call packager#add('git@github.com:t9md/vim-choosewin')
-  call packager#add('git@github.com:mhinz/vim-startify')
-  call packager#add('git@github.com:wincent/terminus')
-  call packager#add('git@github.com:gcmt/taboo.vim')
-  call packager#add('git@github.com:yssl/QFEnter')
-  call packager#add('git@github.com:djoshea/vim-autoread')
-  call packager#add('git@github.com:simeji/winresizer')
-  call packager#add('git@github.com:mbbill/undotree')
-  call packager#add('git@github.com:henrik/vim-indexed-search')
-  call packager#add('git@github.com:machakann/vim-sandwich')
-  call packager#add('git@github.com:unblevable/quick-scope')
-  call packager#add('git@github.com:fcpg/vim-altscreen')
-  call packager#add('git@github.com:sjl/strftimedammit.vim')
-  call packager#add('git@github.com:wincent/ferret')
-  call packager#add('git@github.com:bronson/vim-visual-star-search')
-  call packager#add('git@github.com:romainl/vim-devdocs')
-  call packager#add('git@github.com:chrisbra/Colorizer')
-  call packager#add('git@github.com:fidian/hexmode')
-  call packager#add('git@github.com:wellle/targets.vim')
-  call packager#add('git@github.com:Shougo/defx.nvim')
-  call packager#add('git@github.com:Shougo/echodoc.vim')
-  call packager#add('git@github.com:kristijanhusak/defx-git')
-  call packager#add('git@github.com:kristijanhusak/defx-icons')
-  call packager#add('git@github.com:dstein64/nvim-scrollview.git')
+  " Autocompletion And IDE Features:
+  call packager#add('git@github.com:neoclide/coc.nvim.git', {'branch': 'release'})
+  call packager#add('git@github.com:pappasam/coc-jedi.git', {'do': 'yarn install --frozen-lockfile && yarn build'})
+  call packager#add('git@github.com:tjdevries/coc-zsh.git')
+
+  " TreeSitter:
+  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter.git', {'do': ':TSUpdate'})
+  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter-textobjects.git')
+  call packager#add('git@github.com:nvim-treesitter/playground.git')
+  call packager#add('git@github.com:windwp/nvim-ts-autotag.git')
+  call packager#add('git@github.com:JoosepAlviste/nvim-ts-context-commentstring.git')
+
+  " Vista: Tagbar replacement extraordinaire
+  call packager#add('git@github.com:liuchengxu/vista.vim.git')
 
   " Colors: See CSS colors
   call packager#add('git@github.com:norcalli/nvim-colorizer.lua.git')
+  call packager#add('git@github.com:ntpeters/vim-better-whitespace.git')
 
   " Tim Pope: general, uncategorizable tim pope plugins
   " Notes:
@@ -48,17 +34,35 @@ function s:pack_init() abort
   call packager#add('git@github.com:tpope/vim-commentary')
   call packager#add('git@github.com:tpope/vim-repeat')
   call packager#add('git@github.com:tpope/vim-scriptease')
-  call packager#add('git@github.com:tpope/vim-fugitive')
 
-  " Relative Numbering:
-  call packager#add('git@github.com:myusuf3/numbers.vim')
+  " General:
+  call packager#add('git@github.com:gcmt/taboo.vim')
+  call packager#add('git@github.com:itchyny/lightline.vim')
+  call packager#add('git@github.com:Shougo/defx.nvim')
+  call packager#add('git@github.com:bronson/vim-visual-star-search')
+  call packager#add('git@github.com:fidian/hexmode')
+  call packager#add('git@github.com:kh3phr3n/tabline')
+  call packager#add('git@github.com:kristijanhusak/defx-git')
+  call packager#add('git@github.com:kristijanhusak/defx-icons')
+  call packager#add('git@github.com:mbbill/undotree')
+  call packager#add('git@github.com:qpkorr/vim-bufkill')
+  call packager#add('git@github.com:simeji/winresizer')
+  call packager#add('git@github.com:sjl/strftimedammit.vim')
+  call packager#add('git@github.com:christoomey/vim-system-copy')
+  call packager#add('git@github.com:t9md/vim-choosewin')
+  call packager#add('git@github.com:mhinz/vim-startify')
+  call packager#add('git@github.com:unblevable/quick-scope')
+  call packager#add('git@github.com:wincent/ferret')
+  call packager#add('git@github.com:yssl/QFEnter')
+  call packager#add('git@github.com:dstein64/nvim-scrollview.git')
 
-  " Fuzzy finder:
+  " KeywordPrg:
+  call packager#add('git@github.com:pappasam/vim-keywordprg-commands.git')
+  call packager#add('git@github.com:romainl/vim-devdocs.git')
+
+  " Fuzzy Finder:
   call packager#add('git@github.com:junegunn/fzf')
   call packager#add('git@github.com:junegunn/fzf.vim')
-  " Below needed by fzf-preview
-  call packager#add('git@github.com:bogado/file-line.git')
-  call packager#add('git@github.com:yuki-ycino/fzf-preview.vim.git')
 
   " Git:
   call packager#add('git@github.com:tpope/vim-fugitive')
@@ -69,82 +73,11 @@ function s:pack_init() abort
   call packager#add('git@github.com:sindrets/diffview.nvim.git')
   call packager#add('git@github.com:kyazdani42/nvim-web-devicons.git')
 
-  " Syntax Theme:
-  " call packager#add('git@github.com:NLKNguyen/papercolor-theme')
-  call packager#add('git@github.com:zachliu/molokai.git')
-  call packager#add('git@github.com:zachliu/papercolor-theme-slim.git')
-
-  " Syntax Highlighting:
-  call packager#add('git@github.com:derekwyatt/vim-scala')
-  call packager#add('git@github.com:rust-lang/rust.vim')
-  call packager#add('git@github.com:ron-rs/ron.vim')
-  call packager#add('git@github.com:vim-python/python-syntax')
-  call packager#add('git@github.com:autowitch/hive.vim')
-  call packager#add('git@github.com:elzr/vim-json')
-  call packager#add('git@github.com:vimoutliner/vimoutliner')
-  call packager#add('git@github.com:Glench/Vim-Jinja2-Syntax')
-  call packager#add('git@github.com:godlygeek/tabular')
-  call packager#add('git@github.com:plasticboy/vim-markdown')
-  call packager#add('git@github.com:mopp/rik_octave.vim')
-  call packager#add('git@github.com:ekalinin/Dockerfile.vim')
-  call packager#add('git@github.com:StanAngeloff/php.vim')
-  call packager#add('git@github.com:vim-scripts/SAS-Syntax')
-  call packager#add('git@github.com:neovimhaskell/haskell-vim')
-  call packager#add('git@github.com:pappasam/plantuml-syntax')
-  call packager#add('git@github.com:NLKNguyen/c-syntax.vim')
-  call packager#add('git@github.com:hashivim/vim-terraform')
-  call packager#add('git@github.com:hashivim/vim-vagrant')
-  call packager#add('git@github.com:lervag/vimtex')
-  call packager#add('git@github.com:tomlion/vim-solidity')
-  call packager#add('git@github.com:jparise/vim-graphql')
-  call packager#add('git@github.com:pangloss/vim-javascript')
-  call packager#add('git@github.com:evanleck/vim-svelte')
-  call packager#add('git@github.com:groenewege/vim-less')
-  call packager#add('git@github.com:farfanoide/vim-kivy')
-  call packager#add('git@github.com:raimon49/requirements.txt.vim')
-  call packager#add('git@github.com:chr4/nginx.vim')
-  call packager#add('git@github.com:othree/html5.vim')
-  call packager#add('git@github.com:pearofducks/ansible-vim')
-  call packager#add('git@github.com:martinda/Jenkinsfile-vim-syntax')
-  call packager#add('git@github.com:mattn/vim-xxdcursor')
-  call packager#add('git@github.com:calviken/vim-gdscript3')
-  call packager#add('git@github.com:marshallward/vim-restructuredtext')
-  call packager#add('git@github.com:leafgarland/typescript-vim')
-  call packager#add('git@github.com:peitalin/vim-jsx-typescript.git')
-  call packager#add('git@github.com:MaxMEllon/vim-jsx-pretty.git')
-  call packager#add('git@github.com:killphi/vim-ebnf')
-  call packager#add('git@github.com:neoclide/jsonc.vim.git')
-  call packager#add('git@github.com:hail2u/vim-css3-syntax.git')
-
-  call packager#add('git@github.com:ElmCast/elm-vim')
-  call packager#add('git@github.com:magicalbanana/sql-syntax-vim')
-
-  " TreeSitter:
-  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter.git', {'do': ':TSUpdate'})
-  call packager#add('git@github.com:nvim-treesitter/nvim-treesitter-textobjects.git')
-  call packager#add('git@github.com:nvim-treesitter/playground.git')
-
-  " Indentation Only:
-  call packager#add('git@github.com:vim-scripts/groovyindent-unix')
-  call packager#add('git@github.com:Vimjas/vim-python-pep8-indent')
-  call packager#add('git@github.com:Yggdroot/indentLine')
-
-  " Autocompletion And IDE Features:
-  call packager#add('git@github.com:neoclide/coc.nvim.git', {'branch': 'release'})
-
-  " Tagbar:
-  call packager#add('git@github.com:majutsushi/tagbar')
-  call packager#add('git@github.com:lvht/tagbar-markdown')
-  " Additional requirements
-  "   npm install -g jsctags
-  "   sudo apt install -y php
-
-  " Web Development - General:
-  call packager#add('git@github.com:heavenshell/vim-jsdoc')
-
   " Text Objects:
   call packager#add('git@github.com:machakann/vim-sandwich')
   call packager#add('git@github.com:kana/vim-textobj-user')
+  " support additional delimiters
+  call packager#add('git@github.com:EvanQuan/vim-textobj-delimiters.git')
   " al/il for the current line
   call packager#add('git@github.com:kana/vim-textobj-line')
   " as/is for a sentence of prose (overrides hard-coded native object & motion)
@@ -161,24 +94,20 @@ function s:pack_init() abort
   call packager#add('git@github.com:kana/vim-textobj-indent.git')
   " au/iu for a URI, also includes URI handlers and is easy to extend
   call packager#add('git@github.com:jceb/vim-textobj-uri.git')
-  " ac/ic/af/if for Python classes and functions
-  call packager#add('git@github.com:bps/vim-textobj-python.git')
 
   " Writing:
   call packager#add('git@github.com:dkarter/bullets.vim')
-  call packager#add('git@github.com:moiatgit/vim-rst-sections')
   call packager#add('git@github.com:jlesquembre/rst-tables.nvim')
   call packager#add('git@github.com:junegunn/goyo.vim')
   call packager#add('git@github.com:junegunn/limelight.vim')
-  call packager#add('git@github.com:reedes/vim-wordy')
-  call packager#add('git@github.com:tommcdo/vim-exchange')
-  call packager#add('git@github.com:dbmrq/vim-ditto')
-  call packager#add('git@github.com:swordguin/vim-veil.git')
+  call packager#add('git@github.com:moiatgit/vim-rst-sections')
 
   " Previewers:
-  call packager#add('git@github.com:iamcco/markdown-preview.nvim', {
-        \ 'do': 'cd app & yarn install --frozen-lockfile',
-        \ })
+  " Below needed by fzf-preview
+  call packager#add('git@github.com:bogado/file-line.git')
+  call packager#add('git@github.com:yuki-ycino/fzf-preview.vim.git')
+  call packager#add('git@github.com:ryanoasis/vim-devicons')
+  call packager#add('git@github.com:iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'})
   call packager#add('git@github.com:tyru/open-browser.vim')
   call packager#add('git@github.com:weirongxu/plantuml-previewer.vim')
 
@@ -189,11 +118,52 @@ function s:pack_init() abort
   " call packager#add('git@github.com:jpalardy/vim-slime.git')
   call packager#add('git@github.com:pappasam/nvim-repl.git')
 
-  " Presentation:
-  call packager#add('git@github.com:dhruvasagar/vim-marp')
+  " Indentation Only:
+  call packager#add('git@github.com:Vimjas/vim-python-pep8-indent')
+  call packager#add('git@github.com:Yggdroot/indentLine')
+  call packager#add('git@github.com:vim-scripts/groovyindent-unix')
 
-  " Fonts:
-  call packager#add('git@github.com:ryanoasis/vim-devicons')
+  " Syntax Theme:
+  call packager#add('git@github.com:zachliu/molokai.git')
+  call packager#add('git@github.com:zachliu/papercolor-theme-slim.git')
+
+  " Syntax Highlighting:
+  call packager#add('git@github.com:peitalin/vim-jsx-typescript.git')
+  call packager#add('git@github.com:Glench/Vim-Jinja2-Syntax')
+  call packager#add('git@github.com:NLKNguyen/c-syntax.vim')
+  call packager#add('git@github.com:StanAngeloff/php.vim')
+  call packager#add('git@github.com:autowitch/hive.vim')
+  call packager#add('git@github.com:calviken/vim-gdscript3')
+  call packager#add('git@github.com:chr4/nginx.vim.git')
+  call packager#add('git@github.com:derekwyatt/vim-scala')
+  call packager#add('git@github.com:evanleck/vim-svelte')
+  call packager#add('git@github.com:farfanoide/vim-kivy')
+  call packager#add('git@github.com:godlygeek/tabular')
+  call packager#add('git@github.com:groenewege/vim-less')
+  call packager#add('git@github.com:hashivim/vim-terraform')
+  call packager#add('git@github.com:hashivim/vim-vagrant')
+  call packager#add('git@github.com:jparise/vim-graphql')
+  call packager#add('git@github.com:killphi/vim-ebnf')
+  call packager#add('git@github.com:lervag/vimtex')
+  call packager#add('git@github.com:marshallward/vim-restructuredtext')
+  call packager#add('git@github.com:jxnblk/vim-mdx-js.git')
+  call packager#add('git@github.com:martinda/Jenkinsfile-vim-syntax')
+  call packager#add('git@github.com:mattn/vim-xxdcursor')
+  call packager#add('git@github.com:mopp/rik_octave.vim')
+  call packager#add('git@github.com:neoclide/jsonc.vim.git')
+  call packager#add('git@github.com:neovimhaskell/haskell-vim')
+  call packager#add('git@github.com:othree/html5.vim')
+  call packager#add('git@github.com:pangloss/vim-javascript')
+  call packager#add('git@github.com:aklt/plantuml-syntax.git')
+  call packager#add('git@github.com:pearofducks/ansible-vim')
+  call packager#add('git@github.com:raimon49/requirements.txt.vim')
+  call packager#add('git@github.com:tpope/vim-markdown.git')
+  call packager#add('git@github.com:ron-rs/ron.vim')
+  call packager#add('git@github.com:rust-lang/rust.vim')
+  call packager#add('git@github.com:tomlion/vim-solidity')
+  call packager#add('git@github.com:vim-scripts/SAS-Syntax')
+  call packager#add('git@github.com:vimoutliner/vimoutliner')
+  call packager#add('git@github.com:magicalbanana/sql-syntax-vim')
 endfunction
 
 command! PackInstall call s:pack_init() | call packager#install()
@@ -563,6 +533,12 @@ augroup custom_coc_pairs
   autocmd FileType vim let b:coc_pairs_disabled = ['"']
 augroup end
 
+augroup custom_coc_additional_keyword_characters
+  autocmd!
+  autocmd FileType nginx let b:coc_additional_keywords = ['$']
+  autocmd FileType zsh let b:coc_additional_keywords = ['-']
+augroup end
+
 " }}}
 " Package: treesitter {{{
 
@@ -742,6 +718,12 @@ augroup zliu_incsearch_highlight
   " autocmd CmdlineLeave /,\? :set nohlsearch
 augroup END
 
+augroup custom_nginx
+  autocmd!
+  autocmd FileType nginx set iskeyword+=$
+  autocmd FileType zsh set iskeyword+=-
+augroup end
+
 " }}}
 " General: alacritty callback for dynamic terminal color change {{{
 
@@ -780,19 +762,25 @@ augroup custom_redraw_on_refocus
 augroup end
 
 " Trailing Whitespace: (initial highlight below doesn't matter)
-highlight EOLWS ctermbg=DarkCyan
-match EOLWS /\s\+$/
-augroup custom_syntax_whitespace
-  autocmd!
-  " mkdLineBreak is a link group; special 'link' syntax required here
-  autocmd ColorScheme * highlight link mkdLineBreak NONE
-  autocmd ColorScheme * highlight EOLWS guibg='CornflowerBlue' ctermbg=DarkCyan
+let g:better_whitespace_ctermcolor='DarkCyan'
+let g:better_whitespace_guicolor='DarkCyan'
 
-  autocmd InsertEnter * highlight clear EOLWS
-  autocmd InsertLeave * highlight EOLWS guibg='CornflowerBlue' ctermbg=DarkCyan
+let g:better_whitespace_enabled=1
+let g:strip_whitespace_on_save=1
 
-  autocmd FileType defx highlight clear EOLWS
-augroup END
+" highlight EOLWS ctermbg=DarkCyan
+" match EOLWS /\s\+$/
+" augroup custom_syntax_whitespace
+"   autocmd!
+"   " mkdLineBreak is a link group; special 'link' syntax required here
+"   autocmd ColorScheme * highlight link mkdLineBreak NONE
+"   autocmd ColorScheme * highlight EOLWS guibg='CornflowerBlue' ctermbg=DarkCyan
+
+"   autocmd InsertEnter * highlight clear EOLWS
+"   autocmd InsertLeave * highlight EOLWS guibg='CornflowerBlue' ctermbg=DarkCyan
+
+"   autocmd FileType defx highlight clear EOLWS
+" augroup END
 
 " Cursorline: disable, then override if necessary
 highlight CursorLine cterm=NONE
@@ -978,7 +966,7 @@ cnoreabbrev <expr> c <SID>abbr_help('c', 'close')
 augroup custom_comment_config
   autocmd!
   autocmd FileType dosini setlocal commentstring=#\ %s comments=:#,:;
-  autocmd FileType tmux,python setlocal commentstring=#\ %s comments=:# formatoptions=jcroql
+  autocmd FileType tmux,python,nginx setlocal commentstring=#\ %s comments=:# formatoptions=jcroql
   autocmd FileType jsonc setlocal commentstring=//\ %s comments=:// formatoptions=jcroql
   autocmd FileType sh setlocal formatoptions=jcroql
   autocmd FileType markdown setlocal commentstring=<!--\ %s\ -->
@@ -1082,28 +1070,28 @@ augroup end
 " }}}
 " General: trailing whitespace {{{
 
-function! s:trim_whitespace()
-  let l:save = winsaveview()
-  if &ft == 'markdown'
-    " Replace lines with only trailing spaces
-    %s/^\s\+$//e
-    " Replace lines with exactly one trailing space with no trailing spaces
-    %g/\S\s$/s/\s$//g
-    " Replace lines with more than 2 trailing spaces with 2 trailing spaces
-    %s/\s\s\s\+$/  /e
-  else
-    " Remove all trailing spaces
-    %s/\s\+$//e
-  endif
-  call winrestview(l:save)
-endfunction
+" function! s:trim_whitespace()
+"   let l:save = winsaveview()
+"   if &ft == 'markdown'
+"     " Replace lines with only trailing spaces
+"     %s/^\s\+$//e
+"     " Replace lines with exactly one trailing space with no trailing spaces
+"     %g/\S\s$/s/\s$//g
+"     " Replace lines with more than 2 trailing spaces with 2 trailing spaces
+"     %s/\s\s\s\+$/  /e
+"   else
+"     " Remove all trailing spaces
+"     %s/\s\+$//e
+"   endif
+"   call winrestview(l:save)
+" endfunction
 
-command! TrimWhitespace call s:trim_whitespace()
+" command! TrimWhitespace call s:trim_whitespace()
 
-augroup custom_fix_whitespace_save
-  autocmd!
-  autocmd BufWritePre * TrimWhitespace
-augroup END
+" augroup custom_fix_whitespace_save
+"   autocmd!
+"   autocmd BufWritePre * TrimWhitespace
+" augroup END
 
 " }}}
 " General: resize window {{{
@@ -1928,64 +1916,6 @@ let g:fzf_action = {
       \ }
 
 " }}}
-" Package: tagbar {{{
-
-let g:tagbar_map_showproto = '`'
-let g:tagbar_show_linenumbers = -1
-let g:tagbar_autofocus = v:true
-let g:tagbar_indent = v:true
-let g:tagbar_sort = 0  " order by order in sort file
-let g:tagbar_case_insensitive = v:true
-let g:tagbar_width = 37
-let g:tagbar_silent = v:true
-let g:tagbar_foldlevel = v:false
-let g:tagbar_type_haskell = {
-    \ 'ctagsbin'  : 'hasktags',
-    \ 'ctagsargs' : '-x -c -o-',
-    \ 'kinds'     : [
-        \  'm:modules:0:1',
-        \  'd:data: 0:1',
-        \  'd_gadt: data gadt:0:1',
-        \  't:type names:0:1',
-        \  'nt:new types:0:1',
-        \  'c:classes:0:1',
-        \  'cons:constructors:1:1',
-        \  'c_gadt:constructor gadt:1:1',
-        \  'c_a:constructor accessors:1:1',
-        \  'ft:function types:1:1',
-        \  'fi:function implementations:0:1',
-        \  'o:others:0:1'
-    \ ],
-    \ 'sro'        : '.',
-    \ 'kind2scope' : {
-        \ 'm' : 'module',
-        \ 'c' : 'class',
-        \ 'd' : 'data',
-        \ 't' : 'type'
-    \ },
-    \ 'scope2kind' : {
-        \ 'module' : 'm',
-        \ 'class'  : 'c',
-        \ 'data'   : 'd',
-        \ 'type'   : 't'
-    \ }
-\ }
-let g:tagbar_type_rst = {
-      \ 'ctagstype': 'rst',
-      \ 'ctagsbin' : '~/src/lib/rst2ctags/rst2ctags.py',
-      \ 'ctagsargs' : '-f - --sort=yes',
-      \ 'kinds' : [
-      \ 's:sections',
-      \ 'i:images'
-      \ ],
-      \ 'sro' : '|',
-      \ 'kind2scope' : {
-      \ 's' : 'section',
-      \ },
-      \ 'sort': 0,
-      \ }
-
-"  }}}
 " Package: lightline {{{
 
 " This is a giant section
@@ -2091,8 +2021,6 @@ function! LightlineMode()
         \ &ft == 'vimshell' ? 'VimShell' :
         \ winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
-
-let g:tagbar_status_func = 'TagbarStatusFunc'
 
 function! TagbarStatusFunc(current, sort, fname, ...) abort
   let g:lightline.fname = a:fname
@@ -2255,6 +2183,20 @@ let g:vim_filetype_formatter_commands = {
       \ }
 
 " }}}
+" Package: keywordprg helpers (vim-keywordprg-commands, etc) {{{
+
+let g:vim_keywordprg_commands = {
+      \ }
+" NOTE: latex is handled by vimtex
+
+augroup custom_keywordprg
+  autocmd FileType markdown,rst,tex,txt setlocal keywordprg=:DefEng
+  autocmd FileType python setlocal keywordprg=:Pydoc
+  autocmd FileType typescript,typescriptreact setlocal keywordprg=:DD\ javascript
+  autocmd FileType terraform setlocal keywordprg=:DD\ terraform
+augroup end
+
+" }}}
 " Package: terraform Syntax {{{
 
 let g:terraform_align=1
@@ -2262,25 +2204,19 @@ let g:terraform_align=1
 let g:terraform_remap_spacebar=1
 
 " }}}
-" Package: Vim-filetype-formatter {{{
-
-let g:vim_filetype_formatter_verbose = v:false
-let g:vim_filetype_formatter_ft_no_defaults = [
-      \ 'markdown',
-      \ ]
-let g:vim_filetype_formatter_commands = {
-      \ 'python': 'black -q - | isort -',
-      \ }
-
-" }}}
 " Package: misc global var config {{{
 
 " Python: disable python 2 support
 let g:loaded_python_provider = v:true
 
+" Markdown:
+let g:markdown_fenced_languages = [
+      \ 'bash=sh',
+      \ 'python',
+      \ ]
+
 " TypeScript:
 let g:typescript_indent_disable = v:false
-let g:vim_jsx_pretty_disable_tsx = v:true
 
 " Netrw: disable completely
 let g:loaded_netrw= v:true
@@ -2330,9 +2266,6 @@ let g:FerretMap = v:false
 
 " VimJavascript:
 let g:javascript_plugin_flow = v:false
-
-" JSX: configure jsx-pretty
-let g:vim_jsx_pretty_colorful_config = v:true
 
 " JsDoc:
 let g:jsdoc_enable_es6 = v:true
