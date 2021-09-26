@@ -64,7 +64,7 @@ draw_bold_text_with_bright_colors: false
 font:
   normal:
     # this section handles bold AND italics
-    family: FiraCode Nerd Font
+    family: monospace
     style: Retina
   size: 11.0
 
