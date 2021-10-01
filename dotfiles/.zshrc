@@ -1309,6 +1309,10 @@ function update_program() {
         echo "Updated Vault to $2"
       fi
       ;;
+    chrome)
+      curl -Lsf https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/googlechrome.deb
+      sudo dpkg -i /tmp/googlechrome.deb
+      ;;
   esac
 }
 
