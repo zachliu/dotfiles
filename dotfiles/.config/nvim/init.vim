@@ -72,6 +72,7 @@ function s:pack_init() abort
   call packager#add('git@github.com:sodapopcan/vim-twiggy.git')
   call packager#add('git@github.com:rhysd/git-messenger.vim.git')
   call packager#add('git@github.com:sindrets/diffview.nvim.git')
+  call packager#add('git@github.com:nvim-lua/plenary.nvim')
   call packager#add('git@github.com:kyazdani42/nvim-web-devicons.git')
 
   " Text Objects:
