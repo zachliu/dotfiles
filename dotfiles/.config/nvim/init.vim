@@ -34,6 +34,7 @@ function s:pack_init() abort
   call packager#add('git@github.com:tpope/vim-commentary')
   call packager#add('git@github.com:tpope/vim-repeat')
   call packager#add('git@github.com:tpope/vim-scriptease')
+  call packager#add('git@github.com:github/copilot.vim')
 
   " General:
   call packager#add('git@github.com:gcmt/taboo.vim')
