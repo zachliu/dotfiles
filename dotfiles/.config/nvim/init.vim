@@ -107,8 +107,8 @@ function s:pack_init() abort
   " Previewers:
   " Below needed by fzf-preview
   call packager#add('git@github.com:bogado/file-line.git')
-  call packager#add('git@github.com:yuki-ycino/fzf-preview.vim.git')
   call packager#add('git@github.com:ryanoasis/vim-devicons')
+  call packager#add('git@github.com:yuki-yano/fzf-preview.vim', {'branch': 'release/remote'})
   call packager#add('git@github.com:iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'})
   call packager#add('git@github.com:tyru/open-browser.vim')
   call packager#add('git@github.com:weirongxu/plantuml-previewer.vim')
