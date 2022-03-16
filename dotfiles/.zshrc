@@ -1116,18 +1116,21 @@ function gop() {
     return 1
   fi
   local branch_current=$(git branch --show-current)
-  if [[ $# = 0 ]]; then
-    gh browse --branch "$branch_current"
-    return 0
-  fi
-  local git_root=$(git root)
-  local arg_expanded=$(readlink -f "$1")
-  local arg_relative=$(realpath --relative-base="$git_root" "$arg_expanded")
-  if [[ "$arg_relative" = '.' ]]; then
-    gh browse --branch "$branch_current"
+  gh browse $1 --branch "$branch_current"
+}
+
+function approve() {
+  # 1st arg is the PR number
+  # 2nd arg is the comment if any, otherwise use the 🚀 and 🤞
+  if [ -z "$2" ]; then
+    local message=""":rocket: :crossed_fingers: :rocket: :crossed_fingers: :rocket: :crossed_fingers:
+:rocket: :crossed_fingers: :rocket: :crossed_fingers:
+:rocket: :crossed_fingers:"""
   else
-    gh browse "$arg_relative" --branch "$branch_current"
+    local message="$2"
   fi
+  gh pr review $1 --approve -b $message
+  # echo $1 $message
 }
 
 # Timer
