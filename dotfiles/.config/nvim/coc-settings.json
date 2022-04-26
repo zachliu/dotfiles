@@ -219,14 +219,11 @@
   ],
   "cSpell.allowCompoundWords": true,
   "cSpell.ignorePaths": [
-      "**/node_modules",
-      "**/node_modules/**",
       "node_modules/**",
       "venv",
       ".venv",
       ".git",
-      "*.dll",
-      "**/*.dll"
+      "*.dll"
   ],
   "cSpell.userWords": [
     "AXPC",
