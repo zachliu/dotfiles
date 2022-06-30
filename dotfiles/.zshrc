@@ -1504,3 +1504,6 @@ fi
 # (( ${+_comps} )) && _comps[zplugin]=_zplugin
 ### End of Zplugin installer's chunk
 ### End of Zinit's installer chunk
+# START: Added by Updated Airflow Breeze autocomplete setup
+source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.sh
+# END: Added by Updated Airflow Breeze autocomplete setup
