@@ -36,6 +36,9 @@ function s:pack_init() abort
   call packager#add('git@github.com:tpope/vim-scriptease')
   call packager#add('git@github.com:github/copilot.vim')
 
+  " Tree:
+  call packager#add('git@github.com:kyazdani42/nvim-tree.lua.git')
+
   " General:
   call packager#add('git@github.com:gcmt/taboo.vim')
   call packager#add('git@github.com:itchyny/lightline.vim')
@@ -74,6 +77,7 @@ function s:pack_init() abort
   call packager#add('git@github.com:sindrets/diffview.nvim.git')
   call packager#add('git@github.com:nvim-lua/plenary.nvim')
   call packager#add('git@github.com:kyazdani42/nvim-web-devicons.git')
+  call packager#add('git@github.com:lewis6991/gitsigns.nvim.git')
 
   " Text Objects:
   call packager#add('git@github.com:machakann/vim-sandwich')
@@ -628,6 +632,110 @@ augroup custom_treesitter
   autocmd!
   autocmd VimEnter * call s:init_treesitter()
 augroup end
+
+" }}}
+" Package: lua extensions {{{
+
+" nvim-web-icons
+function s:init_nvim_web_icons()
+  if !exists('g:loaded_devicons')
+    echom 'devicons does not exist, skipping...'
+    return
+  endif
+lua << EOF
+require'nvim-web-devicons'.setup {
+ -- your personnal icons can go here (to override)
+ -- DevIcon will be appended to `name`
+ override = {
+  zsh = {
+    icon = "",
+    color = "#428850",
+    name = "Zsh"
+  }
+ };
+ -- globally enable default icons (default to false)
+ -- will get overriden by `get_icons` option
+ default = true;
+}
+EOF
+endfunction
+
+" nvim-tree-lua
+function! s:init_nvim_tree()
+  try
+lua << EOF
+require('nvim-tree').setup{
+  renderer = {
+    full_name = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+}
+EOF
+  catch
+    echom 'Problem encountered configuring nvim-tree, skipping...'
+  endtry
+endfunction
+
+" gitsigns
+function! s:init_gitsigns()
+  try
+lua << EOF
+require('gitsigns').setup{
+  on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then return ']c' end
+      vim.schedule(function() gs.next_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', '[c', function()
+      if vim.wo.diff then return '[c' end
+      vim.schedule(function() gs.prev_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    -- Actions
+    map({'n', 'v'}, '<leader>hs', '<Cmd>Gitsigns stage_hunk<CR>')
+    map({'n', 'v'}, '<leader>hr', '<Cmd>Gitsigns reset_hunk<CR>')
+    map('n', '<leader>hS', gs.stage_buffer)
+    map('n', '<leader>hu', gs.undo_stage_hunk)
+    map('n', '<leader>hR', gs.reset_buffer)
+    map('n', '<leader>hp', gs.preview_hunk)
+    map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+    map('n', '<leader>tb', gs.toggle_current_line_blame)
+    map('n', '<leader>hd', gs.diffthis)
+    map('n', '<leader>hD', function() gs.diffthis('~') end)
+    map('n', '<leader>td', gs.toggle_deleted)
+
+    -- Text object
+    map({'o', 'x'}, 'ih', '<Cmd>Gitsigns select_hunk<CR>')
+  end
+}
+EOF
+  catch
+    echom 'Problem encountered configuring gitsigns, skipping...'
+  endtry
+endfunction
+
+augroup custom_general_lua_extensions
+  autocmd!
+  autocmd VimEnter * call s:init_nvim_web_icons()
+  autocmd VimEnter * call s:init_nvim_tree()
+  autocmd VimEnter * call s:init_gitsigns()
+augroup end
+
+command! GitsignsToggle Gitsigns toggle_signs
 
 " }}}
 " General: options {{{
@@ -1518,37 +1626,6 @@ augroup custom_diffview
   autocmd FileType DiffviewFiles cnoreabbrev <buffer> <silent> <expr> quit <SID>abbr_help('quit', 'tabclose')
   autocmd FileType DiffviewFiles nnoremap <buffer> <silent> <space>j <cmd>DiffviewToggleFiles<cr>
   autocmd VimEnter * command! Gdiff DiffviewOpen
-augroup end
-
-" }}}
-" Package: nvim-web-icons {{{
-
-function s:init_nvim_web_icons()
-  if !exists('g:loaded_devicons')
-    echom 'devicons does not exist, skipping...'
-    return
-  endif
-lua << EOF
-require'nvim-web-devicons'.setup {
- -- your personnal icons can go here (to override)
- -- DevIcon will be appended to `name`
- override = {
-  zsh = {
-    icon = "",
-    color = "#428850",
-    name = "Zsh"
-  }
- };
- -- globally enable default icons (default to false)
- -- will get overriden by `get_icons` option
- default = true;
-}
-EOF
-endfunction
-
-augroup custom_nvim_web_icons
-  autocmd!
-  autocmd VimEnter * call s:init_nvim_web_icons()
 augroup end
 
 " }}}
