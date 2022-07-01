@@ -297,6 +297,7 @@
     "groupby",
     "gspread",
     "hdays",
+    "hiverization",
     "hnes",
     "hvault",
     "importlib",
