@@ -1338,40 +1338,59 @@ function get_ips() {
 # Get the nth row from a given file on s3
 function nth_row() {
   # 1st arg: s3 path
-  # 2nd arg: row # in question
+  # 2nd arg: row # that triggered the stl load error
   local filename=$(basename -- "$1")
   local extension="${filename##*.}"
-  local local_filename="fiq.${extension}"
+  # fiq: file in question
+  local local_filename="fiq.${filename}"
+
+  # copy the s3 file to local box
   aws s3 cp $1 $local_filename
+
+  # deal with compressed file
+  local proceed=true
   local comp_type=$(file $local_filename)
   if [[ "$comp_type" == *"bzip2"* ]]; then
     bzip2 -d $local_filename
+    # trim the extension because it's decompressed
+    local local_filename=${local_filename%.*}
   elif [[ "$comp_type" == *"gzip"* ]]; then
     gunzip $local_filename
+    # trim the extension because it's decompressed
+    local local_filename=${local_filename%.*}
   else
-    echo $extension
     if [[ $extension != "csv" && $extension != "tsv" && $extension != "json" ]]; then
-      echo "Can't deal with '$comp_type' yet"
-    else
-      mv $local_filename "fiq"
+      tput setaf 1;
+      echo -e "Attention: this file is of $extension extension!"
+      echo -e "Can't deal with '$comp_type' this type of file yet!"
+      proceed=false
     fi
   fi
 
-  local txt_type=$(file "fiq")
-  local total_lines=$(wc -l < "fiq")
-  if (( $2 > $total_lines )); then
-    tput setaf 1;
-    echo -e "The line you want to see exceed total lines $total_lines"
-  else
-    if [[ "$txt_type" == *"JSON"* ]]; then
-      sed "${2}q;d" "fiq" | jq
+  if [[ $proceed = "true" ]]; then
+    # extract the row that caused the issue
+    local txt_type=$(file $local_filename)
+    local total_lines=$(wc -l < $local_filename)
+    if (( $2 > $total_lines )); then
+      tput setaf 1;
+      echo -e "The line you want to see exceed total lines $total_lines"
+      proceed=false
     else
-      sed "${2}q;d" "fiq"
+      echo "========== See data below =========="
+      if [[ "$txt_type" == *"JSON"* ]]; then
+        sed "${2}q;d" $local_filename | jq
+      else
+        sed "${2}q;d" $local_filename
+      fi
     fi
   fi
 
-  if [ -f "fiq" ]; then
-    rm "fiq"
+  # clean-up: remove the downloaded files immediately in case it has PII info
+  if [ -f $local_filename ]; then
+    rm $local_filename
+  fi
+  if [[ $proceed = "false" ]]; then
+    false
   fi
 }
 
