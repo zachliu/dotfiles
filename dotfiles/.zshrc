@@ -1339,6 +1339,8 @@ function get_ips() {
 function nth_row() {
   # 1st arg: s3 path
   # 2nd arg: row # that triggered the stl load error
+  # example: nth_row s3://testingcopy/zliu/test.csv 32
+  # to extract and display the 32nd row of this file
   local filename=$(basename -- "$1")
   local extension="${filename##*.}"
   # fiq: file in question
