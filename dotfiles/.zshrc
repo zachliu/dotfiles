@@ -1295,6 +1295,11 @@ function ftt() {
   echo -n "(╯°□°)╯︵ ┻━┻" | xsel --clipboard --input
 }
 
+function poop() {
+  echo "💩"
+  echo -n "💩" | xsel --clipboard --input
+}
+
 function update_program() {
   case $1 in
     kitty)
