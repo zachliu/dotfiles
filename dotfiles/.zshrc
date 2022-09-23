@@ -289,36 +289,18 @@ include ~/.bash/sensitive
 # }}}
 # Plugins --- {{{
 
-source "$HOME/.zplugin/bin/zplugin.zsh"
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 
-zplugin ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
-zplugin light zdharma/fast-syntax-highlighting
+zinit ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
+zinit light zdharma/fast-syntax-highlighting
 
-# zplugin ice wait lucid  # this generates a weird behavior
-zplugin light paulirish/git-open
+# zinit ice wait lucid  # this generates a weird behavior
+zinit light paulirish/git-open
 
-zplugin ice wait lucid
-zplugin light felixr/docker-zsh-completion
+zinit ice wait lucid
+zinit light felixr/docker-zsh-completion
 
-zplugin light zachliu/spaceship-prompt
-
-# # zplug slows zsh down, me no like
-
-# # Syntax highlighting for zsh
-# source /home/zach/Downloads/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# # git open for zsh
-# source /home/zach/Downloads/git-open/git-open.plugin.zsh
-
-# # docker zsh completion
-# source /home/zach/Downloads/docker-zsh-completion/docker-zsh-completion.plugin.zsh
-
-# # Autojump for zsh
-# source /usr/share/autojump/autojump.zsh
-
-# # Autojump for spaceship-prompt
-# source /home/zach/Downloads/spaceship-prompt/spaceship.zsh
-# # source /home/zach/Downloads/powerlevel10k/powerlevel10k.zsh-theme
+zinit light zachliu/spaceship-prompt
 
 # }}}
 # ZShell Options --- {{{
@@ -833,10 +815,10 @@ function nodeglobal-install() {
 function pydev-install() {  ## Install default python dependencies
   local for_pip=(
     bpython
-    mypy
+    # mypy
     neovim-remote
-    pip
-    pylint
+    # pip
+    # pylint
     pynvim
     wheel
   )
@@ -927,11 +909,12 @@ function shell_python_version() {
 function ve() {  # Optional arg: python interpreter name
   local venv_name="$VIRTUAL_ENV_DEFAULT"
   local python_version=$(shell_python_version)
-  if [ -z "$1" ]; then
-    local python_name='python'
-  else
-    local python_name="$1"
-  fi
+  # if [ -z "$1" ]; then
+  #   local python_name='python'
+  # else
+  #   local python_name="$1"
+  # fi
+  local python_name='python'
   if [ ! -d "$venv_name" ]; then
     if [[ $python_version == "2.7.15+" ]]; then
       echo "You're using system python. Please use asdf!"
@@ -948,7 +931,7 @@ function ve() {  # Optional arg: python interpreter name
       fi
     fi
     source "$venv_name/bin/activate"
-    pip install -U pip
+    pip install pip==$1
     pydev-install  # install dependencies for editing
     deactivate
   else
@@ -1407,6 +1390,7 @@ function nth_row() {
 
 # https://github.com/denysdovhan/spaceship-prompt/blob/master/docs/Options.md
 
+# SPACESHIP_PROMPT_ASYNC=false
 SPACESHIP_PROMPT_ORDER=(
   user          # Username section
   host          # Hostname section
@@ -1525,12 +1509,6 @@ fi
 
 # }}}
 
-### Added by Zplugin's installer
-# source "$HOME/.zplugin/bin/zplugin.zsh"
-# autoload -Uz _zplugin
-# (( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin installer's chunk
-### End of Zinit's installer chunk
 # START: Added by Updated Airflow Breeze autocomplete setup
 source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.sh
 # END: Added by Updated Airflow Breeze autocomplete setup
