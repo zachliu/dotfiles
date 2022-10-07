@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #!/bin/zsh
 
 # source ~/Downloads/instant-zsh.zsh
@@ -300,7 +307,11 @@ zinit light paulirish/git-open
 zinit ice wait lucid
 zinit light felixr/docker-zsh-completion
 
-zinit light zachliu/spaceship-prompt
+# zinit light zachliu/spaceship-prompt
+# zinit light /home/zach/Documents/spaceship-prompt/
+# zinit light spaceship-prompt/spaceship-prompt
+
+zinit ice depth=1; zinit light romkatv/powerlevel10k
 
 # }}}
 # ZShell Options --- {{{
@@ -1486,8 +1497,10 @@ if [[ -o interactive ]]; then
     # if you're in the first tmux pane within all of tmux
     quote
   fi
-  # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
-  stty -ixon
+
+  # doesn't work with powerlevel10k
+  # # turn off ctrl-s and ctrl-q from freezing / unfreezing terminal
+  # stty -ixon
 
   # Try activate virtual environment, don't worry about console output
   va &> /dev/null
@@ -1512,3 +1525,6 @@ fi
 # START: Added by Updated Airflow Breeze autocomplete setup
 source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.sh
 # END: Added by Updated Airflow Breeze autocomplete setup
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
