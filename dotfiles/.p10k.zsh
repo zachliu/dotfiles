@@ -37,6 +37,7 @@
     vcs                     # git status
     # =========================[ Line #2 ]=========================
     newline                 # \n
+    openvpn                 # shield icon indicates we are under openvpn
     prompt_char             # prompt symbol
   )
 
@@ -1560,6 +1561,22 @@
   # typeset -g POWERLEVEL9K_TIME_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # Custom prefix.
   typeset -g POWERLEVEL9K_TIME_PREFIX='%fat '
+
+  ####################################[ openvpn: vpn connection ]####################################
+  function prompt_openvpn() {
+
+    # Check if the nmcli is installed
+    command -v nmcli >/dev/null || return
+
+    local STATUS vpn_status=""
+
+    STATUS=$(command nmcli c show --active 2>/dev/null | rg aws)
+
+    if [[ -n ${STATUS} ]]; then
+      p10k segment -f 208 -i '🛡️ '
+    fi
+  }
+
 
   # Example of a user-defined prompt segment. Function prompt_example will be called on every
   # prompt if `example` prompt segment is added to POWERLEVEL9K_LEFT_PROMPT_ELEMENTS or
