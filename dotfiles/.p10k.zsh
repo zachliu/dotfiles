@@ -347,9 +347,9 @@
   typeset -g POWERLEVEL9K_VCS_BRANCH_ICON='\uF126 '
 
   # Git icon. %178F (yellow) means the current branch has no remote
-  # Now with git's new autoSetupRemote = true, we can just do "git push" 
+  # Now with git's new autoSetupRemote = true, we can just do "git push"
   # for once and the remote will be automatically set
-  # if it has a remote, we'll show the green github icon 
+  # then we'll show the green github icon   because the branch has a remote
   typeset -g POWERLEVEL9K_VCS_GIT_ICON='%178F\uF1D3 '
 
   # Untracked files icon. It's really a question mark, your font isn't broken.
