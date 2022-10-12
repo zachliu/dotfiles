@@ -34,3 +34,4 @@
 
 [push]
   autoSetupRemote = true
+  default = current
