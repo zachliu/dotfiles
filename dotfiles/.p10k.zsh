@@ -346,6 +346,12 @@
   # Branch icon. Set this parameter to '\UE0A0 ' for the popular Powerline branch icon.
   typeset -g POWERLEVEL9K_VCS_BRANCH_ICON='\uF126 '
 
+  # Git icon. %178F (yellow) means the current branch has no remote
+  # we can either push the current branch to the remote origin
+  # or we can create another remote and push the current branch to it
+  # if it has a remote, we'll show the green github icon 
+  typeset -g POWERLEVEL9K_VCS_GIT_ICON='%178F\uF1D3 '
+
   # Untracked files icon. It's really a question mark, your font isn't broken.
   # Change the value of this parameter to show a different icon.
   typeset -g POWERLEVEL9K_VCS_UNTRACKED_ICON='新'
