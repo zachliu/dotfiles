@@ -577,6 +577,9 @@ alias octave="octave --no-gui"
 alias publicip='wget -qO - http://ipecho.net/plain ; echo'
 
 # Git
+# check https://git-scm.com/download/linux regularly
+# For Ubuntu, this PPA provides the latest stable upstream Git version:
+# add-apt-repository ppa:git-core/ppa # apt update; apt install git
 alias g="git status"
 alias gl='git branch --verbose --all'
 alias gm='git commit --verbose'
