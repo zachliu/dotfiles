@@ -369,13 +369,14 @@ autoload -Uz zcalc
 
 # Executed whenever the current working directory is changed
 function chpwd() {
-  ls --color=auto
+  # ls --color=auto
 
   # Magically find Python's virtual environment based on name
-  va
+  # va
+  # va &> /dev/null
 
   # activate direnv if there is a .envrc
-  activate_direnv
+  # activate_direnv
 }
 
 # Executed every $PERIOD seconds, just before a prompt.
@@ -385,7 +386,8 @@ function chpwd() {
 # Hence the set of functions is always called together.
 function periodic() {
   # Magically find Python's virtual environment based on name
-  va
+  # va
+  # va &> /dev/null
 }
 
 # Executed just after a command has been read and is about to be executed
@@ -418,7 +420,7 @@ setopt EXTENDEDGLOB
 if (( $(date '+%s' --date="1 day ago") > $(stat -c "%Z" ${HOME}/.zcompdump) )); then
 # if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
 # the string "#qN.mh+24" (to be specific, the "#") messes up the zsh syntax highlighting
-  echo "re-load .zcompdump"
+  # echo "re-load .zcompdump"
   compinit
   compdump  # update the timestamp on compdump file
 else
@@ -646,7 +648,7 @@ alias cpf='xclip -sel clip'
 # 4. Attach to session newly-created session
 function t() {
   if [ -n "$TMUX" ]; then
-    echo 'Cannot run t() in tmux session'
+    # echo 'Cannot run t() in tmux session'
     return 1
   elif [[ $# > 0 ]]; then
     SESSION=$1
@@ -895,7 +897,8 @@ function va() {  # No arguments
     if [ -d "$current_directory/$venv_name" ]; then
       source "$current_directory/$venv_name/bin/activate"
       if [[ "$old_venv" != "$VIRTUAL_ENV" ]]; then
-        echo "Activated $(python --version) virtualenv in $VIRTUAL_ENV"
+        # echo "Activated $(python --version) virtualenv in $VIRTUAL_ENV"
+        :
       fi
       return
     fi
@@ -905,7 +908,7 @@ function va() {  # No arguments
   if [[ -z $VIRTUAL_ENV ]]; then
   else
     deactivate
-    echo "Disabled existing virtualenv $old_venv"
+    # echo "Disabled existing virtualenv $old_venv"
   fi
 }
 
@@ -928,7 +931,7 @@ function ve() {  # Optional arg: python interpreter name
   local python_name='python'
   if [ ! -d "$venv_name" ]; then
     if [[ $python_version == "2.7.15+" ]]; then
-      echo "You're using system python. Please use asdf!"
+      # echo "You're using system python. Please use asdf!"
       return
     elif [[ $python_version =~ ^"2.7."* ]]; then
       pip install virtualenv
@@ -937,7 +940,7 @@ function ve() {  # Optional arg: python interpreter name
       $python_name -m venv "$venv_name"
       if [ $? -ne 0 ]; then
         local error_code=$?
-        echo "Virtualenv creation failed, aborting"
+        # echo "Virtualenv creation failed, aborting"
         return error_code
       fi
     fi
@@ -946,7 +949,8 @@ function ve() {  # Optional arg: python interpreter name
     pydev-install  # install dependencies for editing
     deactivate
   else
-    echo "$venv_name already exists, activating"
+    # echo "$venv_name already exists, activating"
+    :
   fi
   source $venv_name/bin/activate
 }
