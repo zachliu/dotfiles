@@ -1305,6 +1305,7 @@ function update_program() {
       ;;
     zoom)
       curl -Lsf https://zoom.us/client/latest/zoom_amd64.deb -o /tmp/zoom_amd64.deb
+      dpkg-sig --verify /tmp/zoom_amd64.deb
       sudo dpkg -i /tmp/zoom_amd64.deb
       ;;
     vault)
