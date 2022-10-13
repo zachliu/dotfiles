@@ -372,8 +372,8 @@ function chpwd() {
   # ls --color=auto
 
   # Magically find Python's virtual environment based on name
-  # va
-  # va &> /dev/null
+  # this works under powerlevel10k
+  va &> /dev/null
 
   # activate direnv if there is a .envrc
   # activate_direnv
@@ -386,6 +386,7 @@ function chpwd() {
 # Hence the set of functions is always called together.
 function periodic() {
   # Magically find Python's virtual environment based on name
+  # NOTE: neither of these works under powerlevel10k
   # va
   # va &> /dev/null
 }
