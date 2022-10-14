@@ -1,17 +1,11 @@
+#!/bin/zsh
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-
-#!/bin/zsh
-
-# source ~/Downloads/instant-zsh.zsh
-# instant-zsh-pre "%B%F{yello}%n@%M%f%b%B%247F[%f%b%B%F{cyan}${${(V)${(%):-%~}//\%/%%}//\//%b%6F/%B%6F}%f%B%247F]%f%b"$'\n'"%B%F{green}$%f%b "
-# # instant-zsh-pre "%B%39F${${(V)${(%):-%~}//\%/%%}//\//%b%31F/%B%39F}%f"$'\n'"%76F❯%f "
-
-# sleep 1
 
 # If we are using gnome-terminal, hide the headerbar
 # if [ "$TERM" = "xterm-256color" ]; then
@@ -1406,77 +1400,77 @@ function nth_row() {
 }
 
 # }}}
-# ZShell prompt (PS1) --- {{{
+# # Spaceship configs --- {{{
 
-# https://github.com/denysdovhan/spaceship-prompt/blob/master/docs/Options.md
+# # https://github.com/denysdovhan/spaceship-prompt/blob/master/docs/Options.md
 
-# SPACESHIP_PROMPT_ASYNC=false
-SPACESHIP_PROMPT_ORDER=(
-  user          # Username section
-  host          # Hostname section
-  dir           # Current directory section
-  git           # Git section (git_branch + git_status)
-  # package       # Package version
-  # node          # Node.js section
-  # ruby          # Ruby section
-  # xcode         # Xcode section
-  # golang        # Go section
-  # php           # PHP section
-  # rust          # Rust section
-  # haskell       # Haskell Stack section
-  # docker        # Docker section
-  # aws           # Amazon Web Services section
-  venv          # virtualenv section
-  pyenv         # Pyenv section
-  # kubecontext   # Kubectl context section
-  terraform     # Terraform workspace section
-  # exec_time     # Execution time
-  line_sep      # Line break
-  # battery       # Battery level and status
-  # vi_mode       # Vi-mode indicator
-  # jobs          # Background jobs indicator
-  # exit_code     # Exit code section
-  vpn           # on vpn or not
-  char          # Prompt character
-)
+# # SPACESHIP_PROMPT_ASYNC=false
+# SPACESHIP_PROMPT_ORDER=(
+#   user          # Username section
+#   host          # Hostname section
+#   dir           # Current directory section
+#   git           # Git section (git_branch + git_status)
+#   # package       # Package version
+#   # node          # Node.js section
+#   # ruby          # Ruby section
+#   # xcode         # Xcode section
+#   # golang        # Go section
+#   # php           # PHP section
+#   # rust          # Rust section
+#   # haskell       # Haskell Stack section
+#   # docker        # Docker section
+#   # aws           # Amazon Web Services section
+#   venv          # virtualenv section
+#   pyenv         # Pyenv section
+#   # kubecontext   # Kubectl context section
+#   terraform     # Terraform workspace section
+#   # exec_time     # Execution time
+#   line_sep      # Line break
+#   # battery       # Battery level and status
+#   # vi_mode       # Vi-mode indicator
+#   # jobs          # Background jobs indicator
+#   # exit_code     # Exit code section
+#   vpn           # on vpn or not
+#   char          # Prompt character
+# )
 
-SPACESHIP_PROMPT_ADD_NEWLINE=false
-SPACESHIP_CHAR_SYMBOL='$ '
-SPACESHIP_DIR_PREFIX='['
-SPACESHIP_DIR_SUFFIX=']'
-SPACESHIP_DIR_TRUNC=0
-SPACESHIP_DIR_TRUNC_REPO=false
-SPACESHIP_HOST_COLOR=yellow
-SPACESHIP_HOST_PREFIX=@
-SPACESHIP_HOST_SHOW=always
-SPACESHIP_USER_COLOR=yellow
-SPACESHIP_USER_SHOW=always
-SPACESHIP_USER_SUFFIX=
-SPACESHIP_VENV_PREFIX=' ('
-SPACESHIP_VENV_SUFFIX=')'
-SPACESHIP_VENV_GENERIC_NAMES=()
-SPACESHIP_GIT_BRANCH_PREFIX='🌵 ['
-SPACESHIP_GIT_BRANCH_SUFFIX=']'
-SPACESHIP_GIT_STATUS_PREFIX=''
-SPACESHIP_GIT_STATUS_SUFFIX=''
+# SPACESHIP_PROMPT_ADD_NEWLINE=false
+# SPACESHIP_CHAR_SYMBOL='$ '
+# SPACESHIP_DIR_PREFIX='['
+# SPACESHIP_DIR_SUFFIX=']'
+# SPACESHIP_DIR_TRUNC=0
+# SPACESHIP_DIR_TRUNC_REPO=false
+# SPACESHIP_HOST_COLOR=yellow
+# SPACESHIP_HOST_PREFIX=@
+# SPACESHIP_HOST_SHOW=always
+# SPACESHIP_USER_COLOR=yellow
+# SPACESHIP_USER_SHOW=always
+# SPACESHIP_USER_SUFFIX=
+# SPACESHIP_VENV_PREFIX=' ('
+# SPACESHIP_VENV_SUFFIX=')'
+# SPACESHIP_VENV_GENERIC_NAMES=()
+# SPACESHIP_GIT_BRANCH_PREFIX='🌵 ['
+# SPACESHIP_GIT_BRANCH_SUFFIX=']'
+# SPACESHIP_GIT_STATUS_PREFIX=''
+# SPACESHIP_GIT_STATUS_SUFFIX=''
 
-SPACESHIP_GIT_STATUS_UNTRACKED='新'
-SPACESHIP_GIT_STATUS_MODIFIED='外'
-SPACESHIP_GIT_STATUS_UNMERGED='爭'
-SPACESHIP_GIT_STATUS_DELETED='删'
-SPACESHIP_GIT_STATUS_STASHED='藏'
-SPACESHIP_GIT_STATUS_ADDED='裡'
-SPACESHIP_GIT_STATUS_DIVERGED='歧'
-SPACESHIP_GIT_STATUS_AHEAD='前'
-SPACESHIP_GIT_STATUS_BEHIND='後'
-SPACESHIP_GIT_STATUS_PUSH='推'
-SPACESHIP_GIT_STATUS_PULL='拉'
-SPACESHIP_GIT_STATUS_RENAMED='改'
+# SPACESHIP_GIT_STATUS_UNTRACKED='新'
+# SPACESHIP_GIT_STATUS_MODIFIED='外'
+# SPACESHIP_GIT_STATUS_UNMERGED='爭'
+# SPACESHIP_GIT_STATUS_DELETED='删'
+# SPACESHIP_GIT_STATUS_STASHED='藏'
+# SPACESHIP_GIT_STATUS_ADDED='裡'
+# SPACESHIP_GIT_STATUS_DIVERGED='歧'
+# SPACESHIP_GIT_STATUS_AHEAD='前'
+# SPACESHIP_GIT_STATUS_BEHIND='後'
+# SPACESHIP_GIT_STATUS_PUSH='推'
+# SPACESHIP_GIT_STATUS_PULL='拉'
+# SPACESHIP_GIT_STATUS_RENAMED='改'
 
-SPACESHIP_TERRAFORM_SHOW=true
-SPACESHIP_PYENV_SHOW=true
+# SPACESHIP_TERRAFORM_SHOW=true
+# SPACESHIP_PYENV_SHOW=true
 
-# }}}
+# # }}}
 # FZF --- {{{
 
 # Load zsh script
