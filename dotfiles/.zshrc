@@ -178,7 +178,7 @@ export NOCOLOR=`echo -e '\033[0m'`
 export MANWIDTH=79
 export MANPAGER=less
 
-# Git
+# Git (already set in .gitconfig)
 # export GIT_PAGER=less
 
 # Configure man pager (legacy)
@@ -199,7 +199,7 @@ export GDK_SCALE=0
 # export TERM="screen-256color"
 
 # History: How many lines of history to keep in memory
-export HISTSIZE=30000
+export HISTSIZE=40000
 
 # History: ignore leading space, where to save history to disk
 export HISTCONTROL=ignorespace
@@ -221,7 +221,7 @@ export BROWSER='/usr/bin/google-chrome'
 export WINIT_HIDPI_FACTOR=1.0
 
 # Bat
-export BAT_PAGER=''
+export BAT_PAGER=less
 
 # }}}
 # Path appends + Misc env setup --- {{{
@@ -307,6 +307,8 @@ zinit light felixr/docker-zsh-completion
 
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
+zinit snippet OMZP::history
+
 # }}}
 # ZShell Options --- {{{
 
@@ -330,7 +332,7 @@ setopt AUTOCD
 
 # Dealing with history
 setopt HIST_IGNORE_SPACE
-setopt APPENDHISTORY
+setopt APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt INC_APPEND_HISTORY
 
