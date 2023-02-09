@@ -367,11 +367,14 @@ function! s:default_key_mappings()
   nnoremap <expr> <2-LeftMouse> foldclosed(line('.')) == -1 ? '\<2-LeftMouse>' : 'zo'
   nnoremap <RightMouse> <LeftMouse><LeftRelease>zc
 
-  " Insert Mode moves
+  " Insert Mode moves - arrows
   imap <C-h> <left>
   imap <C-j> <down>
   imap <C-k> <up>
   imap <C-l> <right>
+  " Insert Mode moves - begin/end of line
+  inoremap <C-e> <Esc>A
+  inoremap <C-a> <Esc>I
 
   " Auto-execute all filetypes
   let &filetype=&filetype
@@ -472,7 +475,7 @@ function! s:autocmd_custom_coc()
   augroup custom_coc
     autocmd FileType coctree set nowrap
     autocmd FileType nginx let b:coc_additional_keywords = ['$']
-    autocmd CursorHold * silent call CocActionAsync('highlight')
+    " autocmd CursorHold * silent call CocActionAsync('highlight')
     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     autocmd User CocNvimInit call s:default_key_mappings()
   augroup end
