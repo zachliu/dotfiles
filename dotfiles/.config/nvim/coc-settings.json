@@ -60,7 +60,6 @@
   "diagnostic-languageserver.filetypes": {
     "python": ["mypy", "pylint"],
     "nginx": "nginx-linter",
-    "terraform": "tflint"
   },
   "diagnostic-languageserver.linters": {
     "nginx-linter": {
@@ -169,7 +168,7 @@
         "hie.yaml"
       ]
     },
-    "terraform-ls": {
+    "terraform": {
       "command": "terraform-ls",
       "args": ["serve"],
       "filetypes": ["terraform", "tf"],
