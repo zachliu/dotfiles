@@ -1,5 +1,4 @@
 MKDIR_CONFIG = $(subst dotfiles, ~, $(wildcard dotfiles/.config/*))
-MKDIR_HOME = ~/.stack/ ~/bin/
 
 .PHONY: help
 help: ## Prints each target and its associated help message
