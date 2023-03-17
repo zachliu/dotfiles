@@ -828,6 +828,8 @@ function nodeglobal-install() {
 function pydev-install() {  ## Install default python dependencies
   local for_pip=(
     bpython
+    # ipython
+    # pyright
     # mypy
     neovim-remote
     # pip
@@ -845,7 +847,7 @@ function pipx-upgrade() {
 }
 
 function pyglobal-install() {  ## Install global Python applications
-  pip install -U pipx
+  pip install -U pipx pynvim neovim-remote
   pydev-install
   asdf reshim python
   local for_pipx=(
