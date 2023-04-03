@@ -645,7 +645,8 @@ augroup custom_filetype_recognition
   autocmd BufEnter Makefile.* set filetype=make
   autocmd BufEnter poetry.lock,Pipfile set filetype=toml
   autocmd BufEnter tsconfig.json,*.jsonc,.markdownlintrc set filetype=jsonc
-  autocmd BufEnter .zshrc set filetype=sh
+  " Setting .zshrc filetype to sh messes up with its syntax highlighting or parsing ¯\_(ツ)_/¯
+  " autocmd BufEnter .zshrc set filetype=sh
 augroup end
 
 " }}}
