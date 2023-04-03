@@ -947,7 +947,11 @@ function ve() {  # Optional arg: python interpreter name
       fi
     fi
     source "$venv_name/bin/activate"
-    pip install pip==$1
+    if [ -z "$1" ]; then
+      pip install -U pip
+    else
+      pip install pip==$1
+    fi
     pydev-install  # install dependencies for editing
     deactivate
   else
