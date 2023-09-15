@@ -13,19 +13,19 @@
   "suggest.noselect": true,
   "diagnostic.enable": true,
   "pullDiagnostic.onSave": true,
+  "jedi.enable": false,
+  "pyright.inlayHints.variableTypes": false,
+  "pyright.inlayHints.functionReturnTypes": false,
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportUnusedImport": "none",
+    "reportUnusedExpression": "none",
+    "reportPrivateImportUsage": "none",
+    "reportGeneralTypeIssues": "none",
+    "reportOptionalMemberAccess": "none"
+  },
+  "python.linting.pylintEnabled": true,
   "signature.hideOnTextChange": true,
   "signature.enable": false,
-  "jedi.jediSettings.autoImportModules": [
-    "alembic",
-    "fastai",
-    "fastcore",
-    "matplotlib",
-    "sqlalchemy",
-    "sympy",
-    "django",
-    "django.db"
-  ],
-  "jedi.startupMessage": false,
   "html.autoClosingTags": false,
   "html.completion.attributeDefaultValue": "empty",
   "svelte.enable-ts-plugin": true,
@@ -56,6 +56,9 @@
       "/*open-api*.yml",
       "/*open-api*.yaml"
     ]
+  },
+  "diagnostic-languageserver.formatFiletypes": {
+    "python": ["black", "isort"],
   },
   "diagnostic-languageserver.filetypes": {
     "python": ["mypy", "pylint"],
