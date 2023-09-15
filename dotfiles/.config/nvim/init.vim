@@ -133,7 +133,6 @@ function! s:packager_init(packager) abort
 
   " Autocompletion And IDE Features:
   call a:packager.add('https://github.com/neoclide/coc.nvim.git', {'do': 'yarn install --frozen-lockfile'})
-  call a:packager.add('git@github.com:pappasam/coc-jedi.git', {'do': 'yarn install --frozen-lockfile && yarn build'})
   call a:packager.add('git@github.com:tjdevries/coc-zsh.git')
 
   " TreeSitter:
@@ -448,6 +447,7 @@ let g:coc_global_extensions = [
       \ 'coc-lua',
       \ 'coc-markdownlint',
       \ 'coc-prisma',
+      \ 'coc-pyright',
       \ 'coc-r-lsp',
       \ 'coc-rls',
       \ 'coc-sh',
@@ -517,18 +517,24 @@ function! s:setup_lua_packages()
   call s:safe_require('config.spellsitter')
   call s:safe_require('config.telescope')
   call s:safe_require('config.treesitter-context')
-  call s:safe_require('config.twilight')
-  call s:safe_require('config.zen-mode')
 endfunction
 
 call s:setup_lua_packages()
 
-augroup custom_general_lua_extensions
+function! s:nvimtree_vimenter()
+  let cliargs = argv()
+  if exists(':NvimTreeOpen') && len(cliargs) == 1 && isdirectory(cliargs[0])
+    execute 'NvimTreeOpen ' . cliargs[0]
+  endif
+endfunction
+
+augroup lua_extension_config
   autocmd!
   autocmd FileType vim let &l:path .= ','.stdpath('config').'/lua'
   autocmd FileType vim setlocal
         \ includeexpr=substitute(v:fname,'\\.','/','g')
         \ suffixesadd^=.lua
+  autocmd VimEnter * call s:nvimtree_vimenter()
 augroup end
 
 command! GitsignsToggle Gitsigns toggle_signs
@@ -744,6 +750,12 @@ augroup custom_comment_config
   autocmd FileType sh setlocal formatoptions=jcroql
   autocmd FileType markdown setlocal commentstring=<!--\ %s\ -->
 augroup end
+
+augroup custom_indentation
+  autocmd!
+  " auto wrap when viewing/editing markdown
+  autocmd Filetype markdown setlocal wrap
+augroup END
 
 " }}}
 " General: colorColumn different widths for different filetypes {{{
@@ -1069,6 +1081,9 @@ let g:qs_max_chars = 10000
 " relevant command: Hexmode
 let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_xxd_options = '-g 2'
+
+" Makefile: global variable to prevent syntax highlighting of commands
+let g:make_no_commands = 1
 
 " vim-filetype-formatter:
 let g:vim_filetype_formatter_verbose = v:false
