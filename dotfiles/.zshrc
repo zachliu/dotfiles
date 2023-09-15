@@ -1,13 +1,7 @@
 #!/bin/zsh
+# shellcheck shell=sh disable=all
+# If we are using gnome-terminal, hide the headerbar {{{
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# If we are using gnome-terminal, hide the headerbar
 # if [ "$TERM" = "xterm-256color" ]; then
 #   old_wid=$(xdotool getactivewindow)
 #   wname=$(xdotool getwindowname $old_wid)
@@ -22,11 +16,17 @@ fi
 #     -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"
 # fi
 
-#######################################################################
-# Profiler Header
-#######################################################################
+# }}}
+# Powerlevel10k: Configure instant prompt {{{
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-# Profiler Header --- {{{
+# }}}
+# Profiler Header {{{
 
  # zmodload zsh/zprof
 
@@ -41,21 +41,7 @@ fi
  # setopt XTRACE
 
 # }}}
-
-# Notes:
-#
-# Searching for a specific man page
-#   1. apropros
-#   2. man -k
-#
-# Clearning "less" search results
-#   Alt-u
-
-#######################################################################
-# Environment Setup
-#######################################################################
-
-# Functions --- {{{
+# Functions {{{
 
 path_ladd() {
   # Takes 1 argument and adds it to the beginning of the PATH
@@ -72,7 +58,7 @@ path_radd() {
 }
 
 # }}}
-# Exported variable: LS_COLORS --- {{{
+# Exported variable: LS_COLORS {{{
 
 # Colors when using the LS command
 # NOTE:
@@ -139,7 +125,7 @@ LS_COLORS+="*.rpm=90"
 export LS_COLORS
 
 # }}}
-# Exported variables: General --- {{{
+# Exported variables: General {{{
 
 # React
 export REACT_EDITOR='less'
@@ -224,7 +210,7 @@ export WINIT_HIDPI_FACTOR=1.0
 export BAT_PAGER=less
 
 # }}}
-# Path appends + Misc env setup --- {{{
+# Path appends + Misc env setup {{{
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
@@ -274,12 +260,7 @@ if [ -f '/home/zach/google-cloud-sdk/completion.zsh.inc' ]; then
 fi
 
 # }}}
-
-#######################################################################
-# Interactive session setup
-#######################################################################
-
-# Import from other Bash Files --- {{{
+# Import from other Bash Files {{{
 
 include () {
   [[ -f "$1" ]] && source "$1"
@@ -288,29 +269,34 @@ include () {
 include ~/.bash/sensitive
 
 # }}}
-# Plugins --- {{{
+# Z-shell: plugins {{{
 
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+if [ -f "$HOME/.local/share/zinit/zinit.git/zinit.zsh" ]; then
+  source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 
-zinit ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
-zinit light zdharma/fast-syntax-highlighting
+  zinit ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
+  zinit light zdharma/fast-syntax-highlighting
 
-# zinit ice wait lucid  # this generates a weird behavior
-zinit light paulirish/git-open
+  # zinit ice wait lucid  # this generates a weird behavior
+  zinit light paulirish/git-open
 
-zinit ice wait lucid
-zinit light felixr/docker-zsh-completion
+  zinit ice wait lucid
+  zinit light felixr/docker-zsh-completion
 
-# zinit light zachliu/spaceship-prompt
-# zinit light /home/zach/Documents/spaceship-prompt/
-# zinit light spaceship-prompt/spaceship-prompt
+  # zinit light zachliu/spaceship-prompt
+  # zinit light /home/zach/Documents/spaceship-prompt/
+  # zinit light spaceship-prompt/spaceship-prompt
 
-zinit ice depth=1; zinit light romkatv/powerlevel10k
+  zinit ice depth=1; zinit light romkatv/powerlevel10k
 
-zinit snippet OMZP::history
+  zinit snippet OMZP::history
+
+  # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+fi
 
 # }}}
-# ZShell Options --- {{{
+# Z-shell: options {{{
 
 #######################################################################
 # Set options
@@ -353,13 +339,13 @@ export PERIOD=1
 export LISTMAX=0
 
 # }}}
-# ZShell Misc Autoloads --- {{{
+# Z-shell: misc autoloads {{{
 
 # Enables zshell calculator: type with zcalc
 autoload -Uz zcalc
 
 # }}}
-# ZShell Hook Functions --- {{{
+# Z-shell: hook functions {{{
 
 # NOTE: precmd is defined within the prompt section
 
@@ -410,7 +396,7 @@ function zshexit() {
 }
 
 # }}}
-# ZShell Auto Completion --- {{{
+# Z-shell: auto completion {{{
 
 autoload -Uz compinit
 setopt EXTENDEDGLOB
@@ -446,7 +432,7 @@ zmodload -i zsh/complist
 fpath+=~/.zfunc
 
 # }}}
-# ZShell Key-Bindings --- {{{
+# Z-shell: key-bindings {{{
 
 # emacs
 bindkey -e
@@ -480,7 +466,7 @@ source $HOME/.asdf/asdf.sh
 source $HOME/.asdf/completions/asdf.bash
 
 # }}}
-# # General: post-asdf env setup {{{
+# General: post-asdf env setup {{{
 
 # # MANPATH: add asdf man pages to my man path
 # MANPATH="$HOME/man"
@@ -494,8 +480,8 @@ source $HOME/.asdf/completions/asdf.bash
 
 # include ~/.asdf/plugins/java/set-java-home.sh
 
-# # }}}
-# Aliases --- {{{
+# }}}
+# Aliases {{{
 
 # Easier directory navigation for going up a directory tree
 alias 'cd..'='cd_up'  # can not name function 'cd..'; references cd_up below
@@ -633,7 +619,7 @@ alias emr='aws emr list-clusters --active | jq ".Clusters[]"'
 alias cpf='xclip -sel clip'
 
 # }}}
-# Functions --- {{{
+# Functions {{{
 
 # Tmux Launch
 # NOTE: I use the option "-2" to force Tmux to accept 256 colors. This is
@@ -1407,7 +1393,7 @@ function nth_row() {
 }
 
 # }}}
-# # Spaceship configs --- {{{
+# Spaceship configs {{{
 
 # # https://github.com/denysdovhan/spaceship-prompt/blob/master/docs/Options.md
 
@@ -1477,8 +1463,8 @@ function nth_row() {
 # SPACESHIP_TERRAFORM_SHOW=true
 # SPACESHIP_PYENV_SHOW=true
 
-# # }}}
-# FZF --- {{{
+# }}}
+# FZF {{{
 
 # Load zsh script
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -1499,7 +1485,7 @@ bindkey '^T' fzf-completion
 bindkey '^I' $fzf_default_completion
 
 # }}}
-# Executed Commands --- {{{
+# Executed Commands {{{
 
 # if you want to see less of "quote"
 if [[ -o interactive ]]; then
@@ -1518,12 +1504,7 @@ if [[ -o interactive ]]; then
 fi
 
 # }}}
-
-#######################################################################
-# Profiler Footer
-#######################################################################
-
-# Profiler Footer --- {{{
+# Profiler Footer {{{
 
  # zprof
 
@@ -1531,10 +1512,10 @@ fi
  # exec 2>&3 3>&-
 
 # }}}
+# Airflow breeze {{{
 
 # START: Added by Updated Airflow Breeze autocomplete setup
 source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.sh
 # END: Added by Updated Airflow Breeze autocomplete setup
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# }}}
