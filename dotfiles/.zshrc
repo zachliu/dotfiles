@@ -628,7 +628,6 @@ alias bfg='java -jar /usr/local/bin/bfg.jar'
 
 # AWS
 alias emr='aws emr list-clusters --active | jq ".Clusters[]"'
-alias sso='aws sso login'
 
 # Copy file contents
 alias cpf='xclip -sel clip'
