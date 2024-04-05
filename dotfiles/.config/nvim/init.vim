@@ -36,7 +36,7 @@ set cmdheight=1
 set nowrap linebreak
 
 " Indentation:
-set expandtab autoindent smartindent shiftwidth=2 softtabstop=2 tabstop=8
+set expandtab autoindent shiftwidth=2 softtabstop=2 tabstop=8
 
 " Filename: for gf (@-@='@', see: https://stackoverflow.com/a/45244758)
 set isfname+=@-@ isfname+=:
