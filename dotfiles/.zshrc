@@ -618,6 +618,9 @@ alias emr='aws emr list-clusters --active | jq ".Clusters[]"'
 # Copy file contents
 alias cpf='xclip -sel clip'
 
+# GHA runner status
+alias ghastatus="gh api -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' /orgs/keplergroup/actions/runners | jq -C '.runners[] | select(.status == \"online\") | {name, busy}'"
+
 # }}}
 # Functions {{{
 
@@ -1272,6 +1275,16 @@ function s3size() {
     --dimensions Name=BucketName,Value=$S3_BUCKET Name=StorageType,Value=StandardStorage \
     | jq '.Datapoints[].Average' -r \
     | awk '{print $1/1024/1024/1024 " GB "}'
+}
+
+function thankyou() {
+  echo """🚀 🙏 🚀 🚀 🙏 🚀
+🙏 🚀 🎉 🎉 🚀 🙏
+🚀 🎉 🎉 🎉 🎉 🙏"""
+
+  echo -n """:rocket: :pray: :rocket: :rocket: :pray: :rocket:
+:pray: :rocket: :tada: :tada: :rocket: :pray:
+:pray: :tada: :tada: :tada: :tada: :pray: """ | xsel --clipboard --input
 }
 
 function shrug() {
