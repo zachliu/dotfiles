@@ -171,8 +171,8 @@ export MANPAGER=less
 #
 
 # tmuxinator
-export EDITOR=/usr/bin/nvim
-export SHELL=/usr/local/bin/zsh
+# export EDITOR=/usr/bin/nvim
+export SHELL=/bin/zsh
 
 # environment variable controlling difference between HI-DPI / Non HI_DPI
 # turn off because it messes up my pdf tooling
@@ -201,7 +201,7 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.g
 export PIPENV_VENV_IN_PROJECT='doit'
 
 # Default browser for some programs (eg, urlview)
-export BROWSER='/usr/bin/google-chrome'
+# export BROWSER='/usr/bin/google-chrome'
 
 # Enable editor to scale with monitor's DPI
 export WINIT_HIDPI_FACTOR=1.0
@@ -211,53 +211,11 @@ export BAT_PAGER=less
 
 # }}}
 # Path appends + Misc env setup {{{
+#
 
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
-
-HOME_LOCAL_BIN="$HOME/.local/bin"
-if [ ! -d "$HOME_LOCAL_BIN" ]; then
-  mkdir -p "$HOME_LOCAL_BIN"
-fi
-path_ladd "$HOME_LOCAL_BIN"
-
-RUST_CARGO="$HOME/.cargo/bin"
-if [ -d "$RUST_CARGO" ]; then
-  path_ladd "$RUST_CARGO"
-fi
-
-HOME_BIN_HIDDEN="$HOME/.bin"
-if [ ! -d "$HOME_BIN_HIDDEN" ]; then
-  mkdir "$HOME_BIN_HIDDEN"
-fi
-path_ladd "$HOME_BIN_HIDDEN"
-
-POETRY_LOC="$HOME/.poetry/bin"
-if [ -d "$POETRY_LOC" ]; then
-  path_ladd "$POETRY_LOC"
-  source $HOME/.poetry/env
-fi
-
-SERVERLESS_BIN="$HOME/.serverless/bin"
-if [ -d "$SERVERLESS_BIN" ]; then
-  path_ladd "$SERVERLESS_BIN"
-fi
-
-# EXPORT THE FINAL, MODIFIED PATH
-export PATH
-
-# Remove duplicates in $PATH
-# https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
-typeset -aU path
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/zach/google-cloud-sdk/path.zsh.inc' ]; then
-  . '/home/zach/google-cloud-sdk/path.zsh.inc';
-fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/zach/google-cloud-sdk/completion.zsh.inc' ]; then
-  . '/home/zach/google-cloud-sdk/completion.zsh.inc';
-fi
+source /opt/homebrew/opt/asdf/libexec/asdf.sh
+eval "$(/opt/homebrew/bin/brew shellenv)"
+source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # }}}
 # Import from other Bash Files {{{
@@ -399,20 +357,21 @@ function zshexit() {
 # Z-shell: auto completion {{{
 
 autoload -Uz compinit
-setopt EXTENDEDGLOB
-if (( $(date '+%s' --date="1 day ago") > $(stat -c "%Z" ${HOME}/.zcompdump) )); then
-# if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
-# the string "#qN.mh+24" (to be specific, the "#") messes up the zsh syntax highlighting
-  # echo "re-load .zcompdump"
-  compinit
-  compdump  # update the timestamp on compdump file
-else
-  # echo "within 24"
-  compinit -C
-fi
-unsetopt EXTENDEDGLOB
+compinit
+# setopt EXTENDEDGLOB
+# if (( $(date '+%s' --date="1 day ago") > $(stat -c "%Z" ${HOME}/.zcompdump) )); then
+# # if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
+# # the string "#qN.mh+24" (to be specific, the "#") messes up the zsh syntax highlighting
+#   # echo "re-load .zcompdump"
+#   compinit
+#   compdump  # update the timestamp on compdump file
+# else
+#   # echo "within 24"
+#   compinit -C
+# fi
+# unsetopt EXTENDEDGLOB
 autoload -U +X bashcompinit && bashcompinit
-zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
+# zstyle ':completion:*:*:git:*' script /usr/local/etc/bash_completion.d/git-completion.bash
 
 # CURRENT STATE: does not select any sort of searching
 # searching was too annoying and I didn't really use it
@@ -462,8 +421,8 @@ WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 # }}}
 # ASDF: needs to run after ZSH setup {{{
 
-source $HOME/.asdf/asdf.sh
-source $HOME/.asdf/completions/asdf.bash
+# source $HOME/.asdf/asdf.sh
+# source $HOME/.asdf/completions/asdf.bash
 
 # }}}
 # General: post-asdf env setup {{{
@@ -552,8 +511,8 @@ alias diff="diff -rupP --color"
 
 # Set copy/paste helper functions
 # the perl step removes the final newline from the output
-alias pbcopy="perl -pe 'chomp if eof' | xsel --clipboard --input"
-alias pbpaste="xsel --clipboard --output"
+# alias pbcopy="perl -pe 'chomp if eof' | xsel --clipboard --input"
+# alias pbpaste="xsel --clipboard --output"
 
 # Octave
 alias octave="octave --no-gui"
@@ -612,7 +571,7 @@ alias pipr='pip install -r'
 alias pipi='pip install'
 
 # git repo cleaner
-alias bfg='java -jar /usr/local/bin/bfg.jar'
+# alias bfg='java -jar /usr/local/bin/bfg.jar'
 
 # AWS
 alias emr='aws emr list-clusters --active | jq ".Clusters[]"'
@@ -674,24 +633,6 @@ function upgrade() {
   asdf global neovim nightly
   nvim -c 'PU'
   nvim -c 'CocUpdate'
-}
-
-function alacritty-install() {
-  cargo build --release
-
-  # Install
-  sudo cp target/release/alacritty /usr/local/bin # or anywhere else in $PATH
-  sudo cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg
-  sudo desktop-file-install extra/linux/Alacritty.desktop
-  sudo update-desktop-database
-
-  # terminfo
-  tic -xe alacritty,alacritty-direct extra/alacritty.info
-
-  # man page
-  sudo mkdir -p /usr/local/share/man/man1
-  gzip -c extra/alacritty.man | \
-    sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null
 }
 
 # Fix window dimensions: tty mode
@@ -1160,7 +1101,7 @@ function quote() {
     echo; \
     echo "Daily word: "; \
     shuf -n 1 ~/.gre_words.txt;)
-  echo -e "$cowsay_quote" | cowsay -n | cowsay -n -f gnu | lolcat;
+  echo -e "$cowsay_quote" | cowsay -n | cowsay -n -f ~/.cowsay/cowfiles/gnu.cow | lolcat;
   echo;
 }
 
@@ -1286,22 +1227,22 @@ function thankyou() {
 
   echo -n """:rocket: :pray: :rocket: :rocket: :pray: :rocket:
 :pray: :rocket: :tada: :tada: :rocket: :pray:
-:pray: :tada: :tada: :tada: :tada: :pray: """ | xsel --clipboard --input
+:pray: :tada: :tada: :tada: :tada: :pray: """ | pbcopy
 }
 
 function shrug() {
   echo "¯\_(ツ)_/¯"
-  echo -n "¯\_(ツ)_/¯" | xsel --clipboard --input
+  echo -n "¯\_(ツ)_/¯" | pbcopy
 }
 
 function ftt() {
   echo "(╯°□°)╯︵ ┻━┻"
-  echo -n "(╯°□°)╯︵ ┻━┻" | xsel --clipboard --input
+  echo -n "(╯°□°)╯︵ ┻━┻" | pbcopy
 }
 
 function poop() {
   echo "💩"
-  echo -n "💩" | xsel --clipboard --input
+  echo -n "💩" | pbcopy
 }
 
 function update_program() {
@@ -1530,7 +1471,7 @@ fi
 # Airflow breeze {{{
 
 # START: Added by Updated Airflow Breeze autocomplete setup
-source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.sh
+# source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.sh
 # END: Added by Updated Airflow Breeze autocomplete setup
 
 # }}}
