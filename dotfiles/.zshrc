@@ -172,7 +172,7 @@ export MANPAGER=less
 
 # tmuxinator
 export EDITOR=/usr/bin/nvim
-export SHELL=/usr/bin/zsh
+export SHELL=/usr/local/bin/zsh
 
 # environment variable controlling difference between HI-DPI / Non HI_DPI
 # turn off because it messes up my pdf tooling
@@ -527,7 +527,9 @@ alias igrep="grep --perl-regexp -Ir \
 --exclude-dir='venv'"
 
 # enable color support of ls and also add handy aliases
-alias ls='exa --color=auto'
+# exa is unmaintained, use the active fork eza instead.
+# alias ls='exa --color=auto'
+alias ls='eza --color=auto'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 
@@ -1532,3 +1534,13 @@ source /home/zach/Documents/airflow/dev/breeze/autocomplete/breeze-complete-zsh.
 # END: Added by Updated Airflow Breeze autocomplete setup
 
 # }}}
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+### End of Zinit's installer chunk
