@@ -623,6 +623,9 @@ alias cpf='xclip -sel clip'
 # GHA runner status
 alias ghastatus="gh api -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' /orgs/keplergroup/actions/runners | jq -C '.runners[] | select(.status == \"online\") | {name, busy}'"
 
+# World map in the terminal
+alias map="telnet mapscii.me"
+
 # }}}
 # Functions {{{
 
