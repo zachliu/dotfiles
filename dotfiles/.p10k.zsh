@@ -1582,7 +1582,9 @@
     STATUS=$(command nmcli c show --active 2>/dev/null | rg aws)
 
     if [[ -n ${STATUS} ]]; then
-      p10k segment -f 208 -i '🛡️'
+      p10k segment -f 208 -i '🔐'
+    else
+      p10k segment -f 208 -i '🔓'
     fi
   }
 
