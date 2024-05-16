@@ -132,7 +132,7 @@ function! s:packager_init(packager) abort
   call a:packager.add('https://github.com/kristijanhusak/vim-packager', {'type': 'opt'})
 
   " Autocompletion And IDE Features:
-  call a:packager.add('https://github.com/neoclide/coc.nvim.git', {'do': 'yarn install --frozen-lockfile'})
+  call a:packager.add('https://github.com/neoclide/coc.nvim.git', {'branch': 'master', 'do': 'npm ci'})
   call a:packager.add('git@github.com:tjdevries/coc-zsh.git')
 
   " TreeSitter:
@@ -141,9 +141,6 @@ function! s:packager_init(packager) abort
   call a:packager.add('https://github.com/nvim-treesitter/playground.git')
   call a:packager.add('https://github.com/windwp/nvim-ts-autotag.git')
   call a:packager.add('https://github.com/nvim-treesitter/nvim-treesitter-context')
-  call a:packager.add('https://github.com/JoosepAlviste/nvim-ts-context-commentstring.git', {'requires': [
-      \ 'https://github.com/tpope/vim-commentary',
-      \ ]})
 
   " LocationList:
   call a:packager.add('https://github.com/elbeardmorez/vim-loclist-follow.git')
@@ -512,7 +509,6 @@ function! s:setup_lua_packages()
   call s:safe_require('config.nvim-autopairs')
   call s:safe_require('config.nvim-tree')
   call s:safe_require('config.nvim-treesitter')
-  call s:safe_require('config.nvim-ts-context-commentstring')
   call s:safe_require('config.nvim-web-devicons')
   call s:safe_require('config.spellsitter')
   call s:safe_require('config.telescope')
