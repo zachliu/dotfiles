@@ -195,7 +195,7 @@ function! s:packager_init(packager) abort
   call a:packager.add('https://github.com/moiatgit/vim-rst-sections')
 
   " Previewers:
-  call a:packager.add('https://github.com/iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'})
+  call a:packager.add('https://github.com/jannis-baum/vivify.vim')
   call a:packager.add('https://github.com/weirongxu/plantuml-previewer.vim', {'requires': [
       \ 'https://github.com/tyru/open-browser.vim',
       \ ]})
@@ -622,7 +622,7 @@ catch
 endtry
 
 " }}}
-" General: filetype {{{
+" General: filetype mappings {{{
 
 augroup custom_filetype_recognition
   autocmd!
@@ -652,7 +652,7 @@ augroup custom_filetype_recognition
 augroup end
 
 " }}}
-" General: indentation {{{
+" General: filetype custom configs {{{
 
 augroup custom_indentation
   autocmd!
@@ -667,6 +667,45 @@ augroup custom_indentation
   " Prevent auto-indenting from occuring
   autocmd Filetype yaml setlocal indentkeys-=<:>
   autocmd Filetype dot setlocal autoindent cindent
+augroup END
+
+augroup custom_comments
+  autocmd!
+  " comments
+  autocmd FileType dosini setlocal commentstring=#\ %s comments=:#,:;
+  autocmd FileType mermaid setlocal commentstring=\%\%\ %s comments=:\%\%
+  autocmd FileType tmux,python,nginx setlocal commentstring=#\ %s comments=:# formatoptions=jcroql
+  autocmd FileType jsonc setlocal commentstring=//\ %s comments=:// formatoptions=jcroql
+  autocmd FileType sh setlocal formatoptions=jcroql
+  autocmd FileType markdown setlocal commentstring=<!--\ %s\ -->
+augroup END
+
+augroup custom_iskeyword
+  " iskeyword
+  autocmd FileType nginx setlocal iskeyword+=$
+  autocmd FileType toml,zsh,sh,bash,css setlocal iskeyword+=-
+  autocmd FileType scss setlocal iskeyword+=@-@
+augroup END
+
+augroup custom_keyworddprg
+  " keywordprg
+  autocmd FileType vim setlocal keywordprg=:help
+augroup END
+
+augroup custom_nofoldenable_nolist
+  " nofoldenable nolist
+  autocmd FileType gitcommit,checkhealth setlocal nofoldenable nolist
+augroup END
+
+augroup custom_windown_opening
+  " window opening
+  autocmd FileType gitcommit if winnr("$") > 1 | wincmd T | endif
+augroup end
+
+augroup custom_wrap
+  autocmd!
+  " auto wrap when viewing/editing markdown
+  autocmd Filetype markdown setlocal wrap
 augroup END
 
 " }}}
@@ -729,29 +768,6 @@ cnoreabbrev <expr> snip <SID>abbr_help('snip', 'CocCommand snippets.editSnippets
 
 " 'c' is abbreviation for 'close'. I use it way more often than 'change'
 cnoreabbrev <expr> c <SID>abbr_help('c', 'close')
-
-" }}}
-" General: comment & text format options {{{
-
-" Notes:
-" commentstring: read by vim-commentary; must be one template
-" comments: csv of comments.
-" formatoptions: influences how Vim formats text
-"   ':help fo-table' will get the desired result
-augroup custom_comment_config
-  autocmd!
-  autocmd FileType dosini setlocal commentstring=#\ %s comments=:#,:;
-  autocmd FileType tmux,python,nginx setlocal commentstring=#\ %s comments=:# formatoptions=jcroql
-  autocmd FileType jsonc setlocal commentstring=//\ %s comments=:// formatoptions=jcroql
-  autocmd FileType sh setlocal formatoptions=jcroql
-  autocmd FileType markdown setlocal commentstring=<!--\ %s\ -->
-augroup end
-
-augroup custom_indentation
-  autocmd!
-  " auto wrap when viewing/editing markdown
-  autocmd Filetype markdown setlocal wrap
-augroup END
 
 " }}}
 " General: colorColumn different widths for different filetypes {{{
@@ -1250,6 +1266,7 @@ function! s:set_startify()
         \ '                         ""\___  . ..     __=="',
         \ '                               """"--=--""',
         \] + map(startify#fortune#boxed(), {idx, val -> ' ' . val})
+  highlight StartifyHeader guifg=LightGreen
 endfunction
 
 autocmd VimEnter * call s:set_startify()
