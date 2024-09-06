@@ -17,7 +17,7 @@ require("nvim-treesitter.configs").setup({
     "comment",
     "cpp",
     "css",
-    "dockerfile",
+    -- "dockerfile",
     "dot",
     "gdscript",
     "go",
