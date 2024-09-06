@@ -626,6 +626,9 @@ alias ghastatus="gh api -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Ap
 # World map in the terminal
 alias map="telnet mapscii.me"
 
+# New "docker compose" replaces ole "docker-compose"
+alias docker-compose="docker compose"
+
 # }}}
 # Functions {{{
 
@@ -1408,6 +1411,14 @@ function nth_row() {
   if [[ $proceed = "false" ]]; then
     false
   fi
+}
+
+# Get the previous version given the current Alembic version of a DB
+function last_alem() {
+  rg "^revision = (\"|\')$1(\"|\')" -A 1 \
+    | rg down_revision \
+    | rg "(\"|\')(.*)(\"|\')" -o \
+    | tr -d "\'\""
 }
 
 # }}}
